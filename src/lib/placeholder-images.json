@@ -1,3 +1,28 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero",
+      "description": "Doctor checking patient's eyes",
+      "imageUrl": "https://picsum.photos/seed/hero/1200/600",
+      "imageHint": "doctor patient"
+    },
+    {
+      "id": "symptom-checker",
+      "description": "Person using a laptop for analysis",
+      "imageUrl": "https://picsum.photos/seed/symptom/600/400",
+      "imageHint": "laptop analysis"
+    },
+    {
+      "id": "find-doctor",
+      "description": "Map with location pins",
+      "imageUrl": "https://picsum.photos/seed/map/600/400",
+      "imageHint": "map location"
+    },
+    {
+      "id": "appointments",
+      "description": "Calendar with appointments marked",
+      "imageUrl": "https://picsum.photos/seed/calendar/600/400",
+      "imageHint": "calendar appointment"
+    }
+  ]
 }
