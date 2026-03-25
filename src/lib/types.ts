@@ -21,8 +21,18 @@ export type Appointment = {
 
 export type Doctor = {
   id: string;
+  userId: string;
   name: string;
   specialty: string;
   email: string;
   status: "Active" | "Inactive";
 };
+
+export type UserRole = 'patient' | 'doctor' | 'admin';
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+}

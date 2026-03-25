@@ -1,0 +1,76 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper Functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function getRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && getRole() == 'Admin';
+    }
+
+    function isDoctor() {
+      return isSignedIn() && getRole() == 'Doctor';
+    }
+    
+    function isPatient() {
+        return isSignedIn() && getRole() == 'Patient';
+    }
+
+    function isParticipant(docData) {
+      return isSignedIn() && (request.auth.uid == docData.patientUserId || request.auth.uid == docData.doctorUserId);
+    }
+
+    // User Profiles: Users can manage their own profile. Admins can read any profile.
+    match /users/{userId} {
+      allow read, update: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId);
+      allow delete: if isAdmin();
+      allow list: if isAdmin();
+    }
+
+    // Doctor Profiles: Publicly readable, writable by the doctor or an admin.
+    match /doctors/{doctorId} {
+      allow get, list: if true;
+      allow create, update: if isDoctor() || isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // Hospitals: Publicly readable, writable only by Admins.
+    match /hospitals/{hospitalId} {
+        allow get, list: if true;
+        allow create, update, delete: if isAdmin();
+    }
+
+    // Appointments: Readable/writable by participants (patient/doctor) or admins.
+    match /appointments/{appointmentId} {
+      allow read, update, delete: if isParticipant(resource.data) || isAdmin();
+      allow create: if isPatient() || isDoctor() || isAdmin();
+      allow list: if isSignedIn(); // Further client-side filtering needed
+    }
+    
+    // Medical Images: Readable/writable by participants or admins. Creation by doctors/admins.
+    match /medicalImages/{medicalImageId} {
+        allow read, update, delete: if isParticipant(resource.data) || isAdmin();
+        allow create: if isDoctor() || isAdmin();
+        allow list: if isSignedIn(); // Further client-side filtering needed
+    }
+    
+    // Symptom Reports: Private to the patient who created it.
+    match /symptomReports/{symptomReportId} {
+        allow read, update, delete, create: if isOwner(request.resource.data.patientUserId);
+        allow list: if isSignedIn(); // Further client-side filtering needed
+    }
+  }
+}

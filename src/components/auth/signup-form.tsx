@@ -5,7 +5,10 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { doc, getFirestore, setDoc } from 'firebase/firestore';
 
+import { useFirebaseApp } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -31,6 +34,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
 
 const formSchema = z
   .object({
@@ -40,7 +46,7 @@ const formSchema = z
     email: z.string().email({
       message: 'Please enter a valid email address.',
     }),
-    role: z.enum(['patient', 'doctor']),
+    role: z.enum(['patient', 'doctor', 'admin']),
     password: z.string().min(6, {
       message: 'Password must be at least 6 characters.',
     }),
@@ -53,6 +59,11 @@ const formSchema = z
 
 export function SignupForm() {
   const router = useRouter();
+  const { toast } = useToast();
+  const app = useFirebaseApp();
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -64,14 +75,51 @@ export function SignupForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    // In a real app, you would handle user creation here.
-    // Based on the role, we redirect to the appropriate dashboard.
-    if (values.role === 'doctor') {
-      router.push('/doctor');
-    } else {
-      router.push('/dashboard');
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+      const user = userCredential.user;
+
+      const userProfile = {
+        id: user.uid,
+        name: values.name,
+        email: values.email,
+        role: values.role,
+      };
+
+      const userDocRef = doc(db, 'users', user.uid);
+      
+      setDoc(userDocRef, userProfile)
+        .catch(serverError => {
+            const permissionError = new FirestorePermissionError({
+                path: userDocRef.path,
+                operation: 'create',
+                requestResourceData: userProfile,
+            });
+            errorEmitter.emit('permission-error', permissionError);
+        });
+
+      toast({
+        title: "Account Created!",
+        description: "You have been successfully signed up.",
+      });
+
+      if (values.role === 'doctor') {
+        router.push('/doctor');
+      } else if (values.role === 'admin') {
+        router.push('/admin');
+      }
+      else {
+        router.push('/dashboard');
+      }
+
+    } catch (error: any) {
+      console.error('Signup failed:', error);
+       toast({
+        variant: 'destructive',
+        title: 'Signup Failed',
+        description: error.message || 'An unexpected error occurred.',
+      });
     }
   }
 
@@ -127,6 +175,7 @@ export function SignupForm() {
                     <SelectContent>
                       <SelectItem value="patient">Patient</SelectItem>
                       <SelectItem value="doctor">Doctor</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -161,8 +210,8 @@ export function SignupForm() {
             />
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" className="w-full">
-              Create Account
+            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? 'Creating Account...' : 'Create Account'}
             </Button>
             <div className="text-center text-sm">
               Already have an account?{' '}

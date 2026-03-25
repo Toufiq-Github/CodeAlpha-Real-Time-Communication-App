@@ -13,7 +13,10 @@ import { LogOut, UserCircle } from "lucide-react";
 import type { NavItem } from "@/lib/types";
 import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "../logo";
-import { Button } from "../ui/button";
+import { useAuth } from "@/firebase";
+import { signOut } from "firebase/auth";
+import { useUser } from "@/firebase/auth/use-user";
+
 
 interface DashboardSidebarProps {
   navItems: NavItem[];
@@ -22,10 +25,16 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const auth = useAuth();
+  const { user } = useUser();
+
 
   const handleLogout = () => {
-    // In a real app, this would clear the session
-    router.push('/');
+    if (auth) {
+      signOut(auth).then(() => {
+        router.push('/');
+      });
+    }
   }
 
   return (
@@ -58,9 +67,9 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
       <SidebarFooter>
          <SidebarMenu>
             <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Profile">
+                <SidebarMenuButton tooltip={user?.email || 'Profile'}>
                     <UserCircle />
-                    <span>Profile</span>
+                    <span>{user?.name || 'Profile'}</span>
                 </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>

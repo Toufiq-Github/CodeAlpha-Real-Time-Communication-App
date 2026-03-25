@@ -51,6 +51,7 @@ export const mockDoctorAppointments: Appointment[] = [
 export const mockDoctors: Doctor[] = [
   {
     id: "DOC001",
+    userId: "user1",
     name: "Dr. Alan Grant",
     specialty: "Retina Specialist",
     email: "alan.grant@opticare.ai",
@@ -58,6 +59,7 @@ export const mockDoctors: Doctor[] = [
   },
   {
     id: "DOC002",
+    userId: "user2",
     name: "Dr. Ellie Sattler",
     specialty: "Glaucoma Specialist",
     email: "ellie.sattler@opticare.ai",
@@ -65,6 +67,7 @@ export const mockDoctors: Doctor[] = [
   },
   {
     id: "DOC003",
+    userId: "user3",
     name: "Dr. Ian Malcolm",
     specialty: "Pediatric Ophthalmology",
     email: "ian.malcolm@opticare.ai",
