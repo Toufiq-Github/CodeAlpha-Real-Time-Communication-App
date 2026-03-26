@@ -46,7 +46,7 @@ const formSchema = z
     email: z.string().email({
       message: 'Please enter a valid email address.',
     }),
-    role: z.enum(['Patient', 'Doctor', 'Admin']),
+    role: z.enum(['Patient', 'Doctor']),
     password: z.string().min(6, {
       message: 'Password must be at least 6 characters.',
     }),
@@ -89,7 +89,7 @@ export function SignupForm() {
 
       const userDocRef = doc(db, 'users', user.uid);
       
-      setDoc(userDocRef, userProfile)
+      await setDoc(userDocRef, userProfile)
         .catch(serverError => {
             const permissionError = new FirestorePermissionError({
                 path: userDocRef.path,
@@ -97,6 +97,7 @@ export function SignupForm() {
                 requestResourceData: userProfile,
             });
             errorEmitter.emit('permission-error', permissionError);
+            throw serverError;
         });
 
       if (values.role === 'Doctor') {
@@ -107,13 +108,14 @@ export function SignupForm() {
           email: values.email,
         };
         const doctorDocRef = doc(db, 'doctors', user.uid);
-        setDoc(doctorDocRef, doctorProfile).catch(serverError => {
+        await setDoc(doctorDocRef, doctorProfile).catch(serverError => {
           const permissionError = new FirestorePermissionError({
             path: doctorDocRef.path,
             operation: 'create',
             requestResourceData: doctorProfile,
           });
           errorEmitter.emit('permission-error', permissionError);
+          throw serverError;
         });
       }
       
@@ -124,10 +126,7 @@ export function SignupForm() {
 
       if (values.role === 'Doctor') {
         router.push('/doctor');
-      } else if (values.role === 'Admin') {
-        router.push('/admin');
-      }
-      else {
+      } else {
         router.push('/dashboard');
       }
 
@@ -193,7 +192,6 @@ export function SignupForm() {
                     <SelectContent>
                       <SelectItem value="Patient">Patient</SelectItem>
                       <SelectItem value="Doctor">Doctor</SelectItem>
-                      <SelectItem value="Admin">Admin</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

@@ -34,10 +34,11 @@ service cloud.firestore {
 
     // User Profiles: Users can manage their own profile. Admins can read any profile.
     match /users/{userId} {
-      allow read, update: if isOwner(userId) || isAdmin();
-      allow create: if isOwner(userId);
-      allow delete: if isAdmin();
+      allow get: if isOwner(userId) || isAdmin();
       allow list: if isAdmin();
+      allow create: if isOwner(userId) && request.resource.data.role in ['Patient', 'Doctor'];
+      allow update: if (isOwner(userId) || isAdmin()) && request.resource.data.role == resource.data.role;
+      allow delete: if isAdmin();
     }
 
     // Doctor Profiles: Publicly readable, writable by the doctor or an admin.
