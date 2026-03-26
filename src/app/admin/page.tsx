@@ -30,10 +30,16 @@ export default function AdminDashboardPage() {
 
   const db = useFirestore();
   
-  const doctorsQuery = useMemo(() => db ? query(collection(db, 'users'), where('role', '==', 'Doctor')) : null, [db]);
+  const doctorsQuery = useMemo(() => {
+    if (!db) return null;
+    return query(collection(db, 'users'), where('role', '==', 'Doctor'))
+  }, [db]);
   const { data: doctors, loading: doctorsLoading } = useCollection(doctorsQuery);
 
-  const adminsQuery = useMemo(() => db ? query(collection(db, 'users'), where('role', '==', 'Admin')) : null, [db]);
+  const adminsQuery = useMemo(() => {
+    if (!db) return null;
+    return query(collection(db, 'users'), where('role', '==', 'Admin'))
+  }, [db]);
   const { data: admins, loading: adminsLoading } = useCollection(adminsQuery);
   
   useEffect(() => {
@@ -42,7 +48,7 @@ export default function AdminDashboardPage() {
     }
   }, [user, userLoading, router]);
 
-  const isLoading = userLoading || doctorsLoading || adminsLoading || !db;
+  const isLoading = userLoading || doctorsLoading || adminsLoading;
 
   if (isLoading) {
     return <div>Loading...</div>;

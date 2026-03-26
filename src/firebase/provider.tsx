@@ -1,32 +1,50 @@
 'use client';
-import { createContext, useContext } from 'react';
-import { FirebaseApp } from 'firebase/app';
-import { Auth } from 'firebase/auth';
-import { Firestore } from 'firebase/firestore';
+import { createContext, useContext, useMemo } from 'react';
+import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
+import { getAuth, type Auth } from 'firebase/auth';
+import { getFirestore, type Firestore } from 'firebase/firestore';
+import { firebaseConfig } from './config';
 
 interface FirebaseContextValue {
-  app: FirebaseApp | null;
-  auth: Auth | null;
-  db: Firestore | null;
+  app: FirebaseApp;
+  auth: Auth;
+  db: Firestore;
 }
 
-const FirebaseContext = createContext<FirebaseContextValue>({
-  app: null,
-  auth: null,
-  db: null,
-});
+const FirebaseContext = createContext<FirebaseContextValue | null>(null);
+
+// This function initializes and returns the Firebase services
+function getFirebaseServices() {
+  const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  return { app, auth, db };
+}
 
 export const FirebaseProvider = ({
   children,
-  ...value
 }: {
   children: React.ReactNode;
-  app: FirebaseApp | null;
-  auth: Auth | null;
-  db: Firestore | null;
-}) => <FirebaseContext.Provider value={value}>{children}</FirebaseContext.Provider>;
+}) => {
+  // useMemo ensures this is only called once on the client
+  const firebaseServices = useMemo(() => getFirebaseServices(), []);
 
-export const useFirebase = () => useContext(FirebaseContext);
-export const useFirebaseApp = () => useContext(FirebaseContext).app;
-export const useAuth = () => useContext(FirebaseContext).auth;
-export const useFirestore = () => useContext(FirebaseContext).db;
+  return (
+    <FirebaseContext.Provider value={firebaseServices}>
+      {children}
+    </FirebaseContext.Provider>
+  );
+};
+
+// Custom hooks to access the Firebase services
+export const useFirebase = () => {
+    const context = useContext(FirebaseContext);
+    if (!context) {
+        throw new Error('useFirebase must be used within a FirebaseProvider');
+    }
+    return context;
+}
+
+export const useFirebaseApp = () => useFirebase().app;
+export const useAuth = () => useFirebase().auth;
+export const useFirestore = () => useFirebase().db;

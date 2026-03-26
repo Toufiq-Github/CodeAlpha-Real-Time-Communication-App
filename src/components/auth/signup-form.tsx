@@ -79,14 +79,6 @@ export function SignupForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!auth || !db) {
-      toast({
-        variant: 'destructive',
-        title: 'Signup Failed',
-        description: 'Firebase is not ready. Please try again in a moment.',
-      });
-      return;
-    }
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -166,7 +158,7 @@ export function SignupForm() {
                 <FormItem>
                   <FormLabel>Full Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="John Doe" {...field} />
+                    <Input placeholder="John Doe" {...field} suppressHydrationWarning />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -179,7 +171,7 @@ export function SignupForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="name@example.com" {...field} />
+                    <Input placeholder="name@example.com" {...field} suppressHydrationWarning />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -196,7 +188,7 @@ export function SignupForm() {
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger suppressHydrationWarning>
                         <SelectValue placeholder="Select a role" />
                       </SelectTrigger>
                     </FormControl>
@@ -221,6 +213,7 @@ export function SignupForm() {
                         type={showPassword ? 'text' : 'password'}
                         placeholder="••••••••"
                         {...field}
+                        suppressHydrationWarning
                       />
                       <Button
                         type="button"
@@ -228,6 +221,7 @@ export function SignupForm() {
                         size="icon"
                         className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 text-muted-foreground"
                         onClick={() => setShowPassword(!showPassword)}
+                        suppressHydrationWarning
                       >
                         {showPassword ? (
                           <EyeOff className="h-4 w-4" />
@@ -256,6 +250,7 @@ export function SignupForm() {
                         type={showConfirmPassword ? 'text' : 'password'}
                         placeholder="••••••••"
                         {...field}
+                        suppressHydrationWarning
                       />
                       <Button
                         type="button"
@@ -265,6 +260,7 @@ export function SignupForm() {
                         onClick={() =>
                           setShowConfirmPassword(!showConfirmPassword)
                         }
+                        suppressHydrationWarning
                       >
                         {showConfirmPassword ? (
                           <EyeOff className="h-4 w-4" />
@@ -288,7 +284,7 @@ export function SignupForm() {
             <Button
               type="submit"
               className="w-full"
-              disabled={form.formState.isSubmitting || !auth}
+              disabled={form.formState.isSubmitting}
             >
               {form.formState.isSubmitting
                 ? 'Creating Account...'
