@@ -145,7 +145,7 @@ const SelectSeparator = React.forwardRef<
     {...props}
   />
 ))
-SelectSeparator.displayName = SeparatorPrimitive.Separator.displayName
+SelectSeparator.displayName = SelectPrimitive.Separator.displayName
 
 export {
   Select,
