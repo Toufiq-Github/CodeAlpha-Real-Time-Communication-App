@@ -41,10 +41,12 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // Doctor Profiles: Publicly readable, writable by the doctor or an admin.
+    // Doctor Profiles: Publicly readable. Writable only by the user who owns the profile or an admin.
+    // This allows a user to create their own doctor profile during signup. The app logic should
+    // still rely on the immutable `role` in the `/users/{userId}` document for authorization.
     match /doctors/{doctorId} {
       allow get, list: if true;
-      allow create, update: if isDoctor() || isAdmin();
+      allow create, update: if isOwner(doctorId) || isAdmin();
       allow delete: if isAdmin();
     }
     
@@ -70,8 +72,10 @@ service cloud.firestore {
     
     // Symptom Reports: Private to the patient who created it.
     match /symptomReports/{symptomReportId} {
-        allow read, update, delete, create: if isOwner(request.resource.data.patientUserId);
-        allow list: if isSignedIn(); // Further client-side filtering needed
+        allow create: if isOwner(request.resource.data.patientUserId);
+        allow get, update, delete: if isOwner(resource.data.patientUserId);
+        // List is intentionally broad; client must filter to the current user's reports.
+        allow list: if isSignedIn();
     }
   }
 }
