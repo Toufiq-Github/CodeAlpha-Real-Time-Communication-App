@@ -4,9 +4,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import Link from 'next/link';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc, getFirestore } from 'firebase/firestore';
-import { useFirebaseApp, useFirestore } from '@/firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { useAuth, useFirestore } from '@/firebase';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -41,9 +41,8 @@ const formSchema = z.object({
 export function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
-  const app = useFirebaseApp();
+  const auth = useAuth();
   const db = useFirestore();
-  const auth = getAuth(app);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

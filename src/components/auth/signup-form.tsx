@@ -5,10 +5,10 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
-import { doc, getFirestore, setDoc } from 'firebase/firestore';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
-import { useFirebaseApp } from '@/firebase';
+import { useAuth, useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -60,9 +60,8 @@ const formSchema = z
 export function SignupForm() {
   const router = useRouter();
   const { toast } = useToast();
-  const app = useFirebaseApp();
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+  const auth = useAuth();
+  const db = useFirestore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

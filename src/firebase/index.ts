@@ -10,20 +10,10 @@ import { useDoc } from './firestore/use-doc';
 import { useUser } from './auth/use-user';
 
 
-let app: FirebaseApp;
-let auth: Auth;
-let db: Firestore;
-
 function initializeFirebase() {
-  if (getApps().length === 0) {
-    app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    db = getFirestore(app);
-  } else {
-    app = getApp();
-    auth = getAuth(app);
-    db = getFirestore(app);
-  }
+  const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
   return { app, auth, db };
 }
 
