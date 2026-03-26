@@ -21,12 +21,12 @@ export const FirebaseProvider = ({
   ...value
 }: {
   children: React.ReactNode;
-  app: FirebaseApp;
-  auth: Auth;
-  db: Firestore;
+  app: FirebaseApp | null;
+  auth: Auth | null;
+  db: Firestore | null;
 }) => <FirebaseContext.Provider value={value}>{children}</FirebaseContext.Provider>;
 
 export const useFirebase = () => useContext(FirebaseContext);
-export const useFirebaseApp = () => useContext(FirebaseContext).app as FirebaseApp;
-export const useAuth = () => useContext(FirebaseContext).auth as Auth;
-export const useFirestore = () => useContext(FirebaseContext).db as Firestore;
+export const useFirebaseApp = () => useContext(FirebaseContext).app;
+export const useAuth = () => useContext(FirebaseContext).auth;
+export const useFirestore = () => useContext(FirebaseContext).db;

@@ -18,10 +18,9 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useCollection } from "@/firebase";
-import { collection, getFirestore, query, where } from "firebase/firestore";
-import { useFirebaseApp } from "@/firebase";
-import { useEffect } from "react";
+import { useCollection, useFirestore } from "@/firebase";
+import { collection, query, where } from "firebase/firestore";
+import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/firebase/auth/use-user";
 
@@ -29,13 +28,12 @@ export default function AdminDashboardPage() {
   const router = useRouter();
   const { user, loading: userLoading } = useUser();
 
-  const app = useFirebaseApp();
-  const db = getFirestore(app);
+  const db = useFirestore();
   
-  const doctorsQuery = query(collection(db, 'users'), where('role', '==', 'Doctor'));
+  const doctorsQuery = useMemo(() => db ? query(collection(db, 'users'), where('role', '==', 'Doctor')) : null, [db]);
   const { data: doctors, loading: doctorsLoading } = useCollection(doctorsQuery);
 
-  const adminsQuery = query(collection(db, 'users'), where('role', '==', 'Admin'));
+  const adminsQuery = useMemo(() => db ? query(collection(db, 'users'), where('role', '==', 'Admin')) : null, [db]);
   const { data: admins, loading: adminsLoading } = useCollection(adminsQuery);
   
   useEffect(() => {
@@ -44,7 +42,9 @@ export default function AdminDashboardPage() {
     }
   }, [user, userLoading, router]);
 
-  if (userLoading || doctorsLoading || adminsLoading) {
+  const isLoading = userLoading || doctorsLoading || adminsLoading || !db;
+
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
