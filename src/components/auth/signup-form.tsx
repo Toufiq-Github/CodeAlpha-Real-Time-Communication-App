@@ -6,7 +6,7 @@ import * as z from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, writeBatch } from 'firebase/firestore';
 
 import { useAuth, useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
@@ -75,9 +75,19 @@ export function SignupForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!auth || !db) {
+      toast({
+        variant: 'destructive',
+        title: 'Signup Failed',
+        description: 'Firebase is not ready. Please try again in a moment.',
+      });
+      return;
+    }
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
+
+      const batch = writeBatch(db);
 
       const userProfile = {
         id: user.uid,
@@ -85,19 +95,9 @@ export function SignupForm() {
         email: values.email,
         role: values.role,
       };
-
       const userDocRef = doc(db, 'users', user.uid);
-      
-      await setDoc(userDocRef, userProfile)
-        .catch(serverError => {
-            const permissionError = new FirestorePermissionError({
-                path: userDocRef.path,
-                operation: 'create',
-                requestResourceData: userProfile,
-            });
-            errorEmitter.emit('permission-error', permissionError);
-            throw serverError;
-        });
+      batch.set(userDocRef, userProfile);
+
 
       if (values.role === 'Doctor') {
         const doctorProfile = {
@@ -107,16 +107,19 @@ export function SignupForm() {
           email: values.email,
         };
         const doctorDocRef = doc(db, 'doctors', user.uid);
-        await setDoc(doctorDocRef, doctorProfile).catch(serverError => {
-          const permissionError = new FirestorePermissionError({
-            path: doctorDocRef.path,
-            operation: 'create',
-            requestResourceData: doctorProfile,
-          });
-          errorEmitter.emit('permission-error', permissionError);
-          throw serverError;
-        });
+        batch.set(doctorDocRef, doctorProfile)
       }
+      
+      await batch.commit().catch(serverError => {
+        // This unified catch block will handle permission errors for both writes
+        const permissionError = new FirestorePermissionError({
+            path: 'batch write', // Path is less specific for a batch
+            operation: 'create',
+            requestResourceData: { userProfile, role: values.role },
+        });
+        errorEmitter.emit('permission-error', permissionError);
+        throw serverError; // Re-throw to be caught by the outer try/catch
+      });
       
       toast({
         title: "Account Created!",
@@ -225,7 +228,7 @@ export function SignupForm() {
             />
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting || !auth}>
               {form.formState.isSubmitting ? 'Creating Account...' : 'Create Account'}
             </Button>
             <div className="text-center text-sm">

@@ -53,6 +53,14 @@ export function LoginForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!auth || !db) {
+      toast({
+        variant: 'destructive',
+        title: 'Login Failed',
+        description: 'Firebase is not ready. Please try again in a moment.',
+      });
+      return;
+    }
     try {
       const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
@@ -127,7 +135,7 @@ export function LoginForm() {
             />
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting || !auth}>
               {form.formState.isSubmitting ? 'Signing In...' : 'Sign In'}
             </Button>
             <div className="text-center text-sm">
