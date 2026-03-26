@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useEffect, useState } from 'react';
 import {
@@ -8,6 +8,8 @@ import {
   DocumentData,
   FirestoreError,
 } from 'firebase/firestore';
+import { errorEmitter } from '../error-emitter';
+import { FirestorePermissionError } from '../errors';
 
 export function useDoc<T>(ref: DocumentReference<T> | null) {
   const [data, setData] = useState<T | null>(null);
@@ -35,7 +37,11 @@ export function useDoc<T>(ref: DocumentReference<T> | null) {
         setError(null);
       },
       (err) => {
-        console.error('useDoc error:', err);
+        const permissionError = new FirestorePermissionError({
+          path: ref.path,
+          operation: 'get',
+        });
+        errorEmitter.emit('permission-error', permissionError);
         setError(err);
         setLoading(false);
       }

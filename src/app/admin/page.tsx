@@ -32,16 +32,14 @@ export default function AdminDashboardPage() {
   const app = useFirebaseApp();
   const db = getFirestore(app);
   
-  // Query for all users who are doctors
-  const doctorsQuery = query(collection(db, 'users'), where('role', '==', 'doctor'));
+  const doctorsQuery = query(collection(db, 'users'), where('role', '==', 'Doctor'));
   const { data: doctors, loading: doctorsLoading } = useCollection(doctorsQuery);
 
-  // Query for all users who are admins
-  const adminsQuery = query(collection(db, 'users'), where('role', '==', 'admin'));
+  const adminsQuery = query(collection(db, 'users'), where('role', '==', 'Admin'));
   const { data: admins, loading: adminsLoading } = useCollection(adminsQuery);
   
   useEffect(() => {
-    if (!userLoading && user?.role !== 'admin') {
+    if (!userLoading && user?.role !== 'Admin') {
       router.push('/dashboard');
     }
   }, [user, userLoading, router]);
@@ -50,7 +48,7 @@ export default function AdminDashboardPage() {
     return <div>Loading...</div>;
   }
 
-  if (user?.role !== 'admin') {
+  if (user?.role !== 'Admin') {
     return null;
   }
   

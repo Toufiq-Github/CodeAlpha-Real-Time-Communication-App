@@ -17,6 +17,8 @@ export type Appointment = {
   time: string;
   status: AppointmentStatus;
   meetLink?: string;
+  patientUserId: string;
+  doctorUserId: string;
 };
 
 export type Doctor = {
@@ -28,7 +30,7 @@ export type Doctor = {
   status: "Active" | "Inactive";
 };
 
-export type UserRole = 'patient' | 'doctor' | 'admin';
+export type UserRole = 'Patient' | 'Doctor' | 'Admin';
 
 export interface UserProfile {
   id: string;

@@ -5,7 +5,8 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import Link from 'next/link';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { useFirebaseApp } from '@/firebase';
+import { doc, getDoc, getFirestore } from 'firebase/firestore';
+import { useFirebaseApp, useFirestore } from '@/firebase';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -41,6 +42,7 @@ export function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
   const app = useFirebaseApp();
+  const db = useFirestore();
   const auth = getAuth(app);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -53,10 +55,30 @@ export function LoginForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
-      // For this demo, we'll just redirect to the dashboard
-      // In a real app, you might want to fetch user role and redirect accordingly
-      router.push('/dashboard');
+      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+      const user = userCredential.user;
+      
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        switch (userData.role) {
+          case 'Admin':
+            router.push('/admin');
+            break;
+          case 'Doctor':
+            router.push('/doctor');
+            break;
+          default:
+            router.push('/dashboard');
+            break;
+        }
+      } else {
+        // Fallback if user profile doesn't exist for some reason
+        router.push('/dashboard');
+      }
+
     } catch (error: any) {
       console.error('Login failed:', error);
       toast({

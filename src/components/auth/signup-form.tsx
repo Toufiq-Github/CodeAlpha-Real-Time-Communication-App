@@ -46,7 +46,7 @@ const formSchema = z
     email: z.string().email({
       message: 'Please enter a valid email address.',
     }),
-    role: z.enum(['patient', 'doctor', 'admin']),
+    role: z.enum(['Patient', 'Doctor', 'Admin']),
     password: z.string().min(6, {
       message: 'Password must be at least 6 characters.',
     }),
@@ -71,7 +71,7 @@ export function SignupForm() {
       email: '',
       password: '',
       confirmPassword: '',
-      role: 'patient',
+      role: 'Patient',
     },
   });
 
@@ -99,14 +99,32 @@ export function SignupForm() {
             errorEmitter.emit('permission-error', permissionError);
         });
 
+      if (values.role === 'Doctor') {
+        const doctorProfile = {
+          userId: user.uid,
+          name: values.name,
+          specialty: 'General Ophthalmology', // Default specialty
+          email: values.email,
+        };
+        const doctorDocRef = doc(db, 'doctors', user.uid);
+        setDoc(doctorDocRef, doctorProfile).catch(serverError => {
+          const permissionError = new FirestorePermissionError({
+            path: doctorDocRef.path,
+            operation: 'create',
+            requestResourceData: doctorProfile,
+          });
+          errorEmitter.emit('permission-error', permissionError);
+        });
+      }
+      
       toast({
         title: "Account Created!",
         description: "You have been successfully signed up.",
       });
 
-      if (values.role === 'doctor') {
+      if (values.role === 'Doctor') {
         router.push('/doctor');
-      } else if (values.role === 'admin') {
+      } else if (values.role === 'Admin') {
         router.push('/admin');
       }
       else {
@@ -173,9 +191,9 @@ export function SignupForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="patient">Patient</SelectItem>
-                      <SelectItem value="doctor">Doctor</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="Patient">Patient</SelectItem>
+                      <SelectItem value="Doctor">Doctor</SelectItem>
+                      <SelectItem value="Admin">Admin</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

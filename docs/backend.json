@@ -42,7 +42,8 @@
         "patientUserId": { "type": "string" },
         "doctorUserId": { "type": "string" },
         "date": { "type": "string", "format": "date-time" },
-        "status": { "type": "string", "enum": ["Pending", "Accepted", "Rejected"] }
+        "status": { "type": "string", "enum": ["Pending", "Accepted", "Rejected"] },
+        "meetLink": { "type": "string", "format": "uri" }
       },
       "required": ["patientUserId", "doctorUserId", "date", "status"]
     },

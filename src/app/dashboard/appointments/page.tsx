@@ -1,4 +1,7 @@
-import { mockPatientAppointments } from "@/lib/placeholder-data";
+'use client';
+
+import { useCollection, useDoc, useFirestore, useUser } from "@/firebase";
+import { collection, query, where, doc } from "firebase/firestore";
 import {
   Table,
   TableBody,
@@ -11,8 +14,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { format } from 'date-fns';
+import { Appointment } from "@/lib/types";
+import { Skeleton } from "@/components/ui/skeleton";
+
+function DoctorName({ doctorId }: { doctorId: string }) {
+  const db = useFirestore();
+  const { data: doctor, loading } = useDoc(doc(db, 'users', doctorId));
+
+  if (loading) return <Skeleton className="h-4 w-24" />;
+  return <>{doctor?.name || 'Unknown Doctor'}</>;
+}
 
 export default function PatientAppointmentsPage() {
+  const { user, loading: userLoading } = useUser();
+  const db = useFirestore();
+  
+  const appointmentsQuery = user ? query(collection(db, 'appointments'), where('patientUserId', '==', user.id)) : null;
+  const { data: appointments, loading: appointmentsLoading } = useCollection<Appointment>(appointmentsQuery);
 
   const getStatusBadgeVariant = (status: string) => {
     if (status === 'Accepted') return 'bg-status-success text-white hover:bg-status-success/80';
@@ -20,6 +38,8 @@ export default function PatientAppointmentsPage() {
     if (status === 'Rejected') return 'bg-status-error text-white hover:bg-status-error/80';
     return 'default';
   };
+
+  const isLoading = userLoading || appointmentsLoading;
 
   return (
     <div className="w-full">
@@ -39,34 +59,44 @@ export default function PatientAppointmentsPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Doctor</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Time</TableHead>
+                <TableHead>Date & Time</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Consultation Link</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mockPatientAppointments.map((apt) => (
-                <TableRow key={apt.id}>
-                  <TableCell className="font-medium">{apt.doctorName}</TableCell>
-                  <TableCell>{format(new Date(apt.date), 'MMMM d, yyyy')}</TableCell>
-                  <TableCell>{apt.time}</TableCell>
-                  <TableCell>
-                    <Badge className={cn("text-xs", getStatusBadgeVariant(apt.status))}>
-                      {apt.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {apt.meetLink ? (
-                      <a href={apt.meetLink} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                        Join Meeting
-                      </a>
-                    ) : (
-                      'N/A'
-                    )}
-                  </TableCell>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center">Loading appointments...</TableCell>
                 </TableRow>
-              ))}
+              ) : appointments && appointments.length > 0 ? (
+                appointments.map((apt) => (
+                  <TableRow key={apt.id}>
+                    <TableCell className="font-medium">
+                      <DoctorName doctorId={apt.doctorUserId} />
+                    </TableCell>
+                    <TableCell>{format(new Date(apt.date), 'MMMM d, yyyy, h:mm a')}</TableCell>
+                    <TableCell>
+                      <Badge className={cn("text-xs", getStatusBadgeVariant(apt.status))}>
+                        {apt.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {apt.meetLink ? (
+                        <a href={apt.meetLink} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                          Join Meeting
+                        </a>
+                      ) : (
+                        'N/A'
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center">No appointments found.</TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </CardContent>

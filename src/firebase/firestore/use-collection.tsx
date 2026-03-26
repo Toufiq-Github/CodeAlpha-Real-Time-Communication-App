@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useEffect, useState, useRef } from 'react';
 import {
@@ -10,6 +10,8 @@ import {
   FirestoreError,
 } from 'firebase/firestore';
 import { useFirebaseApp } from '../provider';
+import { errorEmitter } from '../error-emitter';
+import { FirestorePermissionError } from '../errors';
 
 interface UseCollectionOptions<T> {
   // You can add options like 'listen' to disable real-time updates if needed
@@ -41,7 +43,11 @@ export function useCollection<T>(query: Query<T> | null) {
         setError(null);
       },
       (err) => {
-        console.error('useCollection error:', err);
+        const permissionError = new FirestorePermissionError({
+          path: (query as any)._query.path.segments.join('/'),
+          operation: 'list',
+        });
+        errorEmitter.emit('permission-error', permissionError);
         setError(err);
         setLoading(false);
       }
