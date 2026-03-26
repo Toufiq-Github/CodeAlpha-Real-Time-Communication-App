@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -7,6 +8,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc, writeBatch } from 'firebase/firestore';
+import { Eye, EyeOff } from 'lucide-react';
 
 import { useAuth, useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
@@ -62,6 +64,8 @@ export function SignupForm() {
   const { toast } = useToast();
   const auth = useAuth();
   const db = useFirestore();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -84,7 +88,11 @@ export function SignupForm() {
       return;
     }
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        values.email,
+        values.password
+      );
       const user = userCredential.user;
 
       const batch = writeBatch(db);
@@ -98,7 +106,6 @@ export function SignupForm() {
       const userDocRef = doc(db, 'users', user.uid);
       batch.set(userDocRef, userProfile);
 
-
       if (values.role === 'Doctor') {
         const doctorProfile = {
           userId: user.uid,
@@ -107,23 +114,23 @@ export function SignupForm() {
           email: values.email,
         };
         const doctorDocRef = doc(db, 'doctors', user.uid);
-        batch.set(doctorDocRef, doctorProfile)
+        batch.set(doctorDocRef, doctorProfile);
       }
-      
-      await batch.commit().catch(serverError => {
+
+      await batch.commit().catch((serverError) => {
         // This unified catch block will handle permission errors for both writes
         const permissionError = new FirestorePermissionError({
-            path: 'batch write', // Path is less specific for a batch
-            operation: 'create',
-            requestResourceData: { userProfile, role: values.role },
+          path: 'batch write', // Path is less specific for a batch
+          operation: 'create',
+          requestResourceData: { userProfile, role: values.role },
         });
         errorEmitter.emit('permission-error', permissionError);
         throw serverError; // Re-throw to be caught by the outer try/catch
       });
-      
+
       toast({
-        title: "Account Created!",
-        description: "You have been successfully signed up.",
+        title: 'Account Created!',
+        description: 'You have been successfully signed up.',
       });
 
       if (values.role === 'Doctor') {
@@ -131,10 +138,9 @@ export function SignupForm() {
       } else {
         router.push('/dashboard');
       }
-
     } catch (error: any) {
       console.error('Signup failed:', error);
-       toast({
+      toast({
         variant: 'destructive',
         title: 'Signup Failed',
         description: error.message || 'An unexpected error occurred.',
@@ -185,7 +191,10 @@ export function SignupForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>I am a...</FormLabel>
-                   <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a role" />
@@ -207,20 +216,68 @@ export function SignupForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="••••••••"
+                        {...field}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 text-muted-foreground"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                        <span className="sr-only">
+                          {showPassword ? 'Hide password' : 'Show password'}
+                        </span>
+                      </Button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <div className="relative">
+                      <Input
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        placeholder="••••••••"
+                        {...field}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 text-muted-foreground"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                        <span className="sr-only">
+                          {showConfirmPassword
+                            ? 'Hide password'
+                            : 'Show password'}
+                        </span>
+                      </Button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -228,8 +285,14 @@ export function SignupForm() {
             />
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting || !auth}>
-              {form.formState.isSubmitting ? 'Creating Account...' : 'Create Account'}
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={form.formState.isSubmitting || !auth}
+            >
+              {form.formState.isSubmitting
+                ? 'Creating Account...'
+                : 'Create Account'}
             </Button>
             <div className="text-center text-sm">
               Already have an account?{' '}
