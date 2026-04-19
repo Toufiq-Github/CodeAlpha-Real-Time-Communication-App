@@ -1,9 +1,9 @@
 'use client';
-import { createContext, useContext, useMemo } from 'react';
-import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, type Auth } from 'firebase/auth';
-import { getFirestore, type Firestore } from 'firebase/firestore';
-import { firebaseConfig } from './config';
+import { createContext, useContext } from 'react';
+import { type FirebaseApp } from 'firebase/app';
+import { type Auth } from 'firebase/auth';
+import { type Firestore } from 'firebase/firestore';
+import { app, auth, db } from './client'; // Import the initialized singletons
 
 interface FirebaseContextValue {
   app: FirebaseApp;
@@ -13,22 +13,15 @@ interface FirebaseContextValue {
 
 const FirebaseContext = createContext<FirebaseContextValue | null>(null);
 
-// This function initializes and returns the Firebase services
-function getFirebaseServices() {
-  const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  return { app, auth, db };
-}
+// The services are already initialized in client.ts,
+// so we can just pass them to the provider value.
+const firebaseServices = { app, auth, db };
 
 export const FirebaseProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  // useMemo ensures this is only called once on the client
-  const firebaseServices = useMemo(() => getFirebaseServices(), []);
-
   return (
     <FirebaseContext.Provider value={firebaseServices}>
       {children}
