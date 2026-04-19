@@ -4,10 +4,10 @@ import { Logo } from "@/components/logo";
 
 export function Header() {
   return (
-    <header className="px-4 lg:px-6 h-16 flex items-center bg-card border-b">
+    <header className="px-4 lg:px-6 h-16 flex items-center bg-transparent absolute top-0 left-0 right-0 z-20">
       <Link className="flex items-center justify-center" href="/">
         <Logo />
-        <span className="sr-only">OptiCare AI</span>
+        <span className="sr-only">EyeCare AI</span>
       </Link>
       <nav className="ml-auto flex gap-4 sm:gap-6">
         <Button variant="ghost" asChild>
@@ -22,7 +22,7 @@ export function Header() {
           <Link
             href="/signup"
           >
-            Sign Up
+            Get Started
           </Link>
         </Button>
       </nav>

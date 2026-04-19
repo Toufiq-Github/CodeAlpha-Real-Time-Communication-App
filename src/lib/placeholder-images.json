@@ -2,9 +2,9 @@
   "placeholderImages": [
     {
       "id": "hero",
-      "description": "Doctor checking patient's eyes",
-      "imageUrl": "https://picsum.photos/seed/hero/1200/600",
-      "imageHint": "doctor patient"
+      "description": "Futuristic scan of a human eye",
+      "imageUrl": "https://picsum.photos/seed/eyescant/1000/1000",
+      "imageHint": "futuristic eye scan"
     },
     {
       "id": "symptom-checker",
