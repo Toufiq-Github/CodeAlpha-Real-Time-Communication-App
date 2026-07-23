@@ -8,49 +8,33 @@ import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useState } from 'react';
 
 export function Navbar() {
   const auth = useAuth();
   const { user } = useUser();
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState('');
 
   const handleSignOut = () => {
     signOut(auth).then(() => router.push('/login'));
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-    }
-  };
-
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b bg-background/80 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link href="/" className="text-2xl font-black tracking-tighter text-primary">
-          CONNECT
+        <Link href="/" className="text-2xl font-black tracking-tighter text-primary uppercase">
+          ConnectHub
         </Link>
-
-        <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-sm mx-8">
-           <div className="relative w-full">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              <input
-                type="search"
-                placeholder="Search people..."
-                className="w-full rounded-full border bg-muted/50 px-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-           </div>
-        </form>
 
         <div className="flex items-center gap-1 md:gap-4">
           <Button variant="ghost" size="icon" className="rounded-full" asChild>
             <Link href="/">
               <Home className="h-5 w-5" />
+            </Link>
+          </Button>
+
+          <Button variant="ghost" size="icon" className="rounded-full" asChild>
+            <Link href="/search">
+              <Search className="h-5 w-5" />
             </Link>
           </Button>
 
@@ -69,7 +53,7 @@ export function Navbar() {
                     <AvatarImage src={user.avatarUrl} />
                     <AvatarFallback>{user.displayName?.charAt(0)}</AvatarFallback>
                   </Avatar>
-                  <span className="hidden lg:inline font-semibold text-sm">Profile</span>
+                  <span className="hidden lg:inline font-bold text-[10px] uppercase tracking-widest">Profile</span>
                 </Link>
               </Button>
               <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground" onClick={handleSignOut}>

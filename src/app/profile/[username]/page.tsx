@@ -1,19 +1,20 @@
 
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Navbar } from '@/components/navbar';
 import { useCollection, useFirestore, useUser } from '@/firebase';
-import { collection, query, where, orderBy, limit } from 'firebase/firestore';
-import { Post, UserProfile } from '@/lib/types';
+import { collection, query, where, orderBy, limit, doc, setDoc, deleteDoc, increment, writeBatch } from 'firebase/firestore';
+import { Post, UserProfile, Follow } from '@/lib/types';
 import { PostCard } from '@/components/post-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CalendarDays, MapPin, Link as LinkIcon, Edit3 } from 'lucide-react';
+import { CalendarDays, MapPin, Edit3, UserPlus, UserMinus } from 'lucide-react';
 import { format } from 'date-fns';
+import { EditProfileModal } from '@/components/edit-profile-modal';
 
 export default function ProfilePage() {
   const params = useParams();
@@ -21,6 +22,7 @@ export default function ProfilePage() {
   const db = useFirestore();
   const { user: currentUser } = useUser();
   const router = useRouter();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   // Fetch target user profile
   const userQuery = useMemo(() => {
@@ -30,6 +32,16 @@ export default function ProfilePage() {
 
   const { data: users, loading: userLoading } = useCollection<UserProfile>(userQuery);
   const profileUser = users?.[0];
+
+  // Check if current user is following this profile
+  const followQuery = useMemo(() => {
+    if (!db || !currentUser || !profileUser) return null;
+    const followId = `${currentUser.id}_${profileUser.id}`;
+    return query(collection(db, 'follows'), where('__name__', '==', followId));
+  }, [db, currentUser, profileUser]);
+
+  const { data: followStatus } = useCollection<Follow>(followQuery);
+  const isFollowing = followStatus && followStatus.length > 0;
 
   // Fetch target user's posts
   const postsQuery = useMemo(() => {
@@ -45,6 +57,33 @@ export default function ProfilePage() {
 
   const isOwnProfile = currentUser?.username === username;
 
+  const handleFollow = async () => {
+    if (!currentUser || !profileUser || isOwnProfile) return;
+
+    const followId = `${currentUser.id}_${profileUser.id}`;
+    const followRef = doc(db, 'follows', followId);
+    const currentUserRef = doc(db, 'users', currentUser.id);
+    const targetUserRef = doc(db, 'users', profileUser.id);
+
+    const batch = writeBatch(db);
+
+    if (isFollowing) {
+      batch.delete(followRef);
+      batch.update(currentUserRef, { followingCount: increment(-1) });
+      batch.update(targetUserRef, { followerCount: increment(-1) });
+    } else {
+      batch.set(followRef, {
+        followerId: currentUser.id,
+        followingId: profileUser.id,
+        createdAt: new Date().toISOString(),
+      });
+      batch.update(currentUserRef, { followingCount: increment(1) });
+      batch.update(targetUserRef, { followerCount: increment(1) });
+    }
+
+    await batch.commit();
+  };
+
   if (userLoading) return (
     <div className="min-h-screen bg-secondary/10">
       <Navbar />
@@ -55,7 +94,6 @@ export default function ProfilePage() {
             <Skeleton className="h-32 w-32 rounded-full border-4 border-background" />
           </div>
           <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-4 w-full" />
         </div>
       </div>
     </div>
@@ -95,38 +133,61 @@ export default function ProfilePage() {
                 
                 <div className="flex gap-2 mb-2">
                   {isOwnProfile ? (
-                    <Button variant="outline" className="rounded-full font-bold gap-2 hover:bg-primary hover:text-primary-foreground">
+                    <Button 
+                      variant="outline" 
+                      className="rounded-full font-bold gap-2 hover:bg-primary hover:text-primary-foreground"
+                      onClick={() => setIsEditModalOpen(true)}
+                    >
                       <Edit3 className="h-4 w-4" />
                       Edit Profile
                     </Button>
-                  ) : (
-                    <>
-                      <Button className="rounded-full font-bold px-8">Follow</Button>
-                      <Button variant="outline" className="rounded-full font-bold">Message</Button>
-                    </>
+                  ) : currentUser && (
+                    <Button 
+                      onClick={handleFollow}
+                      className={`rounded-full font-bold px-8 gap-2 ${isFollowing ? 'bg-secondary text-foreground hover:bg-destructive hover:text-destructive-foreground' : ''}`}
+                    >
+                      {isFollowing ? (
+                        <>
+                          <UserMinus className="h-4 w-4" />
+                          Unfollow
+                        </>
+                      ) : (
+                        <>
+                          <UserPlus className="h-4 w-4" />
+                          Follow
+                        </>
+                      )}
+                    </Button>
                   )}
                 </div>
               </div>
 
               <div className="mt-6 space-y-4">
                 <p className="text-lg leading-relaxed text-foreground/80 max-w-2xl">
-                  {profileUser?.bio || "No bio yet. This user is keeping it mysterious."}
+                  {profileUser?.bio || "No bio yet."}
                 </p>
 
                 <div className="flex flex-wrap gap-4 text-sm text-muted-foreground font-medium">
-                  <span className="flex items-center gap-1.5"><CalendarDays className="h-4 w-4" /> Joined {profileUser?.createdAt ? format(new Date(profileUser.createdAt), 'MMMM yyyy') : 'Recently'}</span>
-                  <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" /> Global Citizen</span>
+                  <span className="flex items-center gap-1.5">
+                    <CalendarDays className="h-4 w-4" /> 
+                    Joined {profileUser?.createdAt ? format(new Date(profileUser.createdAt), 'MMMM yyyy') : 'Recently'}
+                  </span>
+                  <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" /> World Citizen</span>
                 </div>
 
                 <div className="flex gap-6 pt-2">
-                  <button className="flex gap-1.5 hover:underline decoration-2">
+                  <div className="flex gap-1.5">
+                    <span className="font-black text-foreground">{profileUser?.postCount || 0}</span>
+                    <span className="text-muted-foreground font-bold text-xs uppercase tracking-widest mt-0.5">Posts</span>
+                  </div>
+                  <div className="flex gap-1.5">
                     <span className="font-black text-foreground">{profileUser?.followerCount || 0}</span>
                     <span className="text-muted-foreground font-bold text-xs uppercase tracking-widest mt-0.5">Followers</span>
-                  </button>
-                  <button className="flex gap-1.5 hover:underline decoration-2">
+                  </div>
+                  <div className="flex gap-1.5">
                     <span className="font-black text-foreground">{profileUser?.followingCount || 0}</span>
                     <span className="text-muted-foreground font-bold text-xs uppercase tracking-widest mt-0.5">Following</span>
-                  </button>
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -152,6 +213,14 @@ export default function ProfilePage() {
           </div>
         </div>
       </main>
+
+      {profileUser && (
+        <EditProfileModal 
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          profile={profileUser}
+        />
+      )}
     </div>
   );
 }

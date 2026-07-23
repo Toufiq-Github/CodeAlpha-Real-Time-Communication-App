@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Navbar } from '@/components/navbar';
@@ -5,7 +6,7 @@ import { PostCard } from '@/components/post-card';
 import { CreatePost } from '@/components/create-post';
 import { useCollection, useFirestore, useUser } from '@/firebase';
 import { collection, query, orderBy, limit, where } from 'firebase/firestore';
-import { Post, UserProfile } from '@/lib/types';
+import { Post, UserProfile, Follow } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMemo } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -19,7 +20,7 @@ function RecommendedUsers() {
   
   const usersQuery = useMemo(() => {
     if (!db) return null;
-    return query(collection(db, 'users'), limit(5));
+    return query(collection(db, 'users'), limit(10));
   }, [db]);
 
   const { data: users, loading } = useCollection<UserProfile>(usersQuery);
@@ -36,7 +37,7 @@ function RecommendedUsers() {
     ))}
   </div>;
 
-  const filteredUsers = users?.filter(u => u.id !== user?.id) || [];
+  const filteredUsers = users?.filter(u => u.id !== user?.id).slice(0, 5) || [];
 
   return (
     <div className="space-y-4">
@@ -53,9 +54,6 @@ function RecommendedUsers() {
                 <span className="text-xs text-muted-foreground">@{u.username}</span>
               </div>
             </Link>
-            <Button variant="outline" size="sm" className="rounded-full h-8 text-xs font-bold hover:bg-primary hover:text-primary-foreground">
-              Follow
-            </Button>
           </div>
         ))
       ) : (
@@ -69,10 +67,32 @@ export default function Home() {
   const db = useFirestore();
   const { user, loading: userLoading } = useUser();
 
+  // Get users I follow
+  const followsQuery = useMemo(() => {
+    if (!db || !user) return null;
+    return query(collection(db, 'follows'), where('followerId', '==', user.id));
+  }, [db, user]);
+
+  const { data: follows } = useCollection<Follow>(followsQuery);
+
   const postsQuery = useMemo(() => {
     if (!db) return null;
+    
+    // In a real app with many users, we'd handle the 'in' limit (30) more robustly
+    // For this mini-social, we'll fetch general posts if no follows, otherwise filter
+    if (follows && follows.length > 0) {
+      const followingIds = follows.map(f => f.followingId);
+      followingIds.push(user?.id || ''); // Include own posts
+      return query(
+        collection(db, 'posts'), 
+        where('authorId', 'in', followingIds.slice(0, 30)),
+        orderBy('createdAt', 'desc'), 
+        limit(50)
+      );
+    }
+    
     return query(collection(db, 'posts'), orderBy('createdAt', 'desc'), limit(50));
-  }, [db]);
+  }, [db, follows, user?.id]);
 
   const { data: posts, loading: postsLoading } = useCollection<Post>(postsQuery);
 
@@ -87,6 +107,13 @@ export default function Home() {
             {user && <CreatePost />}
             
             <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-4 px-2">
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+                  {follows && follows.length > 0 ? 'Your News Feed' : 'Explore Global Feed'}
+                </span>
+                <div className="h-px flex-1 bg-border"></div>
+              </div>
+
               {isLoading ? (
                 Array.from({ length: 3 }).map((_, i) => (
                   <div key={i} className="rounded-xl border bg-card p-4 space-y-4 shadow-sm">
@@ -110,7 +137,10 @@ export default function Home() {
                     <p className="text-muted-foreground font-medium italic">
                       "The journey of a thousand miles begins with a single post."
                     </p>
-                    <p className="text-sm text-muted-foreground">Your feed is currently empty. Start following people or share your first post!</p>
+                    <p className="text-sm text-muted-foreground">Your feed is empty. Start following people or share your first post!</p>
+                    <Link href="/search">
+                      <Button variant="outline" className="rounded-full">Discover People</Button>
+                    </Link>
                    </div>
                 </div>
               )}
@@ -118,10 +148,10 @@ export default function Home() {
           </div>
 
           <aside className="hidden lg:block space-y-6">
-            <Card className="rounded-2xl border-none shadow-sm overflow-hidden">
+            <Card className="rounded-2xl border-none shadow-sm overflow-hidden sticky top-24">
               <div className="bg-primary p-6 text-primary-foreground">
-                <h2 className="font-black text-xl tracking-tight uppercase">Who to Follow</h2>
-                <p className="text-xs opacity-80 mt-1">Grow your community</p>
+                <h2 className="font-black text-xl tracking-tight uppercase">Discover</h2>
+                <p className="text-xs opacity-80 mt-1">Suggested for you</p>
               </div>
               <CardContent className="p-6">
                 <RecommendedUsers />
@@ -137,7 +167,7 @@ export default function Home() {
                 ))}
               </div>
               <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
-                © 2024 CONNECT SOCIAL PLATFORM.
+                © 2024 CONNECTHUB.
               </p>
             </div>
           </aside>

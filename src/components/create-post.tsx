@@ -3,15 +3,13 @@
 
 import { useState } from 'react';
 import { useUser, useFirestore } from '@/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, doc, increment, writeBatch } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ImagePlus, Send, Sparkles, Wand2 } from 'lucide-react';
+import { ImagePlus, Sparkles, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError } from '@/firebase/errors';
 import { getPostAssistance } from '@/app/actions/ai-actions';
 import {
   DropdownMenu,
@@ -29,6 +27,7 @@ export function CreatePost() {
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAssisting, setIsAssisting] = useState(false);
+  const [aiSuggestions, setAiSuggestions] = useState<any>(null);
 
   const handleAISuggest = async () => {
     if (!content.trim()) return;
@@ -39,13 +38,11 @@ export function CreatePost() {
     if (result.error) {
       toast({ variant: 'destructive', title: 'AI Error', description: result.error });
     } else if (result.data) {
-      // In a real app we'd show a dialog to choose. Here we just show a dropdown menu approach
+      setAiSuggestions(result.data);
       toast({
         title: "AI Suggestions Ready!",
-        description: "Check the 'Magic' menu for better versions of your post.",
+        description: "Check the 'Magic' menu for better versions.",
       });
-      // For simplicity, we just keep the data for the dropdown to use
-      (window as any)._aiSuggestions = result.data;
     }
   };
 
@@ -64,31 +61,24 @@ export function CreatePost() {
       commentCount: 0,
     };
 
-    const postsCollection = collection(db, 'posts');
-    addDoc(postsCollection, postData)
-      .then(() => {
-        setContent('');
-        toast({
-          title: "Post shared!",
-          description: "Your post is now live.",
-        });
-      })
-      .catch(serverError => {
-        const permissionError = new FirestorePermissionError({
-          path: postsCollection.path,
-          operation: 'create',
-          requestResourceData: postData,
-        });
-        errorEmitter.emit('permission-error', permissionError);
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-      });
+    try {
+      const batch = writeBatch(db);
+      const newPostRef = doc(collection(db, 'posts'));
+      batch.set(newPostRef, postData);
+      batch.update(doc(db, 'users', user.id), { postCount: increment(1) });
+      await batch.commit();
+      
+      setContent('');
+      setAiSuggestions(null);
+      toast({ title: "Post shared!" });
+    } catch (e) {
+      toast({ variant: "destructive", title: "Post failed" });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!user) return null;
-
-  const suggestions = (window as any)._aiSuggestions;
 
   return (
     <Card className="shadow-sm border-primary/10 overflow-hidden">
@@ -117,17 +107,17 @@ export function CreatePost() {
                   variant="ghost" 
                   size="icon" 
                   className="text-primary rounded-full hover:bg-primary/10"
-                  onClick={() => !suggestions && handleAISuggest()}
+                  onClick={() => !aiSuggestions && handleAISuggest()}
                   disabled={isAssisting || !content.trim()}
                 >
                   {isAssisting ? <Sparkles className="h-5 w-5 animate-pulse" /> : <Wand2 className="h-5 w-5" />}
                 </Button>
               </DropdownMenuTrigger>
-              {suggestions && (
+              {aiSuggestions && (
                 <DropdownMenuContent align="start" className="w-80">
                   <DropdownMenuLabel>AI Post Assistant</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  {suggestions.suggestions.map((s: string, i: number) => (
+                  {aiSuggestions.suggestions.map((s: string, i: number) => (
                     <DropdownMenuItem key={i} onClick={() => setContent(s)} className="py-2 cursor-pointer">
                       <div className="text-xs line-clamp-3">{s}</div>
                     </DropdownMenuItem>
@@ -136,7 +126,7 @@ export function CreatePost() {
                   <div className="p-2">
                     <div className="text-[10px] font-bold text-muted-foreground uppercase mb-1">Hashtags</div>
                     <div className="flex flex-wrap gap-1">
-                      {suggestions.hashtags.map((h: string) => (
+                      {aiSuggestions.hashtags.map((h: string) => (
                         <span key={h} className="text-xs text-primary bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer" onClick={() => setContent(prev => prev + " " + h)}>
                           {h}
                         </span>
