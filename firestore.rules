@@ -12,70 +12,35 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    function getRole() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
-    }
-
-    function isAdmin() {
-      return isSignedIn() && getRole() == 'Admin';
-    }
-
-    function isDoctor() {
-      return isSignedIn() && getRole() == 'Doctor';
-    }
-    
-    function isPatient() {
-        return isSignedIn() && getRole() == 'Patient';
-    }
-
-    function isParticipant(docData) {
-      return isSignedIn() && (request.auth.uid == docData.patientUserId || request.auth.uid == docData.doctorUserId);
-    }
-
-    // User Profiles: Users can manage their own profile. Admins can read any profile.
+    // User Profiles: Publicly readable. Users can manage their own profile.
     match /users/{userId} {
-      allow get: if isOwner(userId) || isAdmin();
-      allow list: if isAdmin();
-      allow create: if isOwner(userId) && request.resource.data.role in ['Patient', 'Doctor'];
-      allow update: if (isOwner(userId) || isAdmin()) && request.resource.data.role == resource.data.role;
-      allow delete: if isAdmin();
-    }
-
-    // Doctor Profiles: Publicly readable. Writable only by the user who owns the profile or an admin.
-    // This allows a user to create their own doctor profile during signup. The app logic should
-    // still rely on the immutable `role` in the `/users/{userId}` document for authorization.
-    match /doctors/{doctorId} {
       allow get, list: if true;
-      allow create, update: if isOwner(doctorId) || isAdmin();
-      allow delete: if isAdmin();
-    }
-    
-    // Hospitals: Publicly readable, writable only by Admins.
-    match /hospitals/{hospitalId} {
-        allow get, list: if true;
-        allow create, update, delete: if isAdmin();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
     }
 
-    // Appointments: Readable/writable by participants (patient/doctor) or admins.
-    match /appointments/{appointmentId} {
-      allow read, update, delete: if isParticipant(resource.data) || isAdmin();
-      allow create: if isPatient() || isDoctor() || isAdmin();
-      allow list: if isSignedIn(); // Further client-side filtering needed
+    // Posts: Publicly readable. Only owners can create, update, or delete.
+    // Note: 'update' is allowed for everyone to increment like counts in this MVP, 
+    // but in a production app, you'd use a more secure likes subcollection.
+    match /posts/{postId} {
+      allow read: if true;
+      allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
+      allow update: if isSignedIn(); 
+      allow delete: if isOwner(resource.data.authorId);
+
+      // Comments subcollection
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
+        allow delete: if isOwner(resource.data.authorId) || isOwner(get(/databases/$(database)/documents/posts/$(postId)).data.authorId);
+      }
     }
-    
-    // Medical Images: Readable/writable by participants or admins. Creation by doctors/admins.
-    match /medicalImages/{medicalImageId} {
-        allow read, update, delete: if isParticipant(resource.data) || isAdmin();
-        allow create: if isDoctor() || isAdmin();
-        allow list: if isSignedIn(); // Further client-side filtering needed
-    }
-    
-    // Symptom Reports: Private to the patient who created it.
-    match /symptomReports/{symptomReportId} {
-        allow create: if isOwner(request.resource.data.patientUserId);
-        allow get, update, delete: if isOwner(resource.data.patientUserId);
-        // List is intentionally broad; client must filter to the current user's reports.
-        allow list: if isSignedIn();
+
+    // Follows: Publicly readable. Authenticated users can create/delete follow links.
+    match /follows/{followId} {
+      allow read: if true;
+      allow create: if isSignedIn() && request.resource.data.followerId == request.auth.uid;
+      allow delete: if isSignedIn() && resource.data.followerId == request.auth.uid;
     }
   }
 }
