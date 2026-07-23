@@ -12,9 +12,11 @@ import { useMemo, useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TrendingUp, Users, Sparkles } from 'lucide-react';
+import { TrendingUp, Users, Sparkles, Database } from 'lucide-react';
+import { seedDemoData } from '@/lib/seed-data';
+import { useToast } from '@/hooks/use-toast';
 
 function RecommendedUsers() {
   const db = useFirestore();
@@ -96,8 +98,10 @@ function TrendingTopics() {
 
 export default function Home() {
   const db = useFirestore();
-  const { user, loading: userLoading } = useUser();
+  const { user } = useUser();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("for-you");
+  const [isSeeding, setIsSeeding] = useState(false);
 
   const followsQuery = useMemo(() => {
     if (!db || !user) return null;
@@ -128,6 +132,19 @@ export default function Home() {
 
   const isLoading = activeTab === "for-you" ? globalLoading : followingLoading;
   const currentPosts = activeTab === "for-you" ? globalPosts : followingPosts;
+
+  const handleSeed = async () => {
+    if (!db) return;
+    setIsSeeding(true);
+    try {
+      await seedDemoData(db);
+      toast({ title: "Demo Content Seeded!", description: "Refreshing the feed with lively content." });
+    } catch (e) {
+      toast({ variant: 'destructive', title: "Seeding failed", description: "Could not create demo data." });
+    } finally {
+      setIsSeeding(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -183,11 +200,14 @@ export default function Home() {
                       <p className="text-sm text-muted-foreground font-medium italic">
                         "Your feed is waiting for its first spark."
                       </p>
-                      {activeTab === "following" && (
-                         <Link href="/search">
-                            <Button variant="outline" className="rounded-full font-bold uppercase tracking-tighter text-xs">Discover Creators</Button>
-                         </Link>
-                      )}
+                      <Button 
+                        variant="outline" 
+                        onClick={handleSeed}
+                        disabled={isSeeding}
+                        className="rounded-full font-bold uppercase tracking-tighter text-xs"
+                      >
+                        {isSeeding ? 'Seeding...' : 'Seed Demo Content'}
+                      </Button>
                     </div>
                   </div>
                 )}
@@ -221,6 +241,18 @@ export default function Home() {
                       <h3 className="text-xs font-black uppercase tracking-widest">Who to Follow</h3>
                    </div>
                    <RecommendedUsers />
+                </div>
+
+                <div className="pt-6 border-t border-muted">
+                  <Button 
+                    variant="ghost" 
+                    className="w-full justify-start text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary hover:bg-primary/5"
+                    onClick={handleSeed}
+                    disabled={isSeeding}
+                  >
+                    <Database className="mr-2 h-4 w-4" />
+                    {isSeeding ? 'Seeding...' : 'Populate Demo Data'}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
