@@ -3,6 +3,7 @@ export interface UserProfile {
   id: string;
   username: string;
   displayName: string;
+  email: string;
   bio?: string;
   avatarUrl?: string;
   followerCount: number;
@@ -14,6 +15,7 @@ export interface Post {
   id: string;
   authorId: string;
   authorName: string;
+  authorUsername: string;
   authorAvatar?: string;
   content: string;
   imageUrl?: string;
@@ -27,13 +29,22 @@ export interface Comment {
   postId: string;
   authorId: string;
   authorName: string;
+  authorUsername: string;
   authorAvatar?: string;
   content: string;
   createdAt: string;
 }
 
 export interface Follow {
+  id: string;
   followerId: string;
   followingId: string;
   createdAt: string;
+}
+
+export interface NavItem {
+  href: string;
+  label: string;
+  icon: any;
+  tooltip?: string;
 }
