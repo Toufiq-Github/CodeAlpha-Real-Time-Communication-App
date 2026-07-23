@@ -2,12 +2,13 @@
 'use client';
 
 import Link from 'next/link';
-import { Home, User, LogOut, Search, Bell } from 'lucide-react';
+import { Home, User, LogOut, Search, Bell, Sparkles } from 'lucide-react';
 import { useAuth, useUser } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
 
 export function Navbar() {
   const auth = useAuth();
@@ -19,49 +20,60 @@ export function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b bg-background/80 backdrop-blur-md">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link href="/" className="text-2xl font-black tracking-tighter text-primary uppercase">
-          ConnectHub
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-muted/50 bg-background/60 backdrop-blur-xl">
+      <div className="container mx-auto flex h-16 items-center justify-between px-6">
+        <Link href="/" className="flex items-center gap-2 group">
+          <div className="p-1.5 bg-primary rounded-xl group-hover:rotate-12 transition-transform duration-300">
+             <Sparkles className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <span className="text-xl font-black tracking-tighter text-foreground uppercase group-hover:text-primary transition-colors">
+            ConnectHub
+          </span>
         </Link>
 
         <div className="flex items-center gap-1 md:gap-4">
-          <Button variant="ghost" size="icon" className="rounded-full" asChild>
+          <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/5 hover:text-primary" asChild title="Home">
             <Link href="/">
               <Home className="h-5 w-5" />
             </Link>
           </Button>
 
-          <Button variant="ghost" size="icon" className="rounded-full" asChild>
+          <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/5 hover:text-primary" asChild title="Search">
             <Link href="/search">
               <Search className="h-5 w-5" />
             </Link>
           </Button>
 
           {user && (
-            <Button variant="ghost" size="icon" className="rounded-full relative">
+            <Button variant="ghost" size="icon" className="rounded-full relative hover:bg-primary/5 hover:text-primary" title="Notifications">
               <Bell className="h-5 w-5" />
-              <span className="absolute top-2 right-2 h-2 w-2 bg-primary rounded-full border-2 border-background"></span>
+              <span className="absolute top-2.5 right-2.5 h-2 w-2 bg-primary rounded-full border-2 border-background animate-pulse"></span>
             </Button>
           )}
 
           {user ? (
-            <>
-              <Button variant="ghost" size="sm" className="rounded-full pl-1 pr-3 gap-2" asChild>
+            <div className="flex items-center gap-2 ml-2 pl-4 border-l border-muted">
+              <Button variant="ghost" size="sm" className="rounded-full pl-1 pr-4 gap-3 bg-accent/30 hover:bg-primary/10 transition-colors" asChild>
                 <Link href={`/profile/${user.username}`}>
-                   <Avatar className="h-7 w-7">
+                   <Avatar className="h-8 w-8 ring-2 ring-primary/20">
                     <AvatarImage src={user.avatarUrl} />
-                    <AvatarFallback>{user.displayName?.charAt(0)}</AvatarFallback>
+                    <AvatarFallback className="bg-primary/10 text-primary">{user.displayName?.charAt(0)}</AvatarFallback>
                   </Avatar>
-                  <span className="hidden lg:inline font-bold text-[10px] uppercase tracking-widest">Profile</span>
+                  <span className="hidden lg:inline font-black text-[10px] uppercase tracking-widest text-primary">@{user.username}</span>
                 </Link>
               </Button>
-              <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground" onClick={handleSignOut}>
-                <LogOut className="h-5 w-5" />
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-full text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10" 
+                onClick={handleSignOut}
+                title="Logout"
+              >
+                <LogOut className="h-4 w-4" />
               </Button>
-            </>
+            </div>
           ) : (
-            <Button className="rounded-full font-bold px-6" asChild>
+            <Button className="rounded-full font-black px-8 h-10 shadow-lg shadow-primary/20 transition-transform active:scale-95" asChild>
               <Link href="/login">Login</Link>
             </Button>
           )}
