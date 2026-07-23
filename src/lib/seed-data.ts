@@ -1,6 +1,5 @@
-
 'use client';
-import { doc, setDoc, collection, addDoc, Firestore } from 'firebase/firestore';
+import { doc, setDoc, collection, addDoc, Firestore, getDoc } from 'firebase/firestore';
 
 /**
  * Utility to seed Firestore with demo content for ConnectHub.
@@ -63,7 +62,7 @@ export async function seedDemoData(db: Firestore) {
       authorName: 'Sarah Chen',
       authorUsername: 'sarah_designs',
       authorAvatar: 'https://picsum.photos/seed/sarah/200/200',
-      content: 'Current mood: Simplicty is the ultimate sophistication. ✨ Working on a new glassmorphism UI kit for the community. Stay tuned!',
+      content: 'Current mood: Simplicity is the ultimate sophistication. ✨ Working on a new glassmorphism UI kit for the community. Stay tuned!',
       imageUrl: 'https://picsum.photos/seed/post2/800/600',
       createdAt: new Date(Date.now() - 7200000).toISOString(),
       likeCount: 128,
@@ -91,12 +90,16 @@ export async function seedDemoData(db: Firestore) {
     }
   ];
 
-  // Seed Users (using setDoc to ensure specific IDs)
+  // Seed Users
   for (const u of users) {
-    await setDoc(doc(db, 'users', u.id), u);
+    const userRef = doc(db, 'users', u.id);
+    const snap = await getDoc(userRef);
+    if (!snap.exists()) {
+      await setDoc(userRef, u);
+    }
   }
 
-  // Seed Posts (using addDoc for unique post IDs)
+  // Seed Posts (adding only if needed or just add new ones for variety)
   for (const p of posts) {
     await addDoc(collection(db, 'posts'), p);
   }

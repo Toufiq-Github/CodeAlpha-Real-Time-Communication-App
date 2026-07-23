@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Navbar } from '@/components/navbar';
@@ -14,7 +13,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TrendingUp, Users, Sparkles, Database } from 'lucide-react';
+import { TrendingUp, Users, Sparkles, Database, Plus } from 'lucide-react';
 import { seedDemoData } from '@/lib/seed-data';
 import { useToast } from '@/hooks/use-toast';
 
@@ -134,13 +133,26 @@ export default function Home() {
   const currentPosts = activeTab === "for-you" ? globalPosts : followingPosts;
 
   const handleSeed = async () => {
-    if (!db) return;
+    if (!db) {
+        toast({ variant: 'destructive', title: "Error", description: "Database not initialized." });
+        return;
+    }
+    if (!user) {
+        toast({ title: "Login Required", description: "Please sign in to seed data." });
+        return;
+    }
+    
     setIsSeeding(true);
     try {
       await seedDemoData(db);
       toast({ title: "Demo Content Seeded!", description: "Refreshing the feed with lively content." });
-    } catch (e) {
-      toast({ variant: 'destructive', title: "Seeding failed", description: "Could not create demo data." });
+    } catch (e: any) {
+      console.error("Seeding error:", e);
+      toast({ 
+        variant: 'destructive', 
+        title: "Seeding failed", 
+        description: e.message || "Could not create demo data. Check your permissions." 
+      });
     } finally {
       setIsSeeding(false);
     }

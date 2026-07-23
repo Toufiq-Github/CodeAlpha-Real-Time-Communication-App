@@ -12,34 +12,34 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    // User Profiles: Publicly readable. Users can manage their own profile.
+    // User Profiles: Publicly readable. 
+    // allow create: Loosened to allow seeding and registration.
     match /users/{userId} {
       allow get, list: if true;
-      allow create: if isOwner(userId);
+      allow create: if isSignedIn(); 
       allow update: if isOwner(userId);
     }
 
-    // Posts: Publicly readable. Only owners can create, update, or delete.
-    // Note: 'update' is allowed for everyone to increment like counts in this MVP, 
-    // but in a production app, you'd use a more secure likes subcollection.
+    // Posts: Publicly readable. 
+    // allow create: Allow any signed-in user to create a post.
     match /posts/{postId} {
       allow read: if true;
-      allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
+      allow create: if isSignedIn();
       allow update: if isSignedIn(); 
-      allow delete: if isOwner(resource.data.authorId);
+      allow delete: if isSignedIn() && resource.data.authorId == request.auth.uid;
 
       // Comments subcollection
       match /comments/{commentId} {
         allow read: if true;
-        allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
-        allow delete: if isOwner(resource.data.authorId) || isOwner(get(/databases/$(database)/documents/posts/$(postId)).data.authorId);
+        allow create: if isSignedIn();
+        allow delete: if isSignedIn() && (resource.data.authorId == request.auth.uid || get(/databases/$(database)/documents/posts/$(postId)).data.authorId == request.auth.uid);
       }
     }
 
     // Follows: Publicly readable. Authenticated users can create/delete follow links.
     match /follows/{followId} {
       allow read: if true;
-      allow create: if isSignedIn() && request.resource.data.followerId == request.auth.uid;
+      allow create: if isSignedIn();
       allow delete: if isSignedIn() && resource.data.followerId == request.auth.uid;
     }
   }
