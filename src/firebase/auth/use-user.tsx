@@ -1,9 +1,12 @@
+
 'use client';
 import { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { useAuth, useFirestore } from '@/firebase/provider';
 import { UserProfile } from '@/lib/types';
+import { errorEmitter } from '../error-emitter';
+import { FirestorePermissionError } from '../errors';
 
 export function useUser() {
   const auth = useAuth();
@@ -12,6 +15,8 @@ export function useUser() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!auth || !db) return;
+
     const unsubscribeAuth = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
         const userDocRef = doc(db, 'users', firebaseUser.uid);
@@ -19,13 +24,15 @@ export function useUser() {
           if (doc.exists()) {
             setUser(doc.data() as UserProfile);
           } else {
-            // This case can happen if the user record in Firestore is deleted
-            // but the auth record still exists.
             setUser(null);
           }
           setLoading(false);
         }, (error) => {
-          console.error("Error fetching user profile:", error);
+          const permissionError = new FirestorePermissionError({
+            path: userDocRef.path,
+            operation: 'get',
+          });
+          errorEmitter.emit('permission-error', permissionError);
           setUser(null);
           setLoading(false);
         });

@@ -1,40 +1,39 @@
-import type { LucideIcon } from "lucide-react";
-
-export type NavItem = {
-  href: string;
-  label: string;
-  icon: LucideIcon;
-  tooltip: string;
-};
-
-export type AppointmentStatus = "Pending" | "Accepted" | "Rejected";
-
-export type Appointment = {
-  id: string;
-  patientName: string;
-  doctorName: string;
-  date: string;
-  time: string;
-  status: AppointmentStatus;
-  meetLink?: string;
-  patientUserId: string;
-  doctorUserId: string;
-};
-
-export type Doctor = {
-  id: string;
-  userId: string;
-  name: string;
-  specialty: string;
-  email: string;
-  status: "Active" | "Inactive";
-};
-
-export type UserRole = 'Patient' | 'Doctor' | 'Admin';
 
 export interface UserProfile {
   id: string;
-  name: string;
-  email: string;
-  role: UserRole;
+  username: string;
+  displayName: string;
+  bio?: string;
+  avatarUrl?: string;
+  followerCount: number;
+  followingCount: number;
+  createdAt: string;
+}
+
+export interface Post {
+  id: string;
+  authorId: string;
+  authorName: string;
+  authorAvatar?: string;
+  content: string;
+  imageUrl?: string;
+  createdAt: string;
+  likeCount: number;
+  commentCount: number;
+}
+
+export interface Comment {
+  id: string;
+  postId: string;
+  authorId: string;
+  authorName: string;
+  authorAvatar?: string;
+  content: string;
+  createdAt: string;
+}
+
+export interface Follow {
+  followerId: string;
+  followingId: string;
+  createdAt: string;
 }
