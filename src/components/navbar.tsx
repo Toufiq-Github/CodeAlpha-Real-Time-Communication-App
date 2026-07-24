@@ -1,8 +1,7 @@
-
 'use client';
 
 import Link from 'next/link';
-import { Home, User, LogOut, Search, Bell, Sparkles } from 'lucide-react';
+import { Home, User, LogOut, Search, Bell, Sparkles, PlusCircle } from 'lucide-react';
 import { useAuth, useUser } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
@@ -19,14 +18,25 @@ export function Navbar() {
     signOut(auth).then(() => router.push('/login'));
   };
 
+  const scrollToPost = () => {
+    if (window.location.pathname !== '/') {
+      router.push('/');
+      return;
+    }
+    const element = document.getElementById('post-creator');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-muted/50 bg-background/60 backdrop-blur-xl">
-      <div className="container mx-auto flex h-16 items-center justify-between px-6">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="p-1.5 bg-primary rounded-xl group-hover:rotate-12 transition-transform duration-300">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-muted/50 bg-background/70 backdrop-blur-2xl">
+      <div className="container mx-auto flex h-18 md:h-20 items-center justify-between px-6">
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="p-2 bg-primary rounded-2xl group-hover:rotate-12 transition-all duration-500 shadow-lg shadow-primary/20">
              <Sparkles className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="text-xl font-black tracking-tighter text-foreground uppercase group-hover:text-primary transition-colors">
+          <span className="text-xl md:text-2xl font-black tracking-tighter text-foreground uppercase group-hover:text-primary transition-colors">
             ConnectHub
           </span>
         </Link>
@@ -45,27 +55,38 @@ export function Navbar() {
           </Button>
 
           {user && (
-            <Button variant="ghost" size="icon" className="rounded-full relative hover:bg-primary/5 hover:text-primary" title="Notifications">
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-2.5 right-2.5 h-2 w-2 bg-primary rounded-full border-2 border-background animate-pulse"></span>
-            </Button>
+            <>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-full text-primary hover:bg-primary/10 md:hidden" 
+                onClick={scrollToPost}
+                title="Compose"
+              >
+                <PlusCircle className="h-6 w-6" />
+              </Button>
+              <Button variant="ghost" size="icon" className="rounded-full relative hover:bg-primary/5 hover:text-primary hidden md:inline-flex" title="Notifications">
+                <Bell className="h-5 w-5" />
+                <span className="absolute top-2.5 right-2.5 h-2 w-2 bg-primary rounded-full border-2 border-background animate-pulse"></span>
+              </Button>
+            </>
           )}
 
           {user ? (
             <div className="flex items-center gap-2 ml-2 pl-4 border-l border-muted">
-              <Button variant="ghost" size="sm" className="rounded-full pl-1 pr-4 gap-3 bg-accent/30 hover:bg-primary/10 transition-colors" asChild>
+              <Button variant="ghost" size="sm" className="rounded-full pl-1 pr-4 gap-3 bg-accent/30 hover:bg-primary/10 transition-colors h-10" asChild>
                 <Link href={`/profile/${user.username}`}>
                    <Avatar className="h-8 w-8 ring-2 ring-primary/20">
                     <AvatarImage src={user.avatarUrl} />
                     <AvatarFallback className="bg-primary/10 text-primary">{user.displayName?.charAt(0)}</AvatarFallback>
                   </Avatar>
-                  <span className="hidden lg:inline font-black text-[10px] uppercase tracking-widest text-primary">@{user.username}</span>
+                  <span className="hidden lg:inline font-black text-[10px] uppercase tracking-[0.2em] text-primary">@{user.username}</span>
                 </Link>
               </Button>
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="rounded-full text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10" 
+                className="rounded-full text-muted-foreground/30 hover:text-destructive hover:bg-destructive/10 h-10 w-10" 
                 onClick={handleSignOut}
                 title="Logout"
               >
@@ -73,7 +94,7 @@ export function Navbar() {
               </Button>
             </div>
           ) : (
-            <Button className="rounded-full font-black px-8 h-10 shadow-lg shadow-primary/20 transition-transform active:scale-95" asChild>
+            <Button className="rounded-full font-black px-10 h-11 shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95 uppercase tracking-widest text-[10px]" asChild>
               <Link href="/login">Login</Link>
             </Button>
           )}
