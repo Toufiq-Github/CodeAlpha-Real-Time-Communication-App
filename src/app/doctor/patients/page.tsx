@@ -24,14 +24,14 @@ function PatientCard({ patientId }: { patientId: string }) {
     return (
       <Card className="border-[#404040] bg-[#171717]">
         <CardHeader className="flex flex-row items-center gap-4">
-          <Skeleton className="h-12 w-12 rounded-full" />
+          <Skeleton className="h-12 w-12 rounded-full bg-white/5" />
           <div className="space-y-2">
-            <Skeleton className="h-4 w-32" />
-            <Skeleton className="h-4 w-48" />
+            <Skeleton className="h-4 w-32 bg-white/5" />
+            <Skeleton className="h-4 w-48 bg-white/5" />
           </div>
         </CardHeader>
         <CardContent>
-           <Skeleton className="h-10 w-full" />
+           <Skeleton className="h-10 w-full bg-white/5" />
         </CardContent>
       </Card>
     );
@@ -40,7 +40,7 @@ function PatientCard({ patientId }: { patientId: string }) {
   if (!patient) return null;
 
   return (
-    <Card className="border-[#404040] bg-[#171717]">
+    <Card className="border-[#404040] bg-[#171717] hover:border-white/10 transition-all">
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar className="h-12 w-12 ring-1 ring-[#404040]">
             <AvatarImage src={`https://avatar.vercel.sh/${patient.email}.png`} alt={patient.name} />
@@ -103,7 +103,7 @@ export default function DoctorPatientsPage() {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {loading ? (
-           Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-48 w-full rounded-2xl bg-[#171717] border border-[#404040]" />)
+           Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-48 w-full rounded-2xl bg-[#171717] border border-[#404040] animate-pulse" />)
         ) : patientIds.length > 0 ? (
           patientIds.map(patientId => (
             <PatientCard key={patientId} patientId={patientId} />

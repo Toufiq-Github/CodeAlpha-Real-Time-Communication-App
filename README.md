@@ -36,7 +36,7 @@ git push -u origin main
 - Select **Add New** > **Project** and import your repository.
 
 ### 3. Critical: Environment Variables
-In the Vercel dashboard (Settings > Environment Variables), you **must** add these variables for the app to function. You can find these values in your Firebase Console (Project Settings > General > Your Apps).
+In the Vercel dashboard (Settings > Environment Variables), you **must** add these variables for the app to function. You can find these values in your Firebase Console (Project Settings > General > SDK setup and configuration).
 
 | Key | Description | Requirement |
 | :--- | :--- | :--- |

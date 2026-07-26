@@ -17,7 +17,7 @@ import { format } from 'date-fns';
 import { useUser, useFirestore, useCollection, useDoc } from "@/firebase";
 import { collection, query, where, doc, updateDoc } from "firebase/firestore";
 import { Appointment } from "@/lib/types";
-import { Skeleton } from "@/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { FirestorePermissionError } from "@/firebase/errors";
 import { errorEmitter } from "@/firebase/error-emitter";
@@ -33,7 +33,7 @@ function PatientName({ patientId }: { patientId: string }) {
   
   const { data: patient, loading } = useDoc(patientRef);
 
-  if (loading) return <Skeleton className="h-4 w-24" />;
+  if (loading) return <Skeleton className="h-4 w-24 bg-white/5" />;
   return <span className="font-semibold text-white uppercase tracking-tight">{patient?.name || 'Unknown Patient'}</span>;
 }
 
@@ -57,7 +57,7 @@ export default function DoctorDashboardPage() {
   };
   
   const handleAppointmentUpdate = (appointmentId: string, newStatus: "Accepted" | "Rejected") => {
-    if (!appointmentId) return;
+    if (!db || !appointmentId) return;
     const appointmentRef = doc(db, 'appointments', appointmentId);
     
     const updateData: { status: string; meetLink?: string; } = { status: newStatus };
