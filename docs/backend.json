@@ -23,7 +23,8 @@
         "name": { "type": "string" },
         "createdBy": { "type": "string" },
         "createdAt": { "type": "string", "format": "date-time" },
-        "isActive": { "type": "boolean", "default": true }
+        "isActive": { "type": "boolean", "default": true },
+        "summary": { "type": "string", "description": "AI-generated summary of the session." }
       },
       "required": ["name", "createdBy", "createdAt"]
     },
@@ -52,7 +53,7 @@
       }
     },
     "ChatMessage": {
-      "title": "Chat Message",
+      "title": "ChatMessage",
       "description": "A message sent in the room chat.",
       "type": "object",
       "properties": {

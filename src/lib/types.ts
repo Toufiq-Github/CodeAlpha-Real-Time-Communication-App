@@ -13,6 +13,7 @@ export interface Room {
   createdBy: string;
   createdAt: string;
   isActive: boolean;
+  summary?: string;
 }
 
 export interface Participant {

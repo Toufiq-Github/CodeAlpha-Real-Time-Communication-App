@@ -1,20 +1,24 @@
+
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { UserProfile, Participant, Room } from '@/lib/types';
+import { UserProfile, Participant, Room, ChatMessage } from '@/lib/types';
 import { useFirestore, useCollection } from '@/firebase';
-import { doc, setDoc, deleteDoc, collection } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, collection, updateDoc, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { 
   Mic, MicOff, Video, VideoOff, ScreenShare, 
   MessageSquare, Users, Settings, LogOut, Palette,
-  Link as LinkIcon, Share2, MoreVertical, Clock
+  Link as LinkIcon, Share2, MoreVertical, Clock, Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Whiteboard } from './whiteboard';
 import { ChatPanel } from './chat-panel';
 import { useToast } from '@/hooks/use-toast';
 import { differenceInSeconds } from 'date-fns';
+import { generateRoomSummary } from '@/app/actions/ai-actions';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
 
 interface VideoRoomProps {
   roomId: string;
@@ -26,7 +30,8 @@ export function VideoRoom({ roomId, user, room }: VideoRoomProps) {
   const [isMicOn, setIsMicOn] = useState(false);
   const [isCamOn, setIsCamOn] = useState(false);
   const [activeTab, setActiveTab] = useState<'chat' | 'users' | 'whiteboard' | null>(null);
-  const [timeLeft, setTimeLeft] = useState(3600); // Default to 1 hour
+  const [timeLeft, setTimeLeft] = useState(3600);
+  const [isSummarizing, setIsSummarizing] = useState(false);
   const { toast } = useToast();
   
   const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -41,7 +46,6 @@ export function VideoRoom({ roomId, user, room }: VideoRoomProps) {
 
   const { data: participants } = useCollection<Participant>(participantsRef);
 
-  // Timer Logic
   useEffect(() => {
     const timer = setInterval(() => {
       const start = new Date(room.createdAt);
@@ -72,8 +76,7 @@ export function VideoRoom({ roomId, user, room }: VideoRoomProps) {
         stream.getAudioTracks().forEach(t => t.enabled = false);
         stream.getVideoTracks().forEach(t => t.enabled = false);
       } catch (err) {
-        console.error("Media Error:", err);
-        toast({ variant: 'destructive', title: 'Media Denied', description: 'Please allow camera access to join the session.' });
+        toast({ variant: 'destructive', title: 'Media Denied', description: 'Please allow camera access.' });
       }
     }
     startMedia();
@@ -101,8 +104,7 @@ export function VideoRoom({ roomId, user, room }: VideoRoomProps) {
       if (audioTrack) {
         audioTrack.enabled = !audioTrack.enabled;
         setIsMicOn(audioTrack.enabled);
-        const ref = doc(db, 'rooms', roomId, 'participants', user.id);
-        setDoc(ref, { isMicOn: audioTrack.enabled }, { merge: true });
+        setDoc(doc(db, 'rooms', roomId, 'participants', user.id), { isMicOn: audioTrack.enabled }, { merge: true });
       }
     }
   };
@@ -113,19 +115,54 @@ export function VideoRoom({ roomId, user, room }: VideoRoomProps) {
       if (videoTrack) {
         videoTrack.enabled = !videoTrack.enabled;
         setIsCamOn(videoTrack.enabled);
-        const ref = doc(db, 'rooms', roomId, 'participants', user.id);
-        setDoc(ref, { isCameraOn: videoTrack.enabled }, { merge: true });
+        setDoc(doc(db, 'rooms', roomId, 'participants', user.id), { isCameraOn: videoTrack.enabled }, { merge: true });
       }
     }
   };
 
   const handleCopyInvite = () => {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url);
-    toast({
-      title: "Invite Link Copied",
-      description: "Send the link to team members to join.",
-    });
+    navigator.clipboard.writeText(window.location.href);
+    toast({ title: "Invite Link Copied" });
+  };
+
+  const handleSummarizeAndLeave = async () => {
+    setIsSummarizing(true);
+    try {
+      const messagesRef = collection(db, 'rooms', roomId, 'messages');
+      const q = query(messagesRef, orderBy('createdAt', 'asc'), limit(100));
+      const snapshot = await getDocs(q);
+      const messages = snapshot.docs.map(d => ({
+        sender: d.data().senderName,
+        text: d.data().text
+      }));
+
+      const summaryResult = await generateRoomSummary({ messages });
+      
+      if (summaryResult.data) {
+        const roomRef = doc(db, 'rooms', roomId);
+        const updateData = { 
+          summary: summaryResult.data.summary,
+          isActive: false 
+        };
+        
+        await updateDoc(roomRef, updateData).catch(async (e) => {
+          const err = new FirestorePermissionError({
+            path: roomRef.path,
+            operation: 'update',
+            requestResourceData: updateData
+          });
+          errorEmitter.emit('permission-error', err);
+        });
+
+        toast({ title: "Session Summarized", description: "The AI summary has been stored in your history." });
+      }
+      window.location.href = '/dashboard';
+    } catch (error) {
+      console.error(error);
+      window.location.href = '/dashboard';
+    } finally {
+      setIsSummarizing(false);
+    }
   };
 
   return (
@@ -164,13 +201,15 @@ export function VideoRoom({ roomId, user, room }: VideoRoomProps) {
                 <LinkIcon className="h-3.5 w-3.5" />
                 Invite
               </Button>
-              <div className="w-px h-6 bg-white/10 mx-2" />
-              <Button variant="ghost" size="icon" className="rounded-full h-10 w-10 hover:bg-white/5">
-                <Settings className="h-4 w-4" />
-              </Button>
-              <Button variant="destructive" size="sm" className="rounded-xl px-4 gap-2" onClick={() => window.location.href = '/dashboard'}>
-                <LogOut className="h-4 w-4" />
-                Leave
+              <Button 
+                variant="default" 
+                size="sm" 
+                className="rounded-xl px-4 gap-2 bg-primary/20 text-primary hover:bg-primary hover:text-white transition-all font-bold"
+                onClick={handleSummarizeAndLeave}
+                disabled={isSummarizing}
+              >
+                {isSummarizing ? <Clock className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                Summarize & End
               </Button>
             </div>
           </div>
@@ -280,13 +319,6 @@ export function VideoRoom({ roomId, user, room }: VideoRoomProps) {
             >
               <MessageSquare className="h-6 w-6" />
               <div className="absolute top-3.5 right-3.5 h-2 w-2 rounded-full bg-primary border-2 border-background" />
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-14 w-14 rounded-2xl bg-white/5 hover:bg-white/10 text-muted-foreground"
-            >
-              <MoreVertical className="h-6 w-6" />
             </Button>
           </div>
         </div>

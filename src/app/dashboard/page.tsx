@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -7,7 +8,7 @@ import { collection, addDoc, query, where, limit } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Video, Calendar, UserPlus, Clock, Shield, Share2 } from 'lucide-react';
+import { Video, Calendar, UserPlus, Clock, Shield, Share2, Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
 import { Room } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
@@ -20,7 +21,6 @@ export default function Dashboard() {
   const router = useRouter();
   const { toast } = useToast();
 
-  // Fetch recent sessions. Limit increased to ensure we have enough for sorting.
   const historyQuery = useMemo(() => {
     if (!db || !user) return null;
     return query(
@@ -32,7 +32,6 @@ export default function Dashboard() {
 
   const { data: rooms, loading } = useCollection<Room>(historyQuery);
 
-  // Filter and sort for the 10 most recent sessions (Read-only reminder)
   const recentRooms = useMemo(() => {
     if (!rooms) return [];
     return [...rooms].sort((a, b) => 
@@ -52,11 +51,10 @@ export default function Dashboard() {
       });
       router.push(`/room/${docRef.id}`);
     } catch (error) {
-      console.error(error);
       toast({
         variant: 'destructive',
         title: 'Initialization Failed',
-        description: 'Could not deploy workspace session. Please try again.',
+        description: 'Could not deploy workspace session.',
       });
     } finally {
       setIsCreating(false);
@@ -134,27 +132,37 @@ export default function Dashboard() {
             <Clock className="h-5 w-5 text-muted-foreground" />
           </CardHeader>
           <CardContent className="p-8 pt-0">
-            <div className="space-y-3">
+            <div className="space-y-4">
               {loading ? (
                 <p className="text-muted-foreground animate-pulse font-medium">Syncing archives...</p>
               ) : recentRooms && recentRooms.length > 0 ? (
                 recentRooms.map(room => (
                   <div 
                     key={room.id} 
-                    className="flex items-center justify-between p-5 rounded-2xl bg-white/[0.03] border border-transparent"
+                    className="flex flex-col p-5 rounded-2xl bg-white/[0.03] border border-transparent"
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                        <Video className="h-6 w-6 text-primary" />
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-4">
+                        <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                          <Video className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-bold text-base">{room.name}</p>
+                          <p className="text-[9px] text-muted-foreground font-black uppercase tracking-widest mt-0.5 opacity-60">
+                            {format(new Date(room.createdAt), 'MMM d • h:mm a')}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-bold text-lg">{room.name}</p>
-                        <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mt-0.5 opacity-60">
-                          {format(new Date(room.createdAt), 'MMM d • h:mm a')}
+                      <div className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-40 italic">Reminder</div>
+                    </div>
+                    {room.summary && (
+                      <div className="mt-2 pl-4 border-l-2 border-primary/20 flex gap-2 items-start">
+                        <Sparkles className="h-3 w-3 text-primary shrink-0 mt-0.5" />
+                        <p className="text-[11px] text-slate-400 line-clamp-1 italic font-medium">
+                          {room.summary}
                         </p>
                       </div>
-                    </div>
-                    <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-40 italic">Reminder Only</div>
+                    )}
                   </div>
                 ))
               ) : (
