@@ -8,7 +8,7 @@ import { collection, addDoc, query, where, limit } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Video, Calendar, UserPlus, Clock, Shield, Share2, Sparkles, Loader2 } from 'lucide-react';
+import { Video, Calendar, UserPlus, Clock, Shield, Share2, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Room } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
@@ -105,7 +105,7 @@ export default function Dashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-8">
         <div>
           <h1 className="text-[32px] font-extrabold tracking-tight text-white">{getGreeting()}, {user?.name?.split(' ')[0] || 'Team'} 👋</h1>
-          <p className="text-[#9A9A9A] text-[16px] font-medium tracking-tight mt-2">
+          <p className="text-[#9A9A9A] text-[13px] font-medium tracking-tight mt-2 italic">
             Ready to collaborate with your team today?
           </p>
         </div>
@@ -117,7 +117,7 @@ export default function Dashboard() {
               disabled={!user}
             >
                 <Calendar className="h-5 w-5" />
-                <span className="text-[13px] font-bold uppercase tracking-widest">Schedule</span>
+                <span className="text-[12px] font-bold uppercase tracking-widest">Schedule</span>
             </Button>
             <Button variant="default" className="h-10 px-4 font-bold uppercase tracking-widest text-[10px]">
                 <UserPlus className="h-5 w-5 mr-2" />
@@ -127,16 +127,16 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 border-white/10">
           <CardHeader>
-            <CardTitle className="text-[24px] font-bold text-white">Initialize Session</CardTitle>
-            <CardDescription className="text-[14px] text-[#CFCFCF]">Deploy a secure professional workspace session.</CardDescription>
+            <CardTitle className="text-[20px] font-bold text-white">Initialize Session</CardTitle>
+            <CardDescription className="text-[13px] text-[#CFCFCF]">Deploy a secure professional workspace session.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4">
               <Input 
                 placeholder="Session Objective" 
-                className="flex-1 text-[14px]"
+                className="flex-1 text-[13px] h-[52px]"
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleCreateRoom()}
@@ -150,7 +150,7 @@ export default function Dashboard() {
                   <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
                   <>
-                    <span className="text-[13px] font-black uppercase tracking-[0.2em]">Launch Room</span>
+                    <span className="text-[12px] font-black uppercase tracking-[0.2em]">Launch Room</span>
                     <Video className="ml-3 h-5 w-5" />
                   </>
                 )}
@@ -166,13 +166,13 @@ export default function Dashboard() {
                 <Shield className="h-6 w-6 text-[#111111]" />
               </div>
               <div>
-                <h3 className="text-[18px] font-bold tracking-tight text-white">Security Protocol</h3>
-                <p className="text-[14px] text-[#CFCFCF] font-medium leading-relaxed mt-2">Enterprise signaling layer with peer discovery and encrypted data channels.</p>
+                <h3 className="text-[16px] font-bold tracking-tight text-white">Security Protocol</h3>
+                <p className="text-[12px] text-[#CFCFCF] font-medium leading-relaxed mt-2 italic">Enterprise signaling layer with peer discovery and encrypted data channels.</p>
               </div>
             </div>
             <div className="pt-6 flex items-center gap-2">
               <div className="h-2 w-2 rounded-full bg-[#77DD77] animate-pulse" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-[#77DD77]">Service: Online</span>
+              <span className="text-[9px] font-black uppercase tracking-widest text-[#77DD77]">Service: Online</span>
             </div>
           </CardContent>
         </Card>
@@ -181,14 +181,14 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pt-8">
         <Card className="lg:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between border-b border-[#2A2A2A] pb-6">
-            <CardTitle className="text-[20px] text-white">Recent Sessions</CardTitle>
+            <CardTitle className="text-[18px] text-white uppercase tracking-tight">Recent Sessions</CardTitle>
             <Clock className="h-5 w-5 text-[#9A9A9A]" />
           </CardHeader>
           <CardContent className="pt-8 space-y-4">
               {roomsLoading ? (
                 <div className="flex items-center gap-3 p-4 opacity-50">
                   <Loader2 className="h-4 w-4 animate-spin text-white" />
-                  <p className="font-medium text-[13px] text-[#CFCFCF]">Syncing archives...</p>
+                  <p className="font-medium text-[12px] text-[#CFCFCF]">Syncing archives...</p>
                 </div>
               ) : recentRooms && recentRooms.length > 0 ? (
                 recentRooms.map(room => (
@@ -202,8 +202,8 @@ export default function Dashboard() {
                           {room.scheduledAt ? <Calendar className="h-5 w-5 text-[#FFFFFF]" /> : <Video className="h-5 w-5 text-[#FFFFFF]" />}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-bold text-[15px] text-white group-hover:text-primary transition-all">{room.name}</p>
-                          <p className="text-[12px] text-[#9A9A9A] font-medium mt-1">
+                          <p className="font-bold text-[14px] text-white group-hover:text-primary transition-all uppercase tracking-tight">{room.name}</p>
+                          <p className="text-[11px] text-[#9A9A9A] font-medium mt-1">
                             {room.scheduledAt 
                               ? `Scheduled • ${format(new Date(room.scheduledAt), 'MMM d, h:mm a')}`
                               : format(new Date(room.createdAt), 'MMM d • h:mm a')}
@@ -221,18 +221,18 @@ export default function Dashboard() {
                 ))
               ) : (
                 <div className="text-center py-20 border-2 border-dashed border-[#2A2A2A] rounded-2xl bg-white/[0.01]">
-                  <p className="text-[#707070] font-bold uppercase tracking-widest text-[10px]">No records available</p>
+                  <p className="text-[#707070] font-bold uppercase tracking-widest text-[9px]">No records available</p>
                 </div>
               )}
           </CardContent>
         </Card>
 
         <div className="space-y-8">
-            <Card className="p-8 space-y-6 bg-[#1F1F1F]">
+            <Card className="p-8 space-y-6 bg-[#1F1F1F] border-white/5">
                 <Share2 className="h-10 w-10 text-white" />
-                <h3 className="text-[18px] font-bold tracking-tight text-white">Team Unification</h3>
-                <p className="text-[14px] text-[#CFCFCF] font-medium leading-relaxed">Broadcast secure workspace invites to your entire organization for instant real-time collaboration.</p>
-                <Button variant="secondary" className="w-full h-11 text-[13px] font-bold" onClick={() => router.push('/dashboard/settings')}>Workspace Config</Button>
+                <h3 className="text-[16px] font-bold tracking-tight text-white uppercase">Team Unification</h3>
+                <p className="text-[12px] text-[#CFCFCF] font-medium leading-relaxed italic">Broadcast secure workspace invites to your entire organization for instant real-time collaboration.</p>
+                <Button variant="secondary" className="w-full h-11 text-[12px] font-bold uppercase tracking-widest" onClick={() => router.push('/dashboard/settings')}>Workspace Config</Button>
             </Card>
         </div>
       </div>
