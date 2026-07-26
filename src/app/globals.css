@@ -96,3 +96,8 @@
 ::-webkit-scrollbar-thumb {
   @apply bg-white/10 rounded-full;
 }
+
+/* Remove all italics globally */
+* {
+  font-style: normal !important;
+}
