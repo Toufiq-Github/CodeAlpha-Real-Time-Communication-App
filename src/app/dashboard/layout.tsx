@@ -1,4 +1,3 @@
-
 import type { NavItem } from "@/lib/types";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
@@ -17,13 +16,13 @@ const navItems: NavItem[] = [
     tooltip: "Past Meetings",
   },
   {
-    href: "/search",
+    href: "/dashboard/search",
     label: "Team Search",
     icon: "Users",
     tooltip: "Find Members",
   },
   {
-    href: "/settings",
+    href: "/dashboard/settings",
     label: "Organization",
     icon: "Settings",
     tooltip: "Global Config",

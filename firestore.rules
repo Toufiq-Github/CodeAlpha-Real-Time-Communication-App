@@ -11,8 +11,8 @@ service cloud.firestore {
       allow write: if isSignedIn() && request.auth.uid == userId;
     }
 
+    // Explicitly allow listing and reading from the rooms collection
     match /rooms/{roomId} {
-      // Explicitly allow list and get for signed-in users
       allow list, get, create: if isSignedIn();
       
       // Only the creator can update or delete the room metadata
