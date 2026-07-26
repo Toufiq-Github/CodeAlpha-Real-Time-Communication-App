@@ -20,7 +20,7 @@ export default function Dashboard() {
   const router = useRouter();
   const { toast } = useToast();
 
-  // Fetch recent sessions. Limit increased to 20 to ensure we have enough for the top 10 after sorting.
+  // Fetch recent sessions. Limit increased to ensure we have enough for sorting.
   const historyQuery = useMemo(() => {
     if (!db || !user) return null;
     return query(
@@ -32,7 +32,7 @@ export default function Dashboard() {
 
   const { data: rooms, loading } = useCollection<Room>(historyQuery);
 
-  // Filter and sort for the 10 most recent sessions
+  // Filter and sort for the 10 most recent sessions (Read-only reminder)
   const recentRooms = useMemo(() => {
     if (!rooms) return [];
     return [...rooms].sort((a, b) => 
@@ -67,8 +67,8 @@ export default function Dashboard() {
     <div className="max-w-6xl mx-auto space-y-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div>
-          <h1 className="text-4xl font-black tracking-tighter text-white uppercase">Workspace</h1>
-          <p className="text-muted-foreground mt-2 text-lg font-medium">Execute your team's objectives, {user?.name}.</p>
+          <h1 className="text-4xl font-black tracking-tighter text-white uppercase italic">Omni<span className="text-primary">Meet</span></h1>
+          <p className="text-muted-foreground mt-2 text-lg font-medium tracking-tight">Execute your objectives, {user?.name}.</p>
         </div>
         <div className="flex items-center gap-3">
             <Button variant="outline" className="rounded-xl border-white/5 bg-white/5 gap-2 h-11 px-5 font-bold hover:bg-white/10">
@@ -86,7 +86,7 @@ export default function Dashboard() {
         <Card className="lg:col-span-2 glass-panel border-none rounded-[2rem]">
           <CardHeader className="p-8">
             <CardTitle className="text-xl font-black uppercase">Initialize Session</CardTitle>
-            <CardDescription className="text-base">Deploy a secure workspace with WebRTC signaling and visual synchronization.</CardDescription>
+            <CardDescription className="text-base font-medium">Deploy a secure professional workspace session.</CardDescription>
           </CardHeader>
           <CardContent className="p-8 pt-0">
             <div className="flex flex-col sm:flex-row gap-4">
@@ -136,12 +136,12 @@ export default function Dashboard() {
           <CardContent className="p-8 pt-0">
             <div className="space-y-3">
               {loading ? (
-                <p className="text-muted-foreground animate-pulse font-medium">Syncing history...</p>
+                <p className="text-muted-foreground animate-pulse font-medium">Syncing archives...</p>
               ) : recentRooms && recentRooms.length > 0 ? (
                 recentRooms.map(room => (
                   <div 
                     key={room.id} 
-                    className="flex items-center justify-between p-5 rounded-2xl bg-white/[0.03] border border-transparent hover:border-white/5"
+                    className="flex items-center justify-between p-5 rounded-2xl bg-white/[0.03] border border-transparent"
                   >
                     <div className="flex items-center gap-4">
                       <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -154,11 +154,12 @@ export default function Dashboard() {
                         </p>
                       </div>
                     </div>
+                    <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-40 italic">Reminder Only</div>
                   </div>
                 ))
               ) : (
                 <div className="text-center py-16 border-2 border-dashed border-white/5 rounded-[1.5rem] bg-white/[0.01]">
-                  <p className="text-muted-foreground font-medium">No session history found.</p>
+                  <p className="text-muted-foreground font-medium">No recent session records found.</p>
                 </div>
               )}
             </div>
@@ -168,8 +169,8 @@ export default function Dashboard() {
         <div className="space-y-6">
             <Card className="glass-panel border-none rounded-[2rem] p-8 space-y-4 bg-gradient-to-br from-primary/10 to-transparent">
                 <Share2 className="h-8 w-8 text-primary" />
-                <h3 className="text-xl font-black uppercase tracking-tight">Unify Teams</h3>
-                <p className="text-sm text-muted-foreground font-medium">Broadcast secure workspace invites to your entire organization for instant real-time goal execution.</p>
+                <h3 className="text-xl font-black uppercase tracking-tight">Team Unification</h3>
+                <p className="text-sm text-muted-foreground font-medium">Broadcast secure workspace invites to your entire organization for instant real-time collaboration.</p>
                 <Button variant="outline" className="w-full rounded-xl border-white/10 h-12 font-bold bg-white/5 hover:bg-white/10 uppercase text-[10px] tracking-widest" onClick={() => router.push('/dashboard/settings')}>Workspace Config</Button>
             </Card>
         </div>

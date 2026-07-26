@@ -72,6 +72,7 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
             return (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
+                  suppressHydrationWarning
                   href={item.href}
                   isActive={pathname === item.href}
                   asChild
@@ -98,6 +99,7 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
          <SidebarMenu className="gap-2">
             <SidebarMenuItem>
                 <SidebarMenuButton 
+                    suppressHydrationWarning
                     className="h-12 rounded-xl hover:bg-white/5 text-muted-foreground/60"
                     tooltip={user?.email || 'Profile'}
                 >
@@ -107,6 +109,7 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
             </SidebarMenuItem>
              <SidebarMenuItem>
                 <SidebarMenuButton 
+                    suppressHydrationWarning
                     className="h-12 rounded-xl hover:bg-destructive/10 text-muted-foreground/60 hover:text-destructive transition-colors"
                     tooltip="Logout" 
                     onClick={handleLogout}

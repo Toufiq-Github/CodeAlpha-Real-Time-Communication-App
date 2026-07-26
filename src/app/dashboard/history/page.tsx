@@ -18,6 +18,7 @@ export default function SessionHistoryPage() {
   const router = useRouter();
   const { toast } = useToast();
 
+  // Fetch all history for this user (up to 50 items)
   const historyQuery = useMemo(() => {
     if (!db || !user) return null;
     return query(
@@ -48,14 +49,14 @@ export default function SessionHistoryPage() {
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       <div>
-        <h1 className="text-4xl font-black tracking-tighter text-white uppercase">Session History</h1>
-        <p className="text-muted-foreground mt-2 text-lg font-medium">Audit and rejoin your previous workspace collaborations.</p>
+        <h1 className="text-4xl font-black tracking-tighter text-white uppercase italic">Session <span className="text-primary">History</span></h1>
+        <p className="text-muted-foreground mt-2 text-lg font-medium tracking-tight">Audit and rejoin your previous professional workspace collaborations.</p>
       </div>
 
       <Card className="glass-panel border-none rounded-[2rem]">
         <CardHeader className="p-8">
           <CardTitle className="text-xl font-black uppercase">Meeting Archives</CardTitle>
-          <CardDescription>Comprehensive record of your launched sessions.</CardDescription>
+          <CardDescription className="text-base font-medium">Comprehensive record of all launched sessions.</CardDescription>
         </CardHeader>
         <CardContent className="p-8 pt-0">
           <div className="space-y-4">
@@ -99,7 +100,7 @@ export default function SessionHistoryPage() {
                       <LinkIcon className="h-5 w-5" />
                     </Button>
                     <Button 
-                      className="rounded-xl px-8 h-12 font-black shadow-lg hover:shadow-primary/20 transition-all flex-1 sm:flex-none"
+                      className="rounded-xl px-8 h-12 font-black shadow-lg hover:shadow-primary/20 transition-all flex-1 sm:flex-none uppercase text-xs tracking-widest"
                       onClick={() => router.push(`/room/${room.id}`)}
                     >
                       Rejoin Session

@@ -5,27 +5,27 @@ import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 const navItems: NavItem[] = [
   {
     href: "/dashboard",
-    label: "Command Center",
+    label: "Workspace",
     icon: "LayoutDashboard",
-    tooltip: "Main Workspace",
+    tooltip: "Main Command Center",
   },
   {
     href: "/dashboard/history",
     label: "Session History",
     icon: "History",
-    tooltip: "Past Meetings",
+    tooltip: "Audit Past Meetings",
   },
   {
     href: "/dashboard/search",
     label: "Team Search",
-    icon: "Users",
+    icon: "Search",
     tooltip: "Find Members",
   },
   {
     href: "/dashboard/settings",
-    label: "Organization",
+    label: "Settings",
     icon: "Settings",
-    tooltip: "Global Config",
+    tooltip: "Profile Config",
   },
 ];
 

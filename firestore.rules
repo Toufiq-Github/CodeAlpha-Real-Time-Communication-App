@@ -12,8 +12,8 @@ service cloud.firestore {
     }
 
     match /rooms/{roomId} {
-      // Explicitly allow get and list for authenticated users
-      allow get, list: if isSignedIn();
+      // Allow read (get and list) for authenticated users to view session history
+      allow read: if isSignedIn();
       allow create: if isSignedIn();
       
       // Only the creator can manage the room metadata
