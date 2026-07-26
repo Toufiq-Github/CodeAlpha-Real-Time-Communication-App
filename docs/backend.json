@@ -23,6 +23,7 @@
         "name": { "type": "string" },
         "createdBy": { "type": "string" },
         "createdAt": { "type": "string", "format": "date-time" },
+        "scheduledAt": { "type": "string", "format": "date-time", "description": "Planned time for the session." },
         "isActive": { "type": "boolean", "default": true },
         "summary": { "type": "string", "description": "AI-generated summary of the session." }
       },

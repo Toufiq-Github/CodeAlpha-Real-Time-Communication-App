@@ -12,6 +12,7 @@ export interface Room {
   name: string;
   createdBy: string;
   createdAt: string;
+  scheduledAt?: string;
   isActive: boolean;
   summary?: string;
 }

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -11,10 +12,12 @@ import { Video, Calendar, UserPlus, Clock, Shield, Share2, Sparkles } from 'luci
 import { format } from 'date-fns';
 import { Room } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
+import { ScheduleMeetingModal } from '@/components/dashboard/schedule-meeting-modal';
 
 export default function Dashboard() {
   const [roomName, setRoomName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const { user } = useUser();
   const db = useFirestore();
   const router = useRouter();
@@ -68,7 +71,11 @@ export default function Dashboard() {
           <p className="text-muted-foreground mt-2 text-lg font-medium tracking-tight">Execute your objectives, {user?.name}.</p>
         </div>
         <div className="flex items-center gap-3">
-            <Button variant="outline" className="rounded-xl border-white/5 bg-white/5 gap-2 h-11 px-5 font-bold hover:bg-white/10">
+            <Button 
+              variant="outline" 
+              className="rounded-xl border-white/5 bg-white/5 gap-2 h-11 px-5 font-bold hover:bg-white/10"
+              onClick={() => setIsScheduleModalOpen(true)}
+            >
                 <Calendar className="h-4 w-4 text-primary" />
                 Schedule
             </Button>
@@ -143,12 +150,14 @@ export default function Dashboard() {
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-4">
                         <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                          <Video className="h-5 w-5 text-primary" />
+                          {room.scheduledAt ? <Calendar className="h-5 w-5 text-primary" /> : <Video className="h-5 w-5 text-primary" />}
                         </div>
                         <div>
                           <p className="font-bold text-base">{room.name}</p>
                           <p className="text-[9px] text-muted-foreground font-black uppercase tracking-widest mt-0.5 opacity-60">
-                            {format(new Date(room.createdAt), 'MMM d • h:mm a')}
+                            {room.scheduledAt 
+                              ? `Scheduled • ${format(new Date(room.scheduledAt), 'MMM d, h:mm a')}`
+                              : format(new Date(room.createdAt), 'MMM d • h:mm a')}
                           </p>
                         </div>
                       </div>
@@ -182,6 +191,11 @@ export default function Dashboard() {
             </Card>
         </div>
       </div>
+
+      <ScheduleMeetingModal 
+        isOpen={isScheduleModalOpen} 
+        onClose={() => setIsScheduleModalOpen(false)} 
+      />
     </div>
   );
 }
