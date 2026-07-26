@@ -17,7 +17,7 @@ import { format } from 'date-fns';
 import { useUser, useFirestore, useCollection, useDoc } from "@/firebase";
 import { collection, query, where, doc, updateDoc } from "firebase/firestore";
 import { Appointment } from "@/lib/types";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { FirestorePermissionError } from "@/firebase/errors";
 import { errorEmitter } from "@/firebase/error-emitter";
@@ -27,7 +27,7 @@ export const dynamic = 'force-dynamic';
 function PatientName({ patientId }: { patientId: string }) {
   const db = useFirestore();
   const patientRef = useMemo(() => {
-    if (!db || !patientId) return null;
+    if (!db || !patientId || typeof patientId !== 'string' || patientId.trim() === '') return null;
     return doc(db, 'users', patientId);
   }, [db, patientId]);
   

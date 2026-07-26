@@ -24,7 +24,7 @@ export const dynamic = 'force-dynamic';
 function DoctorName({ doctorId }: { doctorId: string }) {
   const db = useFirestore();
   const doctorRef = useMemo(() => {
-    if (!db || !doctorId) return null;
+    if (!db || !doctorId || typeof doctorId !== 'string' || doctorId.trim() === '') return null;
     return doc(db, 'users', doctorId);
   }, [db, doctorId]);
   
