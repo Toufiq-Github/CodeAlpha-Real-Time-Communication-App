@@ -99,11 +99,11 @@ export function SignupForm() {
       });
 
       toast({
-        title: 'Welcome to OmniMeet!',
+        title: 'Welcome to CoreMeet!',
         description: 'Your account has been successfully created.',
       });
 
-      router.push('/');
+      router.push('/dashboard');
     } catch (error: any) {
       console.error('Signup failed:', error);
       toast({
@@ -119,7 +119,7 @@ export function SignupForm() {
       <CardHeader>
         <CardTitle className="text-2xl text-white">Create Account</CardTitle>
         <CardDescription className="text-slate-400">
-          Join OmniMeet to collaborate in real-time with your team.
+          Join CoreMeet to unify your workspace and meet team goals.
         </CardDescription>
       </CardHeader>
       <Form {...form}>
@@ -134,6 +134,7 @@ export function SignupForm() {
                   <FormControl>
                     <Input 
                       {...field} 
+                      autoComplete="name"
                       className="bg-white/5 border-white/10 text-white"
                     />
                   </FormControl>
@@ -150,6 +151,7 @@ export function SignupForm() {
                   <FormControl>
                     <Input 
                       {...field} 
+                      autoComplete="email"
                       className="bg-white/5 border-white/10 text-white"
                     />
                   </FormControl>
@@ -168,6 +170,7 @@ export function SignupForm() {
                       <Input
                         type={showPassword ? 'text' : 'password'}
                         {...field}
+                        autoComplete="new-password"
                         className="bg-white/5 border-white/10 text-white pr-10"
                       />
                       <Button
@@ -182,9 +185,6 @@ export function SignupForm() {
                         ) : (
                           <Eye className="h-4 w-4" />
                         )}
-                        <span className="sr-only">
-                          {showPassword ? 'Hide password' : 'Show password'}
-                        </span>
                       </Button>
                     </div>
                   </FormControl>
@@ -203,6 +203,7 @@ export function SignupForm() {
                       <Input
                         type={showConfirmPassword ? 'text' : 'password'}
                         {...field}
+                        autoComplete="new-password"
                         className="bg-white/5 border-white/10 text-white pr-10"
                       />
                       <Button
@@ -219,11 +220,6 @@ export function SignupForm() {
                         ) : (
                           <Eye className="h-4 w-4" />
                         )}
-                        <span className="sr-only">
-                          {showConfirmPassword
-                            ? 'Hide password'
-                            : 'Show password'}
-                        </span>
                       </Button>
                     </div>
                   </FormControl>

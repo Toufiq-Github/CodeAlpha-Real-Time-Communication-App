@@ -56,10 +56,10 @@ export function LoginForm() {
       
       toast({
         title: 'Welcome back!',
-        description: 'Successfully signed in to OmniMeet.',
+        description: 'Successfully signed in to CoreMeet.',
       });
       
-      router.push('/');
+      router.push('/dashboard');
     } catch (error: any) {
       console.error('Login failed:', error);
       toast({
@@ -75,7 +75,7 @@ export function LoginForm() {
       <CardHeader>
         <CardTitle className="text-2xl text-white">Welcome Back</CardTitle>
         <CardDescription className="text-slate-400">
-          Enter your email and password to access your meetings.
+          Enter your credentials to access your workspace.
         </CardDescription>
       </CardHeader>
       <Form {...form}>
@@ -90,6 +90,7 @@ export function LoginForm() {
                   <FormControl>
                     <Input 
                       {...field} 
+                      autoComplete="email"
                       className="bg-white/5 border-white/10 text-white"
                     />
                   </FormControl>
@@ -107,6 +108,7 @@ export function LoginForm() {
                     <Input 
                       type="password" 
                       {...field} 
+                      autoComplete="current-password"
                       className="bg-white/5 border-white/10 text-white"
                     />
                   </FormControl>
