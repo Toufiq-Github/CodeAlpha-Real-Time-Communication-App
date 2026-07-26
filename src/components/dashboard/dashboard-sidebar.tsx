@@ -56,7 +56,7 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
   }
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border bg-sidebar">
+    <Sidebar collapsible="icon" className="border-r border-border bg-[#0B0B0B]">
       <SidebarHeader className="py-10 px-6">
         <div className="flex w-full items-center justify-start group-data-[collapsible=icon]:hidden">
           <Link href="/dashboard">
@@ -87,11 +87,11 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
                     "h-12 transition-all duration-200 text-[16px] font-medium px-4",
                     isActive 
                       ? "sidebar-item-active font-semibold" 
-                      : "hover:bg-white/5 text-secondary-foreground hover:text-foreground"
+                      : "hover:bg-[#1F1F1F] text-[#BDBDBD] hover:text-[#FFFFFF]"
                   )}
                 >
                   <Link href={item.href} className="flex items-center gap-4">
-                      <Icon className={cn("h-[24px] w-[24px]", isActive ? "text-primary" : "text-muted-foreground")} />
+                      <Icon className={cn("h-[24px] w-[24px]", isActive ? "text-white" : "text-[#BDBDBD]")} />
                       <span className="tracking-tight">{item.label}</span>
                   </Link>
                 </SidebarMenuButton>
@@ -106,12 +106,12 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
             <SidebarMenuItem>
                 <SidebarMenuButton 
                     suppressHydrationWarning
-                    className="h-12 rounded-[12px] hover:bg-white/5 text-secondary-foreground text-[16px]"
+                    className="h-12 rounded-[12px] hover:bg-[#1F1F1F] text-[#BDBDBD] hover:text-[#FFFFFF] text-[16px]"
                     tooltip={user?.email || 'Profile'}
                     asChild
                 >
                     <Link href="/dashboard/settings" className="flex items-center gap-4">
-                        <UserCircle className="h-[24px] w-[24px] text-muted-foreground" />
+                        <UserCircle className="h-[24px] w-[24px]" />
                         <span className="font-medium truncate">{user?.name || 'Session User'}</span>
                     </Link>
                 </SidebarMenuButton>
@@ -119,7 +119,7 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
              <SidebarMenuItem>
                 <SidebarMenuButton 
                     suppressHydrationWarning
-                    className="h-12 rounded-[12px] hover:bg-destructive/10 text-secondary-foreground hover:text-destructive transition-colors text-[16px]"
+                    className="h-12 rounded-[12px] hover:bg-destructive/10 text-[#BDBDBD] hover:text-destructive transition-colors text-[16px]"
                     tooltip="Logout" 
                     onClick={handleLogout}
                 >

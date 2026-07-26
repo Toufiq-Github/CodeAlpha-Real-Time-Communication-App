@@ -90,10 +90,10 @@ export default function Dashboard() {
 
   if (userLoading) {
     return (
-      <div className="flex h-[80vh] w-full items-center justify-center">
+      <div className="flex h-[80vh] w-full items-center justify-center bg-[#050505]">
         <div className="flex flex-col items-center gap-6">
-          <Loader2 className="h-12 w-12 text-primary animate-spin" />
-          <p className="text-slate-500 font-bold uppercase tracking-[0.3em] text-[12px]">Synchronizing Workspace...</p>
+          <Loader2 className="h-12 w-12 text-white animate-spin" />
+          <p className="text-[#9A9A9A] font-bold uppercase tracking-[0.3em] text-[12px]">Synchronizing Workspace...</p>
         </div>
       </div>
     );
@@ -103,22 +103,22 @@ export default function Dashboard() {
     <div className="max-w-7xl mx-auto space-y-8 pb-20 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-8">
         <div>
-          <h1 className="text-[32px] font-extrabold tracking-tight text-foreground">{getGreeting()}, {user?.name?.split(' ')[0] || 'Team'} 👋</h1>
-          <p className="text-secondary-text text-[18px] font-medium tracking-tight mt-2">
+          <h1 className="text-[32px] font-extrabold tracking-tight text-white">{getGreeting()}, {user?.name?.split(' ')[0] || 'Team'} 👋</h1>
+          <p className="text-[#9A9A9A] text-[18px] font-medium tracking-tight mt-2">
             Ready to collaborate with your team today?
           </p>
         </div>
         <div className="flex items-center gap-4">
             <Button 
-              variant="outline" 
+              variant="secondary" 
               className="gap-2"
               onClick={() => setIsScheduleModalOpen(true)}
               disabled={!user}
             >
-                <Calendar className="h-[22px] w-[22px] text-primary" />
+                <Calendar className="h-[22px] w-[22px]" />
                 Schedule
             </Button>
-            <Button className="font-semibold uppercase tracking-widest text-[12px]">
+            <Button variant="default" className="font-semibold uppercase tracking-widest text-[12px]">
                 <UserPlus className="h-[22px] w-[22px] mr-2" />
                 Invite Team
             </Button>
@@ -128,14 +128,14 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-[28px] font-bold">Initialize Session</CardTitle>
-            <CardDescription className="text-lg">Deploy a secure professional workspace session.</CardDescription>
+            <CardTitle className="text-[28px] font-bold text-white">Initialize Session</CardTitle>
+            <CardDescription className="text-lg text-[#CFCFCF]">Deploy a secure professional workspace session.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4">
               <Input 
                 placeholder="Session Objective" 
-                className="flex-1"
+                className="flex-1 text-[16px]"
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleCreateRoom()}
@@ -158,20 +158,20 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-primary/5 border-primary/20">
+        <Card className="bg-[#1F1F1F] border-[#303030]">
           <CardContent className="h-full flex flex-col justify-between py-8">
             <div className="space-y-6">
-              <div className="h-14 w-14 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-                <Shield className="h-7 w-7 text-white" />
+              <div className="h-14 w-14 rounded-2xl bg-[#F5F5F5] flex items-center justify-center shadow-lg shadow-black/25">
+                <Shield className="h-7 w-7 text-[#111111]" />
               </div>
               <div>
                 <h3 className="text-[22px] font-bold tracking-tight text-white">Security Protocol</h3>
-                <p className="text-base text-secondary-text font-medium leading-relaxed mt-2">Enterprise signaling layer with peer discovery and encrypted data channels.</p>
+                <p className="text-base text-[#CFCFCF] font-medium leading-relaxed mt-2">Enterprise signaling layer with peer discovery and encrypted data channels.</p>
               </div>
             </div>
             <div className="pt-6 flex items-center gap-2">
-              <div className="h-2.5 w-2.5 rounded-full bg-success animate-pulse" />
-              <span className="text-[12px] font-bold uppercase tracking-widest text-success">Service: Online</span>
+              <div className="h-2.5 w-2.5 rounded-full bg-[#77DD77] animate-pulse" />
+              <span className="text-[12px] font-bold uppercase tracking-widest text-[#77DD77]">Service: Online</span>
             </div>
           </CardContent>
         </Card>
@@ -179,30 +179,30 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pt-8">
         <Card className="lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between border-b border-border pb-6">
-            <CardTitle>Recent Sessions</CardTitle>
-            <Clock className="h-[22px] w-[22px] text-muted-foreground" />
+          <CardHeader className="flex flex-row items-center justify-between border-b border-[#2A2A2A] pb-6">
+            <CardTitle className="text-white">Recent Sessions</CardTitle>
+            <Clock className="h-[22px] w-[22px] text-[#9A9A9A]" />
           </CardHeader>
           <CardContent className="pt-8 space-y-6">
               {roomsLoading ? (
                 <div className="flex items-center gap-3 p-4 opacity-50">
-                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                  <p className="font-medium text-sm">Syncing archives...</p>
+                  <Loader2 className="h-4 w-4 animate-spin text-white" />
+                  <p className="font-medium text-sm text-[#CFCFCF]">Syncing archives...</p>
                 </div>
               ) : recentRooms && recentRooms.length > 0 ? (
                 recentRooms.map(room => (
                   <div 
                     key={room.id} 
-                    className="flex flex-col p-6 rounded-2xl bg-white/[0.02] border border-border hover:bg-white/[0.04] transition-all group"
+                    className="flex flex-col p-6 rounded-2xl bg-[#1F1F1F] border border-[#303030] hover:bg-[#262626] transition-all group"
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-4">
-                        <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-all">
-                          {room.scheduledAt ? <Calendar className="h-6 w-6 text-primary" /> : <Video className="h-6 w-6 text-primary" />}
+                        <div className="h-12 w-12 rounded-xl bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-white/10 transition-all">
+                          {room.scheduledAt ? <Calendar className="h-6 w-6 text-[#FFFFFF]" /> : <Video className="h-6 w-6 text-[#FFFFFF]" />}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-bold text-[18px] text-foreground group-hover:text-primary transition-all">{room.name}</p>
-                          <p className="text-[14px] text-secondary-text font-medium mt-1">
+                          <p className="font-bold text-[18px] text-white group-hover:text-primary transition-all">{room.name}</p>
+                          <p className="text-[14px] text-[#9A9A9A] font-medium mt-1">
                             {room.scheduledAt 
                               ? `Scheduled • ${format(new Date(room.scheduledAt), 'MMM d, h:mm a')}`
                               : format(new Date(room.createdAt), 'MMM d • h:mm a')}
@@ -211,34 +211,26 @@ export default function Dashboard() {
                       </div>
                       <span className={cn(
                         "status-chip",
-                        room.scheduledAt ? "text-primary bg-primary/10" : "text-muted-foreground bg-white/5"
+                        room.scheduledAt ? "status-scheduled" : "bg-[#262626] text-[#9A9A9A]"
                       )}>
                         {room.scheduledAt ? "Scheduled" : "Audit Only"}
                       </span>
                     </div>
-                    {room.summary && (
-                      <div className="mt-2 pl-4 border-l-2 border-primary/30 flex gap-3 items-start">
-                        <Sparkles className="h-[22px] w-[22px] text-primary shrink-0 mt-0.5" />
-                        <p className="text-[14px] text-secondary-text italic font-medium leading-relaxed">
-                          {room.summary}
-                        </p>
-                      </div>
-                    )}
                   </div>
                 ))
               ) : (
-                <div className="text-center py-20 border-2 border-dashed border-border rounded-2xl bg-white/[0.01]">
-                  <p className="text-muted-foreground font-bold uppercase tracking-widest text-xs">No records available</p>
+                <div className="text-center py-20 border-2 border-dashed border-[#2A2A2A] rounded-2xl bg-white/[0.01]">
+                  <p className="text-[#707070] font-bold uppercase tracking-widest text-xs">No records available</p>
                 </div>
               )}
           </CardContent>
         </Card>
 
         <div className="space-y-8">
-            <Card className="p-10 space-y-6 bg-gradient-to-br from-primary/10 to-transparent">
-                <Share2 className="h-12 w-12 text-primary" />
+            <Card className="p-10 space-y-6 bg-[#1F1F1F]">
+                <Share2 className="h-12 w-12 text-white" />
                 <h3 className="text-[22px] font-bold tracking-tight text-white">Team Unification</h3>
-                <p className="text-base text-secondary-text font-medium leading-relaxed">Broadcast secure workspace invites to your entire organization for instant real-time collaboration.</p>
+                <p className="text-base text-[#CFCFCF] font-medium leading-relaxed">Broadcast secure workspace invites to your entire organization for instant real-time collaboration.</p>
                 <Button variant="secondary" className="w-full" onClick={() => router.push('/dashboard/settings')}>Workspace Config</Button>
             </Card>
         </div>

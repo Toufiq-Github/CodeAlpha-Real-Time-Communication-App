@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { UserProfile, Participant, Room } from '@/lib/types';
 import { useFirestore, useCollection } from '@/firebase';
-import { doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, collection } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { 
   Mic, MicOff, Video, VideoOff, ScreenShare, 
@@ -123,26 +123,26 @@ export function VideoRoom({ roomId, user, room }: VideoRoomProps) {
   };
 
   return (
-    <div className="flex h-screen w-full bg-[#0F172A] overflow-hidden relative selection:bg-primary/20">
+    <div className="flex h-screen w-full bg-[#050505] overflow-hidden relative selection:bg-white/10">
       <div className="flex-1 flex flex-col relative">
-        <header className="px-6 py-4 flex justify-between items-center glass-panel absolute top-0 left-0 right-0 z-50 border-x-0 border-t-0">
+        <header className="px-6 py-4 flex justify-between items-center bg-[#0B0B0B]/75 backdrop-blur-xl absolute top-0 left-0 right-0 z-50 border-b border-[#303030]">
           <div className="flex items-center gap-4">
-            <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shadow-lg blue-glow shrink-0">
-              <Share2 className="h-6 w-6 text-white" />
+            <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center shadow-lg white-glow shrink-0">
+              <Share2 className="h-6 w-6 text-black" />
             </div>
             <div className="min-w-0">
               <h2 className="font-bold text-sm tracking-tight truncate text-white uppercase">{room.name}</h2>
               <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-[#10B981] animate-pulse shrink-0" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-[#10B981]">Live • {participants?.length || 1} Participants</span>
+                <span className="h-2 w-2 rounded-full bg-[#77DD77] animate-pulse shrink-0" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-[#77DD77]">Live • {participants?.length || 1} Participants</span>
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-6">
             <div className={cn(
-              "flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 shrink-0 transition-all",
-              timeLeft < 300 ? "text-red-500 animate-pulse" : "text-primary"
+              "flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#303030] bg-[#1A1A1A] shrink-0 transition-all",
+              timeLeft < 300 ? "text-[#EF4444] animate-pulse" : "text-[#FFFFFF]"
             )}>
               <Clock className="h-4 w-4" />
               <span className="text-xs font-black font-code tracking-widest">{formatTime(timeLeft)}</span>
@@ -153,7 +153,7 @@ export function VideoRoom({ roomId, user, room }: VideoRoomProps) {
                   variant="outline" 
                   size="sm" 
                   onClick={handleCopyInvite}
-                  className="rounded-xl border-white/10 hover:bg-white/5 text-xs font-bold gap-2 hidden sm:flex"
+                  className="rounded-xl border-[#303030] hover:bg-white/5 text-xs font-bold gap-2 hidden sm:flex text-white"
               >
                 <LinkIcon className="h-4 w-4" />
                 Invite
@@ -161,7 +161,7 @@ export function VideoRoom({ roomId, user, room }: VideoRoomProps) {
               <Button 
                 variant="destructive" 
                 size="sm" 
-                className="rounded-xl h-10 px-4 gap-2 font-black uppercase tracking-widest text-[10px] shadow-lg hover:opacity-90 transition-opacity"
+                className="rounded-xl h-10 px-4 gap-2 font-black uppercase tracking-widest text-[10px] shadow-lg"
                 onClick={handleLeave}
               >
                 <LogOut className="h-4 w-4" />
@@ -173,7 +173,7 @@ export function VideoRoom({ roomId, user, room }: VideoRoomProps) {
 
         <div className="flex-1 flex items-center justify-center p-6 pt-24 pb-32 overflow-y-auto">
           <div className="meeting-grid w-full max-w-7xl mx-auto">
-            <div className="relative rounded-3xl overflow-hidden glass-panel aspect-video flex items-center justify-center group bg-[#1E293B]">
+            <div className="relative rounded-3xl overflow-hidden bg-[#171717] aspect-video flex items-center justify-center group border border-[#2D2D2D] shadow-[0_12px_32px_rgba(0,0,0,0.3)]">
               <video 
                 ref={localVideoRef} 
                 autoPlay 
@@ -183,26 +183,26 @@ export function VideoRoom({ roomId, user, room }: VideoRoomProps) {
               />
               {!isCamOn && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-6">
-                  <div className="h-32 w-32 rounded-full bg-primary/10 flex items-center justify-center text-4xl font-black text-primary border border-primary/20 blue-glow">
+                  <div className="h-32 w-32 rounded-full bg-white/5 flex items-center justify-center text-4xl font-black text-white border border-[#303030]">
                     {user.name.charAt(0)}
                   </div>
-                  <span className="text-muted-foreground font-black uppercase tracking-widest text-xs">Video Paused</span>
+                  <span className="text-[#9A9A9A] font-black uppercase tracking-widest text-xs">Video Paused</span>
                 </div>
               )}
-              <div className="absolute bottom-6 left-6 px-4 py-2 rounded-xl glass-panel text-[10px] font-black uppercase tracking-widest text-white">
+              <div className="absolute bottom-6 left-6 px-4 py-2 rounded-xl bg-[#0B0B0B]/80 text-[10px] font-black uppercase tracking-widest text-white border border-[#303030]">
                 You (Host)
               </div>
             </div>
 
             {participants?.filter(p => p.userId !== user.id).map(p => (
-              <div key={p.userId} className="relative rounded-3xl overflow-hidden glass-panel aspect-video flex items-center justify-center bg-[#1E293B]/50 transition-all hover:ring-2 ring-primary/20">
+              <div key={p.userId} className="relative rounded-3xl overflow-hidden bg-[#171717]/50 aspect-video flex items-center justify-center border border-[#2D2D2D] transition-all hover:bg-[#1F1F1F]">
                  <div className="flex flex-col items-center gap-6">
-                    <div className="h-32 w-32 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-4xl font-black text-slate-500">
+                    <div className="h-32 w-32 rounded-full bg-white/5 border border-[#303030] flex items-center justify-center text-4xl font-black text-[#BDBDBD]">
                       {p.displayName.charAt(0)}
                     </div>
-                    <span className="text-muted-foreground font-black uppercase tracking-widest text-xs">{p.displayName}</span>
+                    <span className="text-[#9A9A9A] font-black uppercase tracking-widest text-xs">{p.displayName}</span>
                 </div>
-                <div className="absolute bottom-6 left-6 px-4 py-2 rounded-xl glass-panel text-[10px] font-black uppercase tracking-widest text-white">
+                <div className="absolute bottom-6 left-6 px-4 py-2 rounded-xl bg-[#0B0B0B]/80 text-[10px] font-black uppercase tracking-widest text-white border border-[#303030]">
                   {p.displayName}
                 </div>
               </div>
@@ -210,14 +210,14 @@ export function VideoRoom({ roomId, user, room }: VideoRoomProps) {
           </div>
         </div>
 
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-6 px-8 py-5 rounded-[2.5rem] glass-panel z-50 transition-all duration-300">
+        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-6 px-8 py-5 rounded-[2.5rem] bg-[#0B0B0B]/90 border border-[#303030] backdrop-blur-xl z-50 transition-all duration-300">
           <div className="flex items-center gap-2">
             <Button 
               variant="ghost" 
               size="icon" 
               className={cn(
                 "h-14 w-14 rounded-2xl transition-all shadow-lg shrink-0",
-                isMicOn ? "bg-primary text-white scale-110 blue-glow" : "bg-destructive/20 text-destructive hover:bg-destructive/30"
+                isMicOn ? "bg-white text-black scale-110 white-glow" : "bg-[#1A1A1A] text-[#BDBDBD] hover:bg-[#262626] border border-[#303030]"
               )}
               onClick={toggleMic}
             >
@@ -228,7 +228,7 @@ export function VideoRoom({ roomId, user, room }: VideoRoomProps) {
               size="icon" 
               className={cn(
                 "h-14 w-14 rounded-2xl transition-all shadow-lg shrink-0",
-                isCamOn ? "bg-primary text-white scale-110 blue-glow" : "bg-destructive/20 text-destructive hover:bg-destructive/30"
+                isCamOn ? "bg-white text-black scale-110 white-glow" : "bg-[#1A1A1A] text-[#BDBDBD] hover:bg-[#262626] border border-[#303030]"
               )}
               onClick={toggleCam}
             >
@@ -236,13 +236,13 @@ export function VideoRoom({ roomId, user, room }: VideoRoomProps) {
             </Button>
           </div>
           
-          <div className="w-px h-10 bg-white/10 mx-2" />
+          <div className="w-px h-10 bg-[#303030] mx-2" />
           
           <div className="flex items-center gap-2">
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-14 w-14 rounded-2xl bg-white/5 hover:bg-primary/20 hover:text-primary text-muted-foreground shrink-0 transition-all"
+              className="h-14 w-14 rounded-2xl bg-white/5 hover:bg-white/10 text-[#BDBDBD] shrink-0 transition-all"
               title="Screen Share"
             >
               <ScreenShare className="h-6 w-6" />
@@ -252,12 +252,12 @@ export function VideoRoom({ roomId, user, room }: VideoRoomProps) {
               size="icon" 
               className={cn(
                 "h-14 w-14 rounded-2xl transition-all bg-white/5 relative shrink-0",
-                activeTab === 'chat' ? "text-primary ring-2 ring-primary/20 bg-primary/10 blue-glow" : "text-muted-foreground hover:bg-white/10"
+                activeTab === 'chat' ? "text-white bg-[#262626] ring-1 ring-[#404040]" : "text-[#BDBDBD] hover:bg-white/10"
               )}
               onClick={() => setActiveTab(activeTab === 'chat' ? null : 'chat')}
             >
               <MessageSquare className="h-6 w-6" />
-              <div className="absolute top-3.5 right-3.5 h-2 w-2 rounded-full bg-primary border-2 border-[#0F172A]" />
+              <div className="absolute top-3.5 right-3.5 h-2 w-2 rounded-full bg-white border-2 border-[#0B0B0B]" />
             </Button>
           </div>
         </div>
@@ -269,5 +269,3 @@ export function VideoRoom({ roomId, user, room }: VideoRoomProps) {
     </div>
   );
 }
-
-import { collection } from 'firebase/firestore';

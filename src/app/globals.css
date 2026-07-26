@@ -4,35 +4,35 @@
 
 @layer base {
   :root {
-    --background: 221 48% 9%;      /* #0B1220 */
-    --foreground: 210 40% 98%;     /* #F8FAFC */
-    --card: 217 34% 16%;           /* #1A2435 */
-    --card-foreground: 210 40% 98%;
-    --popover: 219 42% 11%;        /* #101827 */
-    --popover-foreground: 210 40% 98%;
-    --primary: 219 100% 65%;       /* #4F8CFF */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 214 33% 21%;      /* #243247 */
-    --secondary-foreground: 215 16% 65%;
-    --muted: 215 25% 23%;          /* #2B3748 */
-    --muted-foreground: 215 16% 65%;
-    --accent: 214 33% 21%;
-    --accent-foreground: 219 100% 65%;
-    --destructive: 0 84% 60%;      /* #EF4444 */
-    --destructive-foreground: 210 40% 98%;
-    --border: 215 25% 23%;         /* #2B3748 */
-    --input: 215 25% 23%;
-    --ring: 219 100% 65%;
+    --background: 0 0% 2%;        /* #050505 */
+    --foreground: 0 0% 100%;      /* #FFFFFF */
+    --card: 0 0% 9%;              /* #171717 */
+    --card-foreground: 0 0% 81%;  /* #CFCFCF */
+    --popover: 0 0% 4%;           /* #0B0B0B */
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 0% 96%;          /* #F5F5F5 */
+    --primary-foreground: 0 0% 7%;/* #111111 */
+    --secondary: 0 0% 10%;        /* #1A1A1A */
+    --secondary-foreground: 0 0% 96%;
+    --muted: 0 0% 12%;            /* #1F1F1F */
+    --muted-foreground: 0 0% 60%; /* #9A9A9A */
+    --accent: 0 0% 15%;           /* #262626 */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 19%;           /* #303030 */
+    --input: 0 0% 22%;            /* #393939 */
+    --ring: 0 0% 54%;             /* #8A8A8A */
     --radius: 14px;
 
-    --sidebar-background: 219 42% 11%;
-    --sidebar-foreground: 215 16% 65%;
-    --sidebar-primary: 219 100% 65%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 214 33% 21%;
-    --sidebar-accent-foreground: 219 100% 65%;
-    --sidebar-border: 215 25% 23%;
-    --sidebar-ring: 219 100% 65%;
+    --sidebar-background: 0 0% 4%;
+    --sidebar-foreground: 0 0% 82%;
+    --sidebar-primary: 0 0% 96%;
+    --sidebar-primary-foreground: 0 0% 7%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 19%;
+    --sidebar-ring: 0 0% 54%;
   }
 }
 
@@ -41,7 +41,7 @@
     @apply border-border transition-colors duration-200;
   }
   body {
-    @apply bg-background text-foreground font-body antialiased selection:bg-primary/30 leading-[1.5];
+    @apply bg-background text-foreground font-body antialiased selection:bg-white/10 leading-[1.5];
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-headline;
@@ -49,44 +49,76 @@
 }
 
 .premium-card {
-  background: #1A2435;
-  border: 1px solid #2B3748;
+  background: #171717;
+  border: 1px solid #2D2D2D;
   border-radius: 18px;
-  box-shadow: 0 12px 32px rgba(0,0,0,.28);
+  box-shadow: 0 12px 32px rgba(0,0,0,.30);
 }
 
 .primary-button {
-  background: linear-gradient(135deg, #4F8CFF, #377BFF);
+  background: #F5F5F5;
+  color: #111111;
+  border: 1px solid #DADADA;
   border-radius: 14px;
-  box-shadow: 0 8px 20px rgba(79,140,255,.20);
+  box-shadow: 0 8px 20px rgba(0,0,0,.25);
   transition: all 0.2s ease;
 }
 
 .primary-button:hover {
+  background: #E4E4E4;
   transform: translateY(-1px);
-  filter: brightness(1.1);
+}
+
+.secondary-button {
+  background: #1A1A1A;
+  color: #F5F5F5;
+  border: 1px solid #343434;
+  border-radius: 14px;
+  transition: all 0.2s ease;
+}
+
+.secondary-button:hover {
+  background: #232323;
 }
 
 .input-field {
-  background: #253244;
-  border: 1px solid #324156;
+  background: #1A1A1A;
+  border: 1px solid #393939;
   border-radius: 14px;
   height: 52px;
+  color: #FFFFFF;
+}
+
+.input-field::placeholder {
+  color: #8A8A8A;
 }
 
 .input-field:focus {
-  border-color: #4F8CFF;
-  ring: 0;
+  border-color: #8A8A8A;
+  box-shadow: 0 0 0 3px rgba(255,255,255,.05);
+  outline: none;
 }
 
 .sidebar-item-active {
-  background: rgba(79, 140, 255, 0.1);
-  color: #4F8CFF;
+  background: #262626;
+  color: #FFFFFF;
+  border: 1px solid #404040;
   border-radius: 12px;
 }
 
 .status-chip {
   @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest;
+}
+
+.status-online {
+  background: #183122;
+  color: #77DD77;
+}
+
+.status-scheduled {
+  background: #1a1a1a;
+  color: #bdbdbd;
+  border: 1px solid #303030;
 }
 
 .meeting-grid {
@@ -122,4 +154,8 @@
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+.white-glow {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
 }

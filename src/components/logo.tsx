@@ -30,13 +30,13 @@ export function Logo({ className, size = 'md' }: LogoProps) {
   return (
     <div className={cn("flex items-center gap-3 font-bold group", className)}>
       <div className={cn(
-        "bg-primary rounded-xl shadow-lg shadow-primary/20 group-hover:rotate-12 transition-all duration-300",
+        "bg-white rounded-xl shadow-lg shadow-white/5 group-hover:rotate-12 transition-all duration-300",
         containerSizes[size]
       )}>
-        <Shield className={cn("text-white", iconSizes[size])} />
+        <Shield className={cn("text-black", iconSizes[size])} />
       </div>
       <span className={cn("font-black tracking-tighter text-foreground uppercase italic", textSizes[size])}>
-        TEAM<span className="text-primary not-italic">SYNC</span>
+        TEAM<span className="text-white not-italic">SYNC</span>
       </span>
     </div>
   );
