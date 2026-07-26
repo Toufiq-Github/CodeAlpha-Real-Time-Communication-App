@@ -17,7 +17,8 @@ import {
   Users, 
   Settings, 
   Video,
-  Search
+  Search,
+  ShieldAlert
 } from "lucide-react";
 import type { NavItem } from "@/lib/types";
 import { usePathname, useRouter } from "next/navigation";
@@ -34,7 +35,8 @@ const IconMap = {
   Users,
   Settings,
   Video,
-  Search
+  Search,
+  UserCog: ShieldAlert
 };
 
 interface DashboardSidebarProps {

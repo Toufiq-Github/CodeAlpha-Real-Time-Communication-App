@@ -14,11 +14,11 @@ export const dynamic = 'force-dynamic';
 function PatientCard({ patientId }: { patientId: string }) {
   const db = useFirestore();
   const patientRef = useMemo(() => {
-    if (!db || !patientId) return null;
+    if (!db || !patientId || typeof patientId !== 'string' || patientId.trim() === '') return null;
     return doc(db, 'users', patientId);
   }, [db, patientId]);
   
-  const { data: patient, loading } = useDoc(patientRef) as { data: UserProfile | null, loading: boolean };
+  const { data: patient, loading } = useDoc<UserProfile>(patientRef);
 
   if (loading) {
     return (
@@ -34,7 +34,7 @@ function PatientCard({ patientId }: { patientId: string }) {
            <Skeleton className="h-10 w-full" />
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (!patient) return null;
@@ -61,7 +61,7 @@ function PatientCard({ patientId }: { patientId: string }) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export default function DoctorPatientsPage() {
@@ -81,7 +81,7 @@ export default function DoctorPatientsPage() {
     if (!appointments) return [];
     const ids = appointments
       .map(a => a.patientUserId)
-      .filter((id): id is string => !!id);
+      .filter((id): id is string => !!id && id.trim() !== '');
     return [...new Set(ids)];
   }, [appointments]);
 
