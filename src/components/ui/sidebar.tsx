@@ -276,6 +276,7 @@ const SidebarTrigger = React.forwardRef<
         onClick?.(event)
         toggleSidebar()
       }}
+      suppressHydrationWarning
       {...props}
     >
       <PanelLeft />
@@ -308,6 +309,7 @@ const SidebarRail = React.forwardRef<
         "[[data-side=right][data-collapsible=offcanvas]_&]:-left-2",
         className
       )}
+      suppressHydrationWarning
       {...props}
     />
   )
@@ -344,6 +346,7 @@ const SidebarInput = React.forwardRef<
         "h-8 w-full bg-background shadow-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
         className
       )}
+      suppressHydrationWarning
       {...props}
     />
   )
@@ -466,6 +469,7 @@ const SidebarGroupAction = React.forwardRef<
         "group-data-[collapsible=icon]:hidden",
         className
       )}
+      suppressHydrationWarning
       {...props}
     />
   )
@@ -563,6 +567,7 @@ const SidebarMenuButton = React.forwardRef<
         data-size={size}
         data-active={isActive}
         className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
+        suppressHydrationWarning
         {...props}
       />
     )
@@ -617,6 +622,7 @@ const SidebarMenuAction = React.forwardRef<
           "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 peer-data-[active=true]/menu-button:text-sidebar-accent-foreground md:opacity-0",
         className
       )}
+      suppressHydrationWarning
       {...props}
     />
   )
@@ -729,6 +735,7 @@ const SidebarMenuSubButton = React.forwardRef<
         "group-data-[collapsible=icon]:hidden",
         className
       )}
+      suppressHydrationWarning
       {...props}
     />
   )
