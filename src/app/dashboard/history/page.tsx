@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser, useFirestore, useCollection } from '@/firebase';
-import { collection, query, where, orderBy } from 'firebase/firestore';
+import { collection, query, where, limit } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Video, Clock, Calendar, Link as LinkIcon, ExternalLink } from 'lucide-react';
@@ -22,12 +22,19 @@ export default function SessionHistoryPage() {
     if (!db || !user) return null;
     return query(
       collection(db, 'rooms'), 
-      where('createdBy', '==', user.id), 
-      orderBy('createdAt', 'desc')
+      where('createdBy', '==', user.id),
+      limit(50)
     );
   }, [db, user]);
 
   const { data: rooms, loading } = useCollection<Room>(historyQuery);
+
+  const sortedRooms = useMemo(() => {
+    if (!rooms) return [];
+    return [...rooms].sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }, [rooms]);
 
   const copyRoomLink = (roomId: string) => {
     const url = `${window.location.origin}/room/${roomId}`;
@@ -54,10 +61,10 @@ export default function SessionHistoryPage() {
           <div className="space-y-4">
             {loading ? (
               Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-20 w-full rounded-2xl bg-white/5" />
+                <Skeleton key={i} className="h-24 w-full rounded-2xl bg-white/5" />
               ))
-            ) : rooms && rooms.length > 0 ? (
-              rooms.map(room => (
+            ) : sortedRooms.length > 0 ? (
+              sortedRooms.map(room => (
                 <div 
                   key={room.id} 
                   className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] transition-all group border border-transparent hover:border-white/5 gap-4"

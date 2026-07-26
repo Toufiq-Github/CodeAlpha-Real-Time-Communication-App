@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser, useFirestore, useCollection } from '@/firebase';
-import { collection, addDoc, query, where, orderBy, limit } from 'firebase/firestore';
+import { collection, addDoc, query, where, limit } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -20,17 +20,25 @@ export default function Dashboard() {
   const router = useRouter();
   const { toast } = useToast();
 
+  // We only use 'where' here to avoid composite index requirements for 'orderBy'
+  // Sorting is handled on the client side for robustness
   const historyQuery = useMemo(() => {
     if (!db || !user) return null;
     return query(
       collection(db, 'rooms'), 
-      where('createdBy', '==', user.id), 
-      orderBy('createdAt', 'desc'), 
-      limit(5)
+      where('createdBy', '==', user.id),
+      limit(20)
     );
   }, [db, user]);
 
-  const { data: recentRooms, loading } = useCollection<Room>(historyQuery);
+  const { data: rooms, loading } = useCollection<Room>(historyQuery);
+
+  const recentRooms = useMemo(() => {
+    if (!rooms) return [];
+    return [...rooms].sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    ).slice(0, 5);
+  }, [rooms]);
 
   const handleCreateRoom = async () => {
     if (!user || !roomName.trim()) return;
@@ -45,6 +53,11 @@ export default function Dashboard() {
       router.push(`/room/${docRef.id}`);
     } catch (error) {
       console.error(error);
+      toast({
+        variant: 'destructive',
+        title: 'Initialization Failed',
+        description: 'Could not deploy workspace session. Please try again.',
+      });
     } finally {
       setIsCreating(false);
     }
@@ -81,7 +94,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <Card className="lg:col-span-2 glass-panel border-none rounded-[2rem]">
           <CardHeader className="p-8">
-            <CardTitle className="text-xl font-black uppercase">Initialize Room</CardTitle>
+            <CardTitle className="text-xl font-black uppercase">Initialize Session</CardTitle>
             <CardDescription className="text-base">Deploy a secure workspace with WebRTC signaling and visual synchronization.</CardDescription>
           </CardHeader>
           <CardContent className="p-8 pt-0">
@@ -172,7 +185,7 @@ export default function Dashboard() {
               ) : (
                 <div className="text-center py-16 border-2 border-dashed border-white/5 rounded-[1.5rem] bg-white/[0.01]">
                   <p className="text-muted-foreground font-medium">No session history found.</p>
-                  <Button variant="link" onClick={() => setRoomName('Project Sync')} className="mt-2 text-primary font-bold uppercase text-[10px] tracking-widest">Start First Session</Button>
+                  <Button variant="link" onClick={() => setRoomName('Project Alpha')} className="mt-2 text-primary font-bold uppercase text-[10px] tracking-widest text-center w-full">Initialize First Session</Button>
                 </div>
               )}
             </div>
@@ -184,7 +197,7 @@ export default function Dashboard() {
                 <Share2 className="h-8 w-8 text-primary" />
                 <h3 className="text-xl font-black uppercase tracking-tight">Unify Teams</h3>
                 <p className="text-sm text-muted-foreground font-medium">Broadcast secure workspace invites to your entire organization for instant real-time goal execution.</p>
-                <Button variant="outline" className="w-full rounded-xl border-white/10 h-12 font-bold bg-white/5 hover:bg-white/10 uppercase text-[10px] tracking-widest" onClick={() => router.push('/dashboard/settings')}>Workspace Settings</Button>
+                <Button variant="outline" className="w-full rounded-xl border-white/10 h-12 font-bold bg-white/5 hover:bg-white/10 uppercase text-[10px] tracking-widest" onClick={() => router.push('/dashboard/settings')}>Workspace Config</Button>
             </Card>
         </div>
       </div>
