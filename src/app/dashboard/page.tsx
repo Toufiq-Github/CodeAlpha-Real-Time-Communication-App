@@ -116,7 +116,7 @@ export default function Dashboard() {
               onClick={() => setIsScheduleModalOpen(true)}
               disabled={!user}
             >
-                <Calendar className="h-5 w-5" />
+                <Calendar className="h-5 w-5 text-[#BDBDBD]" />
                 <span className="text-[12px] font-bold uppercase tracking-widest">Schedule</span>
             </Button>
             <Button variant="default" className="h-10 px-4 font-bold uppercase tracking-widest text-[10px]">
@@ -127,16 +127,16 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <Card className="lg:col-span-2 border-white/10">
+        <Card className="lg:col-span-2 border-[#383838] bg-[#1F1F1F]">
           <CardHeader>
-            <CardTitle className="text-[20px] font-bold text-white">Initialize Session</CardTitle>
-            <CardDescription className="text-[13px] text-[#CFCFCF]">Deploy a secure professional workspace session.</CardDescription>
+            <CardTitle className="text-[20px] font-bold text-white uppercase tracking-tight">Initialize Session</CardTitle>
+            <CardDescription className="text-[13px] text-[#CFCFCF] italic">Deploy a secure professional workspace session.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4">
               <Input 
                 placeholder="Session Objective" 
-                className="flex-1 text-[13px] h-[52px]"
+                className="flex-1 text-[13px] h-[52px] bg-[#2A2A2A] border-[#404040]"
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleCreateRoom()}
@@ -159,14 +159,14 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-[#1F1F1F] border-[#303030]">
+        <Card className="bg-[#262626] border-[#404040]">
           <CardContent className="h-full flex flex-col justify-between py-8">
             <div className="space-y-6">
-              <div className="h-12 w-12 rounded-xl bg-[#F5F5F5] flex items-center justify-center shadow-lg shadow-black/25">
-                <Shield className="h-6 w-6 text-[#111111]" />
+              <div className="h-12 w-12 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 shadow-lg">
+                <Shield className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h3 className="text-[16px] font-bold tracking-tight text-white">Security Protocol</h3>
+                <h3 className="text-[16px] font-bold tracking-tight text-white uppercase">Security Protocol</h3>
                 <p className="text-[12px] text-[#CFCFCF] font-medium leading-relaxed mt-2 italic">Enterprise signaling layer with peer discovery and encrypted data channels.</p>
               </div>
             </div>
@@ -179,7 +179,7 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pt-8">
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 border-[#383838] bg-[#1F1F1F]">
           <CardHeader className="flex flex-row items-center justify-between border-b border-[#2A2A2A] pb-6">
             <CardTitle className="text-[18px] text-white uppercase tracking-tight">Recent Sessions</CardTitle>
             <Clock className="h-5 w-5 text-[#9A9A9A]" />
@@ -194,7 +194,7 @@ export default function Dashboard() {
                 recentRooms.map(room => (
                   <div 
                     key={room.id} 
-                    className="flex flex-col p-5 rounded-2xl bg-[#1F1F1F] border border-[#303030] hover:bg-[#262626] transition-all group"
+                    className="flex flex-col p-5 rounded-2xl bg-[#262626] border border-[#404040] hover:bg-[#2D2D2D] transition-all group"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
@@ -212,7 +212,7 @@ export default function Dashboard() {
                       </div>
                       <span className={cn(
                         "status-chip text-[9px]",
-                        room.scheduledAt ? "status-scheduled" : "bg-[#262626] text-[#9A9A9A]"
+                        room.scheduledAt ? "status-scheduled" : "bg-[#1F1F1F] text-[#9A9A9A] border border-[#303030]"
                       )}>
                         {room.scheduledAt ? "Scheduled" : "Audit Only"}
                       </span>
@@ -228,7 +228,7 @@ export default function Dashboard() {
         </Card>
 
         <div className="space-y-8">
-            <Card className="p-8 space-y-6 bg-[#1F1F1F] border-white/5">
+            <Card className="p-8 space-y-6 bg-[#1F1F1F] border-[#383838]">
                 <Share2 className="h-10 w-10 text-white" />
                 <h3 className="text-[16px] font-bold tracking-tight text-white uppercase">Team Unification</h3>
                 <p className="text-[12px] text-[#CFCFCF] font-medium leading-relaxed italic">Broadcast secure workspace invites to your entire organization for instant real-time collaboration.</p>

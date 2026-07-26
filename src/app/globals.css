@@ -7,7 +7,7 @@
   :root {
     --background: 0 0% 2%;        /* #050505 */
     --foreground: 0 0% 100%;      /* #FFFFFF */
-    --card: 0 0% 9%;              /* #171717 */
+    --card: 0 0% 12%;             /* #1F1F1F - Lightened */
     --card-foreground: 0 0% 81%;  /* #CFCFCF */
     --popover: 0 0% 4%;           /* #0B0B0B */
     --popover-foreground: 0 0% 100%;
@@ -15,14 +15,14 @@
     --primary-foreground: 0 0% 7%;/* #111111 */
     --secondary: 0 0% 10%;        /* #1A1A1A */
     --secondary-foreground: 0 0% 96%;
-    --muted: 0 0% 12%;            /* #1F1F1F */
+    --muted: 0 0% 15%;            /* #262626 */
     --muted-foreground: 0 0% 60%; /* #9A9A9A */
-    --accent: 0 0% 15%;           /* #262626 */
+    --accent: 0 0% 18%;           /* #2E2E2E */
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 19%;           /* #303030 */
-    --input: 0 0% 22%;            /* #393939 */
+    --border: 0 0% 22%;           /* #383838 - Lightened */
+    --input: 0 0% 24%;            /* #3D3D3D */
     --ring: 0 0% 54%;             /* #8A8A8A */
     --radius: 14px;
 
@@ -50,10 +50,10 @@
 }
 
 .premium-card {
-  background: #171717;
-  border: 1px solid #2D2D2D;
+  background: #1F1F1F;
+  border: 1px solid #383838;
   border-radius: 18px;
-  box-shadow: 0 12px 32px rgba(0,0,0,.30);
+  box-shadow: 0 12px 32px rgba(0,0,0,.35);
 }
 
 .primary-button {
@@ -83,7 +83,7 @@
 }
 
 .input-field {
-  background: #262626;
+  background: #2A2A2A;
   border: 1px solid #454545;
   border-radius: 14px;
   height: 48px;
