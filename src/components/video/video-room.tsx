@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
@@ -8,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { 
   Mic, MicOff, Video, VideoOff, ScreenShare, 
   MessageSquare, Users, Settings, LogOut, Palette,
-  Link as LinkIcon, Share2
+  Link as LinkIcon, Share2, MoreVertical
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Whiteboard } from './whiteboard';
@@ -32,12 +33,12 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
 
   const db = useFirestore();
 
-  const participantsQuery = useMemo(() => {
+  const participantsRef = useMemo(() => {
     if (!db || !roomId) return null;
     return collection(db, 'rooms', roomId, 'participants');
   }, [db, roomId]);
 
-  const { data: participants } = useCollection<Participant>(participantsQuery);
+  const { data: participants } = useCollection<Participant>(participantsRef);
 
   useEffect(() => {
     if (!db || !roomId || !user) return;
@@ -48,10 +49,12 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
         localStreamRef.current = stream;
         if (localVideoRef.current) localVideoRef.current.srcObject = stream;
         
+        // Start muted/camera off by default for professional sessions
         stream.getAudioTracks().forEach(t => t.enabled = false);
         stream.getVideoTracks().forEach(t => t.enabled = false);
       } catch (err) {
-        console.error("Error accessing media devices:", err);
+        console.error("Media Error:", err);
+        toast({ variant: 'destructive', title: 'Media Denied', description: 'Please allow camera access to join the session.' });
       }
     }
     startMedia();
@@ -71,7 +74,7 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
       }
       deleteDoc(participantRef).catch(() => {});
     };
-  }, [roomId, user?.id, user?.name, db]);
+  }, [roomId, user?.id, user?.name, db, toast]);
 
   const toggleMic = () => {
     if (localStreamRef.current) {
@@ -79,8 +82,8 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
       if (audioTrack) {
         audioTrack.enabled = !audioTrack.enabled;
         setIsMicOn(audioTrack.enabled);
-        const participantRef = doc(db, 'rooms', roomId, 'participants', user.id);
-        setDoc(participantRef, { isMicOn: audioTrack.enabled }, { merge: true });
+        const ref = doc(db, 'rooms', roomId, 'participants', user.id);
+        setDoc(ref, { isMicOn: audioTrack.enabled }, { merge: true });
       }
     }
   };
@@ -91,8 +94,8 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
       if (videoTrack) {
         videoTrack.enabled = !videoTrack.enabled;
         setIsCamOn(videoTrack.enabled);
-        const participantRef = doc(db, 'rooms', roomId, 'participants', user.id);
-        setDoc(participantRef, { isCameraOn: videoTrack.enabled }, { merge: true });
+        const ref = doc(db, 'rooms', roomId, 'participants', user.id);
+        setDoc(ref, { isCameraOn: videoTrack.enabled }, { merge: true });
       }
     }
   };
@@ -101,111 +104,99 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
     const url = window.location.href;
     navigator.clipboard.writeText(url);
     toast({
-      title: "Invite Link Copied!",
-      description: "Share this URL with others to let them join this meeting.",
+      title: "Invite Link Copied",
+      description: "Send the link to team members to join.",
     });
   };
 
   return (
-    <div className="flex h-screen w-full bg-slate-950 overflow-hidden relative">
-      <div className="flex-1 flex flex-col relative transition-all duration-300">
-        <div className="p-4 flex justify-between items-center bg-slate-900/50 backdrop-blur-md absolute top-0 left-0 right-0 z-20 border-b border-white/5">
-          <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-              <Share2 className="h-4 w-4 text-white" />
+    <div className="flex h-screen w-full bg-background overflow-hidden relative">
+      <div className="flex-1 flex flex-col relative">
+        {/* Modern Header */}
+        <header className="px-6 py-4 flex justify-between items-center glass-panel absolute top-0 left-0 right-0 z-50 border-x-0 border-t-0 bg-background/50">
+          <div className="flex items-center gap-4">
+            <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30">
+              <Share2 className="h-5 w-5 text-white" />
             </div>
-            <div className="flex flex-col">
-              <h2 className="font-bold text-sm tracking-tight text-white">{roomName}</h2>
-              <span className="text-[10px] text-emerald-500 font-black uppercase tracking-widest flex items-center gap-1">
-                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Live Session
-              </span>
+            <div>
+              <h2 className="font-bold text-sm tracking-tight">{roomName}</h2>
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Live • {participants?.length || 1} Participants</span>
+              </div>
             </div>
           </div>
-          <div className="flex gap-2">
+          
+          <div className="flex items-center gap-3">
             <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleCopyInvite}
-              className="rounded-full bg-white/5 border-white/10 hover:bg-primary/20 hover:text-primary transition-all text-xs font-black uppercase tracking-widest gap-2 hidden md:flex"
+                variant="outline" 
+                size="sm" 
+                onClick={handleCopyInvite}
+                className="rounded-xl border-white/10 hover:bg-white/5 text-xs font-bold gap-2 hidden md:flex"
             >
               <LinkIcon className="h-3.5 w-3.5" />
-              Copy Invite Link
+              Invite
             </Button>
-            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full bg-white/5 hover:bg-white/10 text-slate-400">
+            <div className="w-px h-6 bg-white/10 mx-2" />
+            <Button variant="ghost" size="icon" className="rounded-full h-10 w-10 hover:bg-white/5">
               <Settings className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20" onClick={() => window.location.href = '/dashboard'}>
+            <Button variant="destructive" size="sm" className="rounded-xl px-4 gap-2" onClick={() => window.location.href = '/dashboard'}>
               <LogOut className="h-4 w-4" />
+              Leave
             </Button>
           </div>
-        </div>
+        </header>
 
-        <div className="flex-1 flex items-center justify-center bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black p-4 pt-20 pb-28">
-          <div className={cn(
-            "grid gap-6 w-full h-full max-w-6xl transition-all duration-500",
-            (participants && participants.length > 1) ? "md:grid-cols-2" : "grid-cols-1"
-          )}>
-            <div className="relative rounded-[2.5rem] overflow-hidden bg-slate-900 border border-white/5 shadow-2xl aspect-video group flex items-center justify-center">
+        {/* Dynamic Grid Layout */}
+        <div className="flex-1 flex items-center justify-center p-6 pt-24 pb-32">
+          <div className="meeting-grid w-full h-full max-w-7xl">
+            <div className="relative rounded-3xl overflow-hidden glass-panel aspect-video flex items-center justify-center group">
               <video 
                 ref={localVideoRef} 
                 autoPlay 
                 muted 
                 playsInline 
-                className={cn("w-full h-full object-cover transition-opacity duration-300", !isCamOn ? "opacity-0" : "opacity-100")}
+                className={cn("w-full h-full object-cover transition-opacity duration-500", !isCamOn ? "opacity-0" : "opacity-100")}
               />
               {!isCamOn && (
-                <div className="absolute inset-0 flex items-center justify-center flex-col gap-6 animate-in fade-in zoom-in-95 duration-500">
-                  <div className="h-32 w-32 rounded-full bg-primary/10 flex items-center justify-center text-5xl font-black text-primary border border-primary/20 shadow-[0_0_50px_-12px_rgba(var(--primary),0.3)]">
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-6">
+                  <div className="h-32 w-32 rounded-full bg-primary/10 flex items-center justify-center text-4xl font-black text-primary border border-primary/20 shadow-2xl">
                     {user.name.charAt(0)}
                   </div>
-                  <span className="text-slate-500 font-black uppercase tracking-[0.3em] text-[10px]">Camera Disabled</span>
+                  <span className="text-muted-foreground font-black uppercase tracking-widest text-xs">Video Paused</span>
                 </div>
               )}
-              <div className="absolute bottom-6 left-6 px-4 py-2 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 text-xs font-black uppercase tracking-widest text-white shadow-xl">
+              <div className="absolute bottom-6 left-6 px-4 py-2 rounded-xl glass-panel bg-black/40 text-[10px] font-black uppercase tracking-widest">
                 You (Host)
               </div>
             </div>
 
             {participants?.filter(p => p.userId !== user.id).map(p => (
-              <div key={p.id} className="relative rounded-[2.5rem] overflow-hidden bg-slate-900 border border-white/5 shadow-2xl aspect-video flex items-center justify-center">
+              <div key={p.userId} className="relative rounded-3xl overflow-hidden glass-panel aspect-video flex items-center justify-center bg-slate-900/50">
                  <div className="flex flex-col items-center gap-6">
-                   <div className="h-32 w-32 rounded-full bg-slate-800/50 border border-white/5 flex items-center justify-center text-5xl font-black text-slate-700">
+                    <div className="h-32 w-32 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-4xl font-black text-slate-500">
                       {p.displayName.charAt(0)}
                     </div>
-                    <span className="text-slate-500 font-black uppercase tracking-[0.3em] text-[10px]">{p.displayName}</span>
+                    <span className="text-muted-foreground font-black uppercase tracking-widest text-xs">{p.displayName}</span>
                 </div>
-                <div className="absolute bottom-6 left-6 px-4 py-2 rounded-xl bg-black/40 backdrop-blur-md border border-white/10 text-xs font-black uppercase tracking-widest text-slate-300">
+                <div className="absolute bottom-6 left-6 px-4 py-2 rounded-xl glass-panel bg-black/40 text-[10px] font-black uppercase tracking-widest">
                   {p.displayName}
                 </div>
               </div>
             ))}
-
-            {(!participants || participants.length === 1) && (
-               <div className="relative rounded-[2.5rem] overflow-hidden bg-slate-900/30 border border-white/5 border-dashed flex items-center justify-center aspect-video hidden md:flex">
-                  <div className="flex flex-col items-center gap-6 text-center">
-                    <Users className="h-12 w-12 text-slate-800" />
-                    <span className="text-slate-700 font-black uppercase tracking-widest text-[10px]">Invite team members to begin</span>
-                    <Button 
-                      variant="link" 
-                      onClick={handleCopyInvite} 
-                      className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/80"
-                    >
-                      Copy Link
-                    </Button>
-                  </div>
-               </div>
-            )}
           </div>
         </div>
 
+        {/* Whiteboard Overlay */}
         {activeTab === 'whiteboard' && (
-          <div className="absolute inset-x-8 inset-y-24 md:inset-x-12 md:inset-y-28 z-30 transition-all">
+          <div className="absolute inset-x-8 inset-y-28 z-40 animate-in zoom-in-95 duration-300">
             <Whiteboard roomId={roomId} userId={user.id} onClose={() => setActiveTab(null)} />
           </div>
         )}
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 px-8 py-5 rounded-[2.5rem] bg-slate-900/90 backdrop-blur-3xl border border-white/10 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] z-40">
+        {/* Floating Controls */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-6 px-8 py-5 rounded-[2.5rem] glass-panel bg-background/80 shadow-[0_30px_60px_-12px_rgba(0,0,0,0.6)] z-50">
           <div className="flex items-center gap-2">
             <Button 
               variant="ghost" 
@@ -237,7 +228,7 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-14 w-14 rounded-2xl bg-white/5 hover:bg-primary/20 hover:text-primary text-slate-400"
+              className="h-14 w-14 rounded-2xl bg-white/5 hover:bg-primary/20 hover:text-primary text-muted-foreground"
               title="Screen Share"
             >
               <ScreenShare className="h-6 w-6" />
@@ -247,10 +238,9 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
               size="icon" 
               className={cn(
                 "h-14 w-14 rounded-2xl transition-all bg-white/5",
-                activeTab === 'whiteboard' ? "text-primary ring-2 ring-primary/20 bg-primary/10" : "text-slate-400 hover:bg-white/10"
+                activeTab === 'whiteboard' ? "text-primary ring-2 ring-primary/20 bg-primary/10" : "text-muted-foreground hover:bg-white/10"
               )}
               onClick={() => setActiveTab(activeTab === 'whiteboard' ? null : 'whiteboard')}
-              title="Whiteboard"
             >
               <Palette className="h-6 w-6" />
             </Button>
@@ -259,17 +249,25 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
               size="icon" 
               className={cn(
                 "h-14 w-14 rounded-2xl transition-all bg-white/5 relative",
-                activeTab === 'chat' ? "text-primary ring-2 ring-primary/20 bg-primary/10" : "text-slate-400 hover:bg-white/10"
+                activeTab === 'chat' ? "text-primary ring-2 ring-primary/20 bg-primary/10" : "text-muted-foreground hover:bg-white/10"
               )}
               onClick={() => setActiveTab(activeTab === 'chat' ? null : 'chat')}
-              title="Chat"
             >
               <MessageSquare className="h-6 w-6" />
+              <div className="absolute top-3.5 right-3.5 h-2 w-2 rounded-full bg-primary border-2 border-background" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-14 w-14 rounded-2xl bg-white/5 hover:bg-white/10 text-muted-foreground"
+            >
+              <MoreVertical className="h-6 w-6" />
             </Button>
           </div>
         </div>
       </div>
 
+      {/* Side Panels */}
       {activeTab === 'chat' && (
         <ChatPanel roomId={roomId} user={user} onClose={() => setActiveTab(null)} />
       )}

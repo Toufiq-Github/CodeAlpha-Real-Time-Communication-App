@@ -59,7 +59,6 @@
         "senderId": { "type": "string" },
         "senderName": { "type": "string" },
         "text": { "type": "string" },
-        "fileUrl": { "type": "string", "format": "uri" },
         "createdAt": { "type": "string", "format": "date-time" }
       }
     },

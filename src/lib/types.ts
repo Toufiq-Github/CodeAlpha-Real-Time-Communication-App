@@ -2,14 +2,9 @@
 export interface UserProfile {
   id: string;
   name: string;
-  username: string;
   email: string;
-  bio?: string;
   avatarUrl?: string;
   createdAt: string;
-  followerCount?: number;
-  followingCount?: number;
-  postCount?: number;
 }
 
 export interface Room {
@@ -34,7 +29,6 @@ export interface ChatMessage {
   senderId: string;
   senderName: string;
   text: string;
-  fileUrl?: string;
   createdAt: string;
 }
 
@@ -43,15 +37,6 @@ export interface WhiteboardPath {
   userId: string;
   color: string;
   points: Array<{ x: number; y: number }>;
-  createdAt: string;
-}
-
-export interface SignalingMessage {
-  id: string;
-  from: string;
-  to: string;
-  type: 'offer' | 'answer' | 'candidate';
-  data: string;
   createdAt: string;
 }
 
