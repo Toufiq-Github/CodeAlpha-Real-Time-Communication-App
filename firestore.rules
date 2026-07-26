@@ -12,9 +12,8 @@ service cloud.firestore {
     }
 
     match /rooms/{roomId} {
-      // Allow any signed-in user to list rooms and read metadata
-      // The application query filters by 'createdBy', which is safe
-      allow read, create: if isSignedIn();
+      // Explicitly allow list and get for signed-in users
+      allow list, get, create: if isSignedIn();
       
       // Only the creator can update or delete the room metadata
       allow update, delete: if isSignedIn() && resource.data.createdBy == request.auth.uid;
@@ -33,18 +32,6 @@ service cloud.firestore {
 
       match /whiteboard/{pathId} {
         allow read, create: if isSignedIn();
-      }
-    }
-
-    // Legacy support for other collections
-    match /posts/{postId} {
-      allow read: if true;
-      allow create: if isSignedIn();
-      allow update, delete: if isSignedIn() && resource.data.authorId == request.auth.uid;
-
-      match /comments/{commentId} {
-        allow read: if true;
-        allow create: if isSignedIn();
       }
     }
   }
