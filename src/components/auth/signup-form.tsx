@@ -29,13 +29,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
@@ -48,7 +41,6 @@ const formSchema = z
     email: z.string().email({
       message: 'Please enter a valid email address.',
     }),
-    role: z.enum(['Patient', 'Doctor']),
     password: z.string().min(6, {
       message: 'Password must be at least 6 characters.',
     }),
@@ -74,7 +66,6 @@ export function SignupForm() {
       email: '',
       password: '',
       confirmPassword: '',
-      role: 'Patient',
     },
   });
 
@@ -87,49 +78,31 @@ export function SignupForm() {
       );
       const user = userCredential.user;
 
-      const batch = writeBatch(db);
-
       const userProfile = {
         id: user.uid,
         name: values.name,
         email: values.email,
-        role: values.role,
+        createdAt: new Date().toISOString(),
       };
+      
       const userDocRef = doc(db, 'users', user.uid);
-      batch.set(userDocRef, userProfile);
-
-      if (values.role === 'Doctor') {
-        const doctorProfile = {
-          userId: user.uid,
-          name: values.name,
-          specialty: 'General Ophthalmology', // Default specialty
-          email: values.email,
-        };
-        const doctorDocRef = doc(db, 'doctors', user.uid);
-        batch.set(doctorDocRef, doctorProfile);
-      }
-
-      await batch.commit().catch((serverError) => {
-        // This unified catch block will handle permission errors for both writes
+      
+      await setDoc(userDocRef, userProfile).catch((serverError) => {
         const permissionError = new FirestorePermissionError({
-          path: 'batch write', // Path is less specific for a batch
+          path: userDocRef.path,
           operation: 'create',
-          requestResourceData: { userProfile, role: values.role },
+          requestResourceData: userProfile,
         });
         errorEmitter.emit('permission-error', permissionError);
-        throw serverError; // Re-throw to be caught by the outer try/catch
+        throw serverError;
       });
 
       toast({
-        title: 'Account Created!',
-        description: 'You have been successfully signed up.',
+        title: 'Welcome to OmniMeet!',
+        description: 'Your account has been successfully created.',
       });
 
-      if (values.role === 'Doctor') {
-        router.push('/doctor');
-      } else {
-        router.push('/dashboard');
-      }
+      router.push('/dashboard');
     } catch (error: any) {
       console.error('Signup failed:', error);
       toast({
@@ -143,9 +116,9 @@ export function SignupForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl">Create an Account</CardTitle>
+        <CardTitle className="text-2xl">Create Account</CardTitle>
         <CardDescription>
-          Enter your details below to create your OptiCare AI account.
+          Join OmniMeet to collaborate in real-time with your team.
         </CardDescription>
       </CardHeader>
       <Form {...form}>
@@ -173,30 +146,6 @@ export function SignupForm() {
                   <FormControl>
                     <Input placeholder="name@example.com" {...field} suppressHydrationWarning />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>I am a...</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger suppressHydrationWarning>
-                        <SelectValue placeholder="Select a role" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Patient">Patient</SelectItem>
-                      <SelectItem value="Doctor">Doctor</SelectItem>
-                    </SelectContent>
-                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -287,8 +236,8 @@ export function SignupForm() {
               disabled={form.formState.isSubmitting}
             >
               {form.formState.isSubmitting
-                ? 'Creating Account...'
-                : 'Create Account'}
+                ? 'Onboarding...'
+                : 'Get Started'}
             </Button>
             <div className="text-center text-sm">
               Already have an account?{' '}

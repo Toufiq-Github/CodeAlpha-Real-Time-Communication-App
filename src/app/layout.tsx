@@ -1,4 +1,3 @@
-
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -10,8 +9,8 @@ import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: 'EyeMeet AI | Secure Real-Time Collaboration',
-  description: 'Video conferencing, screen sharing, and collaborative whiteboards for modern teams.',
+  title: 'OmniMeet | Secure Real-Time Collaboration',
+  description: 'High-performance video conferencing, screen sharing, and collaborative whiteboards for modern teams.',
 };
 
 export default function RootLayout({

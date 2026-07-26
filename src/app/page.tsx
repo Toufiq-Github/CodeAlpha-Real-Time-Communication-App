@@ -1,14 +1,13 @@
-
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser, useFirestore } from '@/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Video, Plus, ArrowRight, Shield, Share2, Palette } from 'lucide-react';
+import { Video, Plus, Shield, Share2, Palette, Zap } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import Link from 'next/link';
 
@@ -59,27 +58,26 @@ export default function LandingPage() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-widest">
-              <Shield className="h-3 w-3" />
-              E2E Encrypted Signaling
+              <Zap className="h-3 w-3" />
+              Ultra-low latency signaling
             </div>
             <h1 className="text-5xl lg:text-7xl font-black tracking-tighter leading-tight">
-              Real-time <br />
-              <span className="text-primary italic">Collaboration</span> <br />
-              Perfected.
+              Collaborate <br />
+              <span className="text-primary italic">Without Boundaries.</span>
             </h1>
             <p className="text-xl text-slate-400 max-w-lg leading-relaxed">
-              Video calls, screen sharing, and interactive whiteboards. All in one secure, seamless platform built for the modern team.
+              Experience professional-grade video meetings, collaborative whiteboards, and real-time synchronization. Built for modern teams that demand security and speed.
             </p>
 
             <Card className="bg-white/5 border-white/10 rounded-[2rem] overflow-hidden backdrop-blur-xl">
               <CardHeader>
-                <CardTitle className="text-white text-lg">Start a New Meeting</CardTitle>
-                <CardDescription className="text-slate-400 text-sm">Create a secure room and invite your team instantly.</CardDescription>
+                <CardTitle className="text-white text-lg">Quick Start Meeting</CardTitle>
+                <CardDescription className="text-slate-400 text-sm">Launch a secure session and share the link instantly.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex gap-3">
                   <Input 
-                    placeholder="Enter meeting name..." 
+                    placeholder="Meeting title..." 
                     className="bg-white/5 border-white/10 rounded-xl h-12"
                     value={roomName}
                     onChange={(e) => setRoomName(e.target.value)}
@@ -89,12 +87,12 @@ export default function LandingPage() {
                     onClick={handleCreateRoom}
                     disabled={!user || isCreating || !roomName.trim()}
                   >
-                    {isCreating ? 'Setting up...' : 'Create'}
+                    {isCreating ? 'Deploying...' : 'Create Room'}
                     <Plus className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
                 {!user && (
-                   <p className="text-xs text-primary/60 font-medium">Please login to create a room.</p>
+                   <p className="text-xs text-primary/60 font-medium">Authentication required to host meetings.</p>
                 )}
               </CardContent>
             </Card>
@@ -103,10 +101,10 @@ export default function LandingPage() {
           {/* Feature Grid */}
           <div className="grid grid-cols-2 gap-4">
             {[
-              { icon: Video, title: "HD Video", desc: "Crystal clear multi-user streaming" },
-              { icon: Share2, title: "Screen Share", desc: "Present your work in real-time" },
-              { icon: Palette, title: "Whiteboard", desc: "Sketch ideas collaboratively" },
-              { icon: Shield, title: "Secure", desc: "Private WebRTC signaling" },
+              { icon: Video, title: "HD Video", desc: "Crystal clear multi-party streaming" },
+              { icon: Share2, title: "Deep Sync", desc: "Low-latency state synchronization" },
+              { icon: Palette, title: "Whiteboard", desc: "Collaborative sketching tools" },
+              { icon: Shield, title: "Encrypted", desc: "Enterprise-grade security rules" },
             ].map((f, i) => (
               <div key={i} className="p-8 rounded-[2rem] bg-white/5 border border-white/10 space-y-4 hover:bg-white/10 transition-colors">
                 <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center">
