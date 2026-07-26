@@ -21,7 +21,11 @@ import { Calendar } from "lucide-react";
 
 function DoctorName({ doctorId }: { doctorId: string }) {
   const db = useFirestore();
-  const doctorRef = useMemo(() => doctorId ? doc(db, 'users', doctorId) : null, [db, doctorId]);
+  const doctorRef = useMemo(() => {
+    if (!db || !doctorId) return null;
+    return doc(db, 'users', doctorId);
+  }, [db, doctorId]);
+  
   const { data: doctor, loading } = useDoc(doctorRef);
 
   if (loading) return <Skeleton className="h-4 w-24" />;

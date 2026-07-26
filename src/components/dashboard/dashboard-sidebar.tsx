@@ -65,7 +65,7 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
         </div>
         <div className="hidden h-12 w-full items-center justify-center group-data-[collapsible=icon]:flex">
             <Link href="/dashboard">
-                <Logo className="[&>span]:hidden" />
+                <Logo size="sm" className="[&>span]:hidden" />
             </Link>
         </div>
       </SidebarHeader>

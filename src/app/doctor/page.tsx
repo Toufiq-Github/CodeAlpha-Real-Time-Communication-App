@@ -24,7 +24,11 @@ import { errorEmitter } from "@/firebase/error-emitter";
 
 function PatientName({ patientId }: { patientId: string }) {
   const db = useFirestore();
-  const patientRef = useMemo(() => patientId ? doc(db, 'users', patientId) : null, [db, patientId]);
+  const patientRef = useMemo(() => {
+    if (!db || !patientId) return null;
+    return doc(db, 'users', patientId);
+  }, [db, patientId]);
+  
   const { data: patient, loading } = useDoc(patientRef);
 
   if (loading) return <Skeleton className="h-4 w-24" />;

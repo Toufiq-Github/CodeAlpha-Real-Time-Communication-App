@@ -1,21 +1,21 @@
 # TeamSync | Enterprise Collaboration Platform
 
-TeamSync is a high-performance collaboration environment designed for distributed teams. It unifies video conferencing, real-time messaging, and AI-augmented productivity tools within a minimalist, high-contrast monochrome interface.
+TeamSync is a high-performance collaboration environment designed for distributed teams. It unifies video conferencing, real-time messaging, and session management within a minimalist, high-contrast monochrome interface inspired by professional Apple ecosystem applications.
 
 ## Core Features
 
 - **High-Fidelity Media**: Secure, low-latency video and audio communication.
 - **Synchronized Workspace**: Real-time collaborative signaling and messaging.
-- **AI-Powered Productivity**: Integrated Genkit flows for session refinement and summarization.
-- **Audit & History**: Persistent session archives and objective tracking.
-- **Enterprise Security**: Role-based access control powered by Firebase.
+- **Session Audit & History**: Persistent archives of launched sessions and objective outcomes.
+- **Professional Monochrome UI**: A strictly grayscale, high-contrast interface designed for focus and productivity.
+- **Enterprise Security**: Role-based access control and secure peer discovery powered by Firebase.
 
 ## Technology Stack
 
 - **Framework**: Next.js 15 (App Router)
 - **Backend**: Firebase (Firestore, Authentication)
-- **AI**: Google Genkit (Gemini 2.5 Flash)
-- **Styling**: Tailwind CSS & ShadCN UI (Monochrome Theme)
+- **Styling**: Tailwind CSS & ShadCN UI (Custom Monochrome Theme)
+- **Icons**: Lucide React
 
 ---
 
@@ -44,7 +44,6 @@ In the Vercel project settings, add the following **Environment Variables**:
 
 | Variable | Description |
 | :--- | :--- |
-| `GEMINI_API_KEY` | Your Google AI Studio API Key |
 | `NEXT_PUBLIC_FIREBASE_API_KEY` | Firebase API Key |
 | `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Firebase Auth Domain |
 | `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Firebase Project ID |
@@ -60,7 +59,7 @@ Click **Deploy**. Vercel will build the project and provide a live URL.
 ## Local Development
 
 1. **Install Dependencies**: `npm install`
-2. **Environment Setup**: Create a `.env` file with your `GEMINI_API_KEY`.
+2. **Environment Setup**: Create a `.env.local` file with your Firebase credentials.
 3. **Run**: `npm run dev`
 
 *© 2024 TeamSync Infrastructure. Professional tools for distributed excellence.*
