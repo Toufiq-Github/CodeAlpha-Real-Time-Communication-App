@@ -1,20 +1,16 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 import { useUser, useFirestore, useCollection } from '@/firebase';
 import { collection, query, where, limit } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Video, Clock, Calendar, Link as LinkIcon, Sparkles } from 'lucide-react';
+import { Video, Clock, Calendar, Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
 import { Room } from '@/lib/types';
-import { useToast } from '@/hooks/use-toast';
 
 export default function SessionHistoryPage() {
   const { user } = useUser();
   const db = useFirestore();
-  const { toast } = useToast();
 
   const historyQuery = useMemo(() => {
     if (!db || !user) return null;
@@ -33,12 +29,6 @@ export default function SessionHistoryPage() {
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }, [rooms]);
-
-  const copyRoomLink = (roomId: string) => {
-    const url = `${window.location.origin}/room/${roomId}`;
-    navigator.clipboard.writeText(url);
-    toast({ title: "Invite Link Copied" });
-  };
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
@@ -82,18 +72,6 @@ export default function SessionHistoryPage() {
                           </div>
                         </div>
                       </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 w-full sm:w-auto">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="rounded-xl px-5 h-10 border-white/10 hover:bg-white/5 text-[10px] font-black uppercase tracking-widest gap-2"
-                        onClick={() => copyRoomLink(room.id)}
-                      >
-                        <LinkIcon className="h-3 w-3" />
-                        Copy Invite
-                      </Button>
                     </div>
                   </div>
 
