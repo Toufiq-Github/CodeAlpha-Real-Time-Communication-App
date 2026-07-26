@@ -79,6 +79,16 @@ To securely push this project to a private or public GitHub repository:
    ```bash
    git push -u origin main
    ```
+ ## 👨‍💻 Author
+
+**Shafaeat Hasan Toufiq**
+
+- LinkedIn: https://www.linkedin.com/in/shafaeat-hasan-toufiq/
+- GitHub: https://github.com/Toufiq-Github
+
+
+---
+Official Repository: [https://github.com/Toufiq-Github/CodeAlpha-Ecommerce-Store](https://github.com/Toufiq-Github/CodeAlpha-Ecommerce-Store)
 
 ---
 
