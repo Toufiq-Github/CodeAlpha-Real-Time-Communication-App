@@ -1,4 +1,3 @@
-
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -90,10 +89,8 @@ export function LoginForm() {
                   <FormLabel className="text-slate-300">Email</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="name@example.com" 
                       {...field} 
                       className="bg-white/5 border-white/10 text-white"
-                      suppressHydrationWarning 
                     />
                   </FormControl>
                   <FormMessage />
@@ -109,10 +106,8 @@ export function LoginForm() {
                   <FormControl>
                     <Input 
                       type="password" 
-                      placeholder="••••••••" 
                       {...field} 
                       className="bg-white/5 border-white/10 text-white"
-                      suppressHydrationWarning 
                     />
                   </FormControl>
                   <FormMessage />

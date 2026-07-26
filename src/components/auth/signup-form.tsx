@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -134,10 +133,8 @@ export function SignupForm() {
                   <FormLabel className="text-slate-300">Full Name</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="John Doe" 
                       {...field} 
                       className="bg-white/5 border-white/10 text-white"
-                      suppressHydrationWarning 
                     />
                   </FormControl>
                   <FormMessage />
@@ -152,10 +149,8 @@ export function SignupForm() {
                   <FormLabel className="text-slate-300">Email</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="name@example.com" 
                       {...field} 
                       className="bg-white/5 border-white/10 text-white"
-                      suppressHydrationWarning 
                     />
                   </FormControl>
                   <FormMessage />
@@ -172,10 +167,8 @@ export function SignupForm() {
                     <div className="relative">
                       <Input
                         type={showPassword ? 'text' : 'password'}
-                        placeholder="••••••••"
                         {...field}
                         className="bg-white/5 border-white/10 text-white pr-10"
-                        suppressHydrationWarning
                       />
                       <Button
                         type="button"
@@ -183,7 +176,6 @@ export function SignupForm() {
                         size="icon"
                         className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 text-slate-400 hover:text-white"
                         onClick={() => setShowPassword(!showPassword)}
-                        suppressHydrationWarning
                       >
                         {showPassword ? (
                           <EyeOff className="h-4 w-4" />
@@ -210,10 +202,8 @@ export function SignupForm() {
                     <div className="relative">
                       <Input
                         type={showConfirmPassword ? 'text' : 'password'}
-                        placeholder="••••••••"
                         {...field}
                         className="bg-white/5 border-white/10 text-white pr-10"
-                        suppressHydrationWarning
                       />
                       <Button
                         type="button"
@@ -223,7 +213,6 @@ export function SignupForm() {
                         onClick={() =>
                           setShowConfirmPassword(!showConfirmPassword)
                         }
-                        suppressHydrationWarning
                       >
                         {showConfirmPassword ? (
                           <EyeOff className="h-4 w-4" />
