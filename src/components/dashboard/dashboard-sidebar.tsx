@@ -86,13 +86,13 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
                   className={cn(
                     "h-11 transition-all duration-200 text-[14px] font-medium px-4",
                     isActive 
-                      ? "sidebar-item-active font-semibold bg-white/5 border border-white/10" 
-                      : "hover:bg-sidebar-accent text-sidebar-foreground hover:text-foreground"
+                      ? "sidebar-item-active text-black bg-white" 
+                      : "hover:bg-sidebar-accent/10 text-sidebar-foreground hover:text-white"
                   )}
                 >
                   <Link href={item.href} className="flex items-center gap-4">
-                      <Icon className={cn("h-5 w-5", isActive ? "text-accent" : "text-sidebar-foreground")} />
-                      <span className={cn("tracking-tight", isActive ? "text-accent" : "")}>{item.label}</span>
+                      <Icon className={cn("h-5 w-5", isActive ? "text-black" : "text-sidebar-foreground")} />
+                      <span className={cn("tracking-tight", isActive ? "text-black" : "")}>{item.label}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -106,7 +106,7 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
             <SidebarMenuItem>
                 <SidebarMenuButton 
                     suppressHydrationWarning
-                    className="h-11 rounded-[12px] hover:bg-sidebar-accent text-sidebar-foreground hover:text-foreground text-[14px]"
+                    className="h-11 rounded-[12px] hover:bg-sidebar-accent/10 text-sidebar-foreground hover:text-white text-[14px]"
                     tooltip={user?.email || 'Profile'}
                     asChild
                 >

@@ -35,8 +35,8 @@ export function Logo({ className, size = 'md' }: LogoProps) {
       )}>
         <Shield className={cn("text-black", iconSizes[size])} />
       </div>
-      <span className={cn("font-black tracking-tighter text-foreground uppercase italic", textSizes[size])}>
-        TEAM<span className="text-accent not-italic">SYNC</span>
+      <span className={cn("font-bold tracking-tighter text-foreground uppercase italic", textSizes[size])}>
+        TEAM<span className="not-italic opacity-80">SYNC</span>
       </span>
     </div>
   );
