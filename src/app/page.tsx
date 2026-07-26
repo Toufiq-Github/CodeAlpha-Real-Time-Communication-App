@@ -6,7 +6,7 @@ import { useUser, useFirestore } from '@/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Video, Shield, Zap, Layout, ArrowRight, Play } from 'lucide-react';
+import { Shield, Zap, Layout, ArrowRight, Play, Globe } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import Link from 'next/link';
 
@@ -24,7 +24,7 @@ export default function LandingPage() {
     setIsCreating(true);
     try {
       const docRef = await addDoc(collection(db, 'rooms'), {
-        name: `Sync-${Math.random().toString(36).substring(7).toUpperCase()}`,
+        name: `SYNC-${Math.random().toString(36).substring(7).toUpperCase()}`,
         createdBy: user.id,
         createdAt: new Date().toISOString(),
         isActive: true,
@@ -51,73 +51,69 @@ export default function LandingPage() {
               <Button variant="ghost" className="rounded-full text-white/60 hover:text-white" asChild>
                 <Link href="/login">Login</Link>
               </Button>
-              <Button className="rounded-full px-8 shadow-[0_0_30px_rgba(var(--primary),0.3)]" asChild>
-                <Link href="/signup">Start Now</Link>
+              <Button className="rounded-full px-8 shadow-xl shadow-primary/20" asChild>
+                <Link href="/signup">Get Started</Link>
               </Button>
             </>
           )}
         </div>
       </header>
 
-      <main className="container mx-auto px-6 py-20 lg:py-40 relative">
-        <div className="absolute top-[-20%] left-[-10%] -z-10 w-[1000px] h-[1000px] bg-primary/10 rounded-full blur-[160px]" />
-        <div className="absolute bottom-[-20%] right-[-10%] -z-10 w-[800px] h-[800px] bg-blue-600/5 rounded-full blur-[140px]" />
+      <main className="container mx-auto px-6 py-20 lg:py-32 relative">
+        <div className="absolute top-[-20%] left-[-10%] -z-10 w-[1000px] h-[1000px] bg-primary/5 rounded-full blur-[160px]" />
         
         <div className="max-w-5xl mx-auto text-center space-y-12">
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary/5 border border-primary/10 text-primary text-[10px] font-black uppercase tracking-[0.3em]">
-            <span className="flex h-2 w-2 rounded-full bg-primary animate-ping mr-1" />
-            Empowering Modern Teams
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.3em]">
+            <Globe className="h-3 w-3" />
+            Empowering Distributed Teams
           </div>
           
-          <h1 className="text-7xl lg:text-9xl font-black tracking-tighter leading-[0.9] text-white uppercase">
+          <h1 className="text-6xl lg:text-8xl font-black tracking-tighter leading-[0.9] text-white uppercase">
             UNIFY YOUR <br />
             <span className="text-primary italic">WORKSPACE.</span>
           </h1>
           
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-medium">
-            OmniMeet is a high-fidelity workspace for high-performing teams. Seamlessly bridge the gap between video, interactive whiteboards, and real-time data.
+            OmniMeet provides high-fidelity collaboration for performance-driven teams. Secure video, interactive whiteboards, and real-time team synchronization in one unified interface.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">
             <Button 
               size="lg" 
               onClick={handleQuickMeeting}
-              className="h-20 px-12 rounded-[2rem] text-xl font-black shadow-[0_20px_50px_rgba(var(--primary),0.3)] transition-all hover:scale-105 active:scale-95"
+              className="h-16 px-12 rounded-2xl text-lg font-black shadow-2xl transition-all hover:scale-105 active:scale-95"
               disabled={isCreating}
             >
-              {isCreating ? 'Initializing...' : 'Launch Instant Session'}
-              <Play className="ml-4 h-6 w-6 fill-current" />
+              {isCreating ? 'Deploying...' : 'Launch Instant Session'}
+              <Play className="ml-4 h-5 w-5 fill-current" />
             </Button>
             <Button 
               size="lg" 
               variant="outline" 
-              className="h-20 px-12 rounded-[2rem] text-xl font-black border-white/10 bg-white/5 backdrop-blur-md hover:bg-white/10"
+              className="h-16 px-12 rounded-2xl text-lg font-black border-white/10 bg-white/5 backdrop-blur-md hover:bg-white/10"
               asChild
             >
               <Link href="/dashboard">
-                View All Rooms
-                <ArrowRight className="ml-4 h-6 w-6" />
+                Workspace Hub
+                <ArrowRight className="ml-4 h-5 w-5" />
               </Link>
             </Button>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-10 mt-40">
+        <div className="grid md:grid-cols-3 gap-8 mt-32">
           {[
-            { icon: Shield, title: "Enterprise Security", desc: "Private signaling layers and data encryption ensure your organization's discussions remain strictly confidential." },
-            { icon: Zap, title: "Low-Latency Media", desc: "Optimized WebRTC architecture delivers crystal-clear video and sub-second latency for seamless conversation." },
-            { icon: Layout, title: "Integrated Workspace", desc: "A unified interface combining talk, visual ideation, and persistent data for comprehensive team execution." }
+            { icon: Shield, title: "Enterprise Grade", desc: "Private signaling layers and end-to-end data synchronization ensure your team's objectives remain strictly confidential." },
+            { icon: Zap, title: "Low-Latency Discovery", desc: "Optimized WebRTC architecture delivers crystal-clear media and sub-second latency for seamless peer discovery." },
+            { icon: Layout, title: "Integrated Context", desc: "A unified interface combining high-fidelity media, visual ideation, and persistent signaling data." }
           ].map((feature, i) => (
-            <Card key={i} className="glass-panel border-none rounded-[2.5rem] hover:ring-2 ring-primary/20 transition-all duration-500 group overflow-hidden">
-              <CardContent className="p-12 space-y-6 relative">
-                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                   <feature.icon className="h-32 w-32" />
+            <Card key={i} className="glass-panel border-none rounded-3xl hover:ring-2 ring-primary/20 transition-all duration-500 group overflow-hidden">
+              <CardContent className="p-10 space-y-6">
+                <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary transition-all duration-500 shadow-inner">
+                  <feature.icon className="h-7 w-7 text-primary group-hover:text-white" />
                 </div>
-                <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner">
-                  <feature.icon className="h-8 w-8 text-primary group-hover:text-white" />
-                </div>
-                <h3 className="text-2xl font-black text-white tracking-tight uppercase">{feature.title}</h3>
-                <p className="text-muted-foreground leading-relaxed font-medium text-lg">{feature.desc}</p>
+                <h3 className="text-xl font-black text-white tracking-tight uppercase">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed font-medium">{feature.desc}</p>
               </CardContent>
             </Card>
           ))}
