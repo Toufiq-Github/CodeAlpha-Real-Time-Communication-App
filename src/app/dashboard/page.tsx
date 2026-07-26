@@ -7,7 +7,7 @@ import { collection, addDoc, query, where, limit } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Video, Calendar, UserPlus, Clock, Shield, Share2, Sparkles } from 'lucide-react';
+import { Video, Calendar, UserPlus, Clock, Shield, Share2, Sparkles, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Room } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
@@ -17,7 +17,7 @@ export default function Dashboard() {
   const [roomName, setRoomName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
-  const { user } = useUser();
+  const { user, loading: userLoading } = useUser();
   const db = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
@@ -31,7 +31,7 @@ export default function Dashboard() {
     );
   }, [db, user]);
 
-  const { data: rooms, loading } = useCollection<Room>(historyQuery);
+  const { data: rooms, loading: roomsLoading } = useCollection<Room>(historyQuery);
 
   const recentRooms = useMemo(() => {
     if (!rooms) return [];
@@ -41,7 +41,24 @@ export default function Dashboard() {
   }, [rooms]);
 
   const handleCreateRoom = async () => {
-    if (!user || !roomName.trim()) return;
+    if (!user) {
+      toast({
+        variant: 'destructive',
+        title: 'Sync in Progress',
+        description: 'Please wait while your profile is being synchronized.',
+      });
+      return;
+    }
+
+    if (!roomName.trim()) {
+      toast({
+        variant: 'destructive',
+        title: 'Title Required',
+        description: 'Please provide a title for your workspace session.',
+      });
+      return;
+    }
+
     setIsCreating(true);
     try {
       const docRef = await addDoc(collection(db, 'rooms'), {
@@ -52,28 +69,43 @@ export default function Dashboard() {
       });
       router.push(`/room/${docRef.id}`);
     } catch (error) {
+      console.error("Initialization Failed:", error);
       toast({
         variant: 'destructive',
         title: 'Initialization Failed',
-        description: 'Could not deploy workspace session.',
+        description: 'Could not deploy workspace session. Please check your connection.',
       });
     } finally {
       setIsCreating(false);
     }
   };
 
+  if (userLoading) {
+    return (
+      <div className="flex h-[80vh] w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-10 w-10 text-primary animate-spin" />
+          <p className="text-muted-foreground font-black uppercase tracking-[0.2em] text-[10px]">Synchronizing Workspace...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-6xl mx-auto space-y-8 md:space-y-12 pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8">
         <div>
           <h1 className="text-3xl md:text-4xl font-black tracking-tighter text-white uppercase italic">Team<span className="text-primary">Sync</span></h1>
-          <p className="text-muted-foreground mt-1 md:mt-2 text-base md:text-lg font-medium tracking-tight">Execute your objectives, {user?.name}.</p>
+          <p className="text-muted-foreground mt-1 md:mt-2 text-base md:text-lg font-medium tracking-tight">
+            Execute your objectives, <span className="text-white">{user?.name || 'Member'}</span>.
+          </p>
         </div>
         <div className="flex items-center gap-2 md:gap-3">
             <Button 
               variant="outline" 
               className="flex-1 md:flex-none rounded-xl border-white/5 bg-white/5 gap-2 h-10 md:h-11 px-4 md:px-5 font-bold hover:bg-white/10"
               onClick={() => setIsScheduleModalOpen(true)}
+              disabled={!user}
             >
                 <Calendar className="h-4 w-4 text-primary" />
                 Schedule
@@ -98,14 +130,21 @@ export default function Dashboard() {
                 className="h-12 md:h-14 rounded-xl bg-white/5 border-white/10 text-base md:text-lg font-medium px-4 md:px-6 focus-visible:ring-primary/50 text-white"
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleCreateRoom()}
               />
               <Button 
                 onClick={handleCreateRoom}
-                disabled={isCreating || !roomName.trim()}
+                disabled={isCreating || !roomName.trim() || !user}
                 className="h-12 md:h-14 rounded-xl px-6 md:px-8 font-black text-sm md:text-base shadow-xl transition-all active:scale-95"
               >
-                {isCreating ? 'Deploying...' : 'Launch Room'}
-                <Video className="ml-2 h-4 w-4 md:h-5 md:w-5" />
+                {isCreating ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <>
+                    Launch Room
+                    <Video className="ml-2 h-4 w-4 md:h-5 md:w-5" />
+                  </>
+                )}
               </Button>
             </div>
           </CardContent>
@@ -138,8 +177,11 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="p-6 md:p-8 pt-0">
             <div className="space-y-3 md:space-y-4">
-              {loading ? (
-                <p className="text-muted-foreground animate-pulse font-medium text-sm">Syncing archives...</p>
+              {roomsLoading ? (
+                <div className="flex items-center gap-3 p-4">
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                  <p className="text-muted-foreground font-medium text-sm">Syncing archives...</p>
+                </div>
               ) : recentRooms && recentRooms.length > 0 ? (
                 recentRooms.map(room => (
                   <div 
