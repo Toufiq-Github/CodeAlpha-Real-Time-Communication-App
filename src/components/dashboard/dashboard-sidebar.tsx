@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -57,7 +58,7 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
 
   return (
     <Sidebar collapsible="icon" className="border-r border-border bg-[#0B0B0B]">
-      <SidebarHeader className="py-10 px-6">
+      <SidebarHeader className="py-8 px-6">
         <div className="flex w-full items-center justify-start group-data-[collapsible=icon]:hidden">
           <Link href="/dashboard">
             <Logo size="sm" />
@@ -70,8 +71,8 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
         </div>
       </SidebarHeader>
       
-      <SidebarContent className="px-4 pt-6">
-        <SidebarMenu className="gap-3">
+      <SidebarContent className="px-4 pt-4">
+        <SidebarMenu className="gap-2">
           {navItems.map((item) => {
             const Icon = IconMap[item.icon as keyof typeof IconMap] || LayoutDashboard;
             const isActive = pathname === item.href;
@@ -84,14 +85,14 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
                   asChild
                   tooltip={item.tooltip}
                   className={cn(
-                    "h-12 transition-all duration-200 text-[16px] font-medium px-4",
+                    "h-11 transition-all duration-200 text-[14px] font-medium px-4",
                     isActive 
                       ? "sidebar-item-active font-semibold" 
                       : "hover:bg-[#1F1F1F] text-[#BDBDBD] hover:text-[#FFFFFF]"
                   )}
                 >
                   <Link href={item.href} className="flex items-center gap-4">
-                      <Icon className={cn("h-[24px] w-[24px]", isActive ? "text-white" : "text-[#BDBDBD]")} />
+                      <Icon className={cn("h-5 w-5", isActive ? "text-white" : "text-[#BDBDBD]")} />
                       <span className="tracking-tight">{item.label}</span>
                   </Link>
                 </SidebarMenuButton>
@@ -101,17 +102,17 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
         </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter className="p-6 border-t border-border bg-black/10">
-         <SidebarMenu className="gap-3">
+      <SidebarFooter className="p-4 border-t border-border bg-black/10">
+         <SidebarMenu className="gap-2">
             <SidebarMenuItem>
                 <SidebarMenuButton 
                     suppressHydrationWarning
-                    className="h-12 rounded-[12px] hover:bg-[#1F1F1F] text-[#BDBDBD] hover:text-[#FFFFFF] text-[16px]"
+                    className="h-11 rounded-[12px] hover:bg-[#1F1F1F] text-[#BDBDBD] hover:text-[#FFFFFF] text-[14px]"
                     tooltip={user?.email || 'Profile'}
                     asChild
                 >
                     <Link href="/dashboard/settings" className="flex items-center gap-4">
-                        <UserCircle className="h-[24px] w-[24px]" />
+                        <UserCircle className="h-5 w-5" />
                         <span className="font-medium truncate">{user?.name || 'Session User'}</span>
                     </Link>
                 </SidebarMenuButton>
@@ -119,11 +120,11 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
              <SidebarMenuItem>
                 <SidebarMenuButton 
                     suppressHydrationWarning
-                    className="h-12 rounded-[12px] hover:bg-destructive/10 text-[#BDBDBD] hover:text-destructive transition-colors text-[16px]"
+                    className="h-11 rounded-[12px] hover:bg-destructive/10 text-[#BDBDBD] hover:text-destructive transition-colors text-[14px]"
                     tooltip="Logout" 
                     onClick={handleLogout}
                 >
-                    <LogOut className="h-[24px] w-[24px]" />
+                    <LogOut className="h-5 w-5" />
                     <span className="font-medium">Logout</span>
                 </SidebarMenuButton>
             </SidebarMenuItem>
