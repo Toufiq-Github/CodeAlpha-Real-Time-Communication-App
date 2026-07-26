@@ -16,21 +16,21 @@
     --secondary-foreground: 0 0% 96%;
     --muted: 0 0% 11%;            /* #1C1C1C */
     --muted-foreground: 0 0% 50.2%; /* #808080 */
-    --accent: 0 0% 100%;          /* White */
-    --accent-foreground: 0 0% 0%; /* Black */
+    --accent: 0 0% 100%;          /* #FFFFFF */
+    --accent-foreground: 0 0% 0%; /* #000000 */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 25%;           /* #404040 */
     --input: 0 0% 10%;            /* #1A1A1A */
-    --ring: 0 0% 50%;             /* Gray Focus Ring */
+    --ring: 0 0% 50%;
     --radius: 12px;
 
     --sidebar-background: 0 0% 5%; /* #0D0D0D */
     --sidebar-foreground: 0 0% 70%;/* #B3B3B3 */
     --sidebar-primary: 0 0% 100%;
     --sidebar-primary-foreground: 0 0% 0%;
-    --sidebar-accent: 0 0% 100%;   /* White for active items */
-    --sidebar-accent-foreground: 0 0% 0%; /* Black for active items */
+    --sidebar-accent: 0 0% 100%;   /* White background */
+    --sidebar-accent-foreground: 0 0% 0%; /* Black text */
     --sidebar-border: 0 0% 25%;    /* #404040 */
     --sidebar-ring: 0 0% 50%;
   }
@@ -68,7 +68,7 @@
 
 .secondary-button {
   background: #202020;
-  color: #F5F5F5;
+  color: #B3B3B3;
   border: 1px solid #404040;
   border-radius: 10px;
   transition: all 0.2s ease;
@@ -76,7 +76,7 @@
 
 .secondary-button:hover {
   background: #2A2A2A;
-  border-color: #505050;
+  color: #FFFFFF;
 }
 
 .input-field {
@@ -85,31 +85,6 @@
   border-radius: 10px;
   height: 52px;
   color: #FFFFFF;
-  font-size: 14px;
-}
-
-.input-field::placeholder {
-  color: #606060;
-}
-
-.input-field:focus {
-  border-color: #E8E8E8;
-  background: #000000;
-  outline: none;
-}
-
-.sidebar-item-active {
-  @apply bg-white;
-  border-radius: 8px;
-}
-
-.sidebar-item-active span,
-.sidebar-item-active svg {
-  @apply text-black font-semibold;
-}
-
-.status-chip {
-  @apply inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-widest;
 }
 
 ::-webkit-scrollbar {
@@ -120,17 +95,4 @@
 }
 ::-webkit-scrollbar-thumb {
   @apply bg-white/10 rounded-full;
-}
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-white/20;
-}
-
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-input[type=number] {
-  -moz-appearance: textfield;
 }

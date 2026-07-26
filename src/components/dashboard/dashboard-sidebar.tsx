@@ -63,11 +63,6 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
             <Logo size="sm" />
           </Link>
         </div>
-        <div className="hidden h-12 w-full items-center justify-center group-data-[collapsible=icon]:flex">
-            <Link href="/dashboard">
-                <Logo size="sm" className="[&>span]:hidden" />
-            </Link>
-        </div>
       </SidebarHeader>
       
       <SidebarContent className="px-4 pt-4">
@@ -79,19 +74,17 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
             return (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
-                  suppressHydrationWarning
                   isActive={isActive}
                   asChild
-                  tooltip={item.tooltip}
                   className={cn(
-                    "h-11 transition-all duration-200 text-[14px] font-medium px-4",
+                    "h-11 transition-all duration-200 text-[14px] font-medium px-4 rounded-lg",
                     isActive 
                       ? "bg-white text-black hover:bg-white" 
-                      : "hover:bg-sidebar-accent/10 text-sidebar-foreground hover:text-white"
+                      : "hover:bg-white/5 text-sidebar-foreground hover:text-white"
                   )}
                 >
                   <Link href={item.href} className="flex items-center gap-4">
-                      <Icon className={cn("h-5 w-5", isActive ? "text-black" : "text-sidebar-foreground")} />
+                      <Icon className={cn("h-5 w-5", isActive ? "text-black" : "text-[#D5D5D5]")} />
                       <span className={cn("tracking-tight", isActive ? "text-black font-semibold" : "")}>{item.label}</span>
                   </Link>
                 </SidebarMenuButton>
@@ -101,26 +94,22 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
         </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter className="p-4 border-t border-sidebar-border bg-black/10">
+      <SidebarFooter className="p-4 border-t border-sidebar-border">
          <SidebarMenu className="gap-2">
             <SidebarMenuItem>
                 <SidebarMenuButton 
-                    suppressHydrationWarning
-                    className="h-11 rounded-[12px] hover:bg-sidebar-accent/10 text-sidebar-foreground hover:text-white text-[14px]"
-                    tooltip={user?.email || 'Profile'}
+                    className="h-11 rounded-lg hover:bg-white/5 text-sidebar-foreground hover:text-white text-[14px]"
                     asChild
                 >
                     <Link href="/dashboard/settings" className="flex items-center gap-4">
-                        <UserCircle className="h-5 w-5" />
+                        <UserCircle className="h-5 w-5 text-[#D5D5D5]" />
                         <span className="font-medium truncate">{user?.name || 'Session User'}</span>
                     </Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>
                 <SidebarMenuButton 
-                    suppressHydrationWarning
-                    className="h-11 rounded-[12px] hover:bg-destructive/10 text-sidebar-foreground hover:text-destructive transition-colors text-[14px]"
-                    tooltip="Logout" 
+                    className="h-11 rounded-lg hover:bg-destructive/10 text-sidebar-foreground hover:text-destructive transition-colors text-[14px]"
                     onClick={handleLogout}
                 >
                     <LogOut className="h-5 w-5" />

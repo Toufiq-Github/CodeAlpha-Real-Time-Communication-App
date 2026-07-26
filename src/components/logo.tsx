@@ -30,13 +30,13 @@ export function Logo({ className, size = 'md' }: LogoProps) {
   return (
     <div className={cn("flex items-center gap-3 font-semibold group", className)}>
       <div className={cn(
-        "bg-white rounded-xl shadow-lg shadow-white/5 transition-all duration-300",
+        "bg-white rounded-xl shadow-lg transition-all duration-300",
         containerSizes[size]
       )}>
         <Shield className={cn("text-black", iconSizes[size])} />
       </div>
-      <span className={cn("font-semibold tracking-tighter text-foreground uppercase", textSizes[size])}>
-        TEAM<span className="opacity-80">SYNC</span>
+      <span className={cn("font-semibold tracking-tighter text-white uppercase not-italic", textSizes[size])}>
+        TEAM<span className="opacity-60">SYNC</span>
       </span>
     </div>
   );
