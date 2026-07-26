@@ -1,45 +1,85 @@
-# TeamSync | Professional Collaboration Platform
+# TeamSync | Enterprise Collaboration Platform
 
-Unify your workspace with high-fidelity video conferencing, interactive whiteboards, and real-time team synchronization.
+TeamSync is a professional-grade collaboration environment designed for high-performance teams. It unifies high-fidelity video conferencing, real-time visual whiteboarding, and AI-augmented productivity tools within a minimalist, high-contrast monochrome interface inspired by modern enterprise standards.
 
-## Setup & Deployment
+## Core Capabilities
 
-This project is built with Next.js, Tailwind CSS, and Firebase.
+- **High-Fidelity Media Layer**: Secure, low-latency video and audio communication for distributed teams.
+- **Synchronized Workspace**: Real-time collaborative whiteboard and messaging for seamless context sharing.
+- **AI-Powered Productivity**: Integrated Genkit flows for session summarization and content refinement.
+- **Audit & History**: Persistent session archives and objective tracking for organizational transparency.
+- **Enterprise Security**: Role-based access control (RBAC) powered by Firebase Authentication and specialized Firestore Security Rules.
+
+## Technology Stack
+
+- **Framework**: Next.js 15 (App Router) & React 19
+- **Backend-as-a-Service**: Firebase (Firestore, Authentication, App Hosting)
+- **AI Integration**: Google Genkit (Gemini 2.5 Flash)
+- **UI/UX**: Tailwind CSS & ShadCN UI (Custom Monochrome Theme)
+- **Language**: TypeScript
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (Latest LTS recommended)
+- A Firebase Project configured with Firestore and Authentication
+- A Google AI API Key for Genkit functionality
 
 ### Local Development
 
-1. Install dependencies: `npm install`
-2. Start the development server: `npm run dev`
-3. Open [http://localhost:9002](http://localhost:9002) in your browser.
+1. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
+
+2. **Environment Setup**:
+   Ensure your `.env` file contains the necessary `GEMINI_API_KEY`. The Firebase configuration is managed locally in `src/firebase/config.ts`.
+
+3. **Run the Workspace**:
+   ```bash
+   npm run dev
+   ```
+   The application will be accessible at [http://localhost:9002](http://localhost:9002).
+
+## Deployment & Version Control
+
+### Security Best Practices
+
+This project is configured to exclude sensitive credentials from version control. The `.gitignore` file explicitly targets:
+- `.env` and environment local files
+- `src/firebase/config.ts` (Firebase API keys)
+- Build artifacts (`.next`, `node_modules`)
 
 ### Pushing to GitHub
 
-To push this code to your own GitHub repository without exposing sensitive API keys:
+To securely push this project to a private or public GitHub repository:
 
-1. **Create a new repository** on [GitHub](https://github.com/new).
-2. **Initialize Git** locally:
+1. **Initialize Git**:
    ```bash
    git init
    ```
-3. **Stage your changes**:
+2. **Stage Application Code**:
    ```bash
    git add .
    ```
-4. **Commit your code**:
+3. **Create Initial Commit**:
    ```bash
-   git commit -m "feat: initial commit with professional monochrome theme"
+   git commit -m "feat: initial enterprise release with monochrome theme"
    ```
-5. **Rename branch**:
+4. **Define Branch**:
    ```bash
    git branch -M main
    ```
-6. **Add your remote**:
+5. **Connect Remote**:
    ```bash
    git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
    ```
-7. **Push to GitHub**:
+6. **Push to GitHub**:
    ```bash
    git push -u origin main
    ```
 
-*Note: Your `src/firebase/config.ts` is ignored by Git to protect your API keys.*
+---
+
+*© 2024 TeamSync Infrastructure. Professional tools for distributed excellence.*
