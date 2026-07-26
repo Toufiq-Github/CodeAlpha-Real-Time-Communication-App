@@ -87,7 +87,7 @@ export default function Dashboard() {
           <CardContent className="p-8 pt-0">
             <div className="flex flex-col sm:flex-row gap-4">
               <Input 
-                placeholder="Session Title (e.g., Weekly Sync)" 
+                placeholder="Session Title" 
                 className="h-14 rounded-xl bg-white/5 border-white/10 text-lg font-medium px-6 focus-visible:ring-primary/50"
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
