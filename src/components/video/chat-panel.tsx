@@ -5,7 +5,7 @@ import { useFirestore, useCollection } from '@/firebase';
 import { collection, addDoc, query, orderBy, limit } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, X, FileUp, Sparkles } from 'lucide-react';
+import { Send, X, FileUp, Sparkles, MessageSquare } from 'lucide-react';
 import { ChatMessage, UserProfile } from '@/lib/types';
 import { format } from 'date-fns';
 
@@ -40,47 +40,47 @@ export function ChatPanel({ roomId, user, onClose }: ChatPanelProps) {
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 z-[60] w-full sm:w-80 bg-slate-950/95 sm:bg-slate-900 border-l border-white/5 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300 backdrop-blur-xl">
-      <div className="p-4 md:p-6 border-b border-white/5 flex justify-between items-center">
+    <div className="fixed inset-y-0 right-0 z-[60] w-full sm:w-80 glass-panel border-l flex flex-col shadow-2xl animate-in slide-in-from-right duration-300">
+      <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/5">
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-primary" />
-          <h2 className="font-black text-xs uppercase tracking-[0.2em]">In-Room Chat</h2>
+          <h2 className="font-black text-[10px] uppercase tracking-[0.2em] text-white">In-Room Chat</h2>
         </div>
-        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={onClose}>
+        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-white/10 transition-all" onClick={onClose}>
           <X className="h-4 w-4" />
         </Button>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 flex flex-col-reverse gap-4 scrollbar-hide">
         {messages?.map(msg => (
-          <div key={msg.id} className={`flex flex-col gap-1 ${msg.senderId === user.id ? 'items-end' : 'items-start'}`}>
-            <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-slate-500 px-1">
+          <div key={msg.id} className={`flex flex-col gap-1.5 ${msg.senderId === user.id ? 'items-end' : 'items-start'} animate-in fade-in slide-in-from-bottom-2`}>
+            <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 px-1">
               {msg.senderName} • {format(new Date(msg.createdAt), 'h:mm a')}
             </span>
-            <div className={`px-4 py-2 rounded-2xl text-xs md:text-sm max-w-[90%] sm:max-w-[85%] ${
-              msg.senderId === user.id ? 'bg-primary text-white rounded-tr-none' : 'bg-white/5 text-slate-200 rounded-tl-none border border-white/5'
+            <div className={`px-4 py-2.5 rounded-2xl text-sm max-w-[85%] transition-all ${
+              msg.senderId === user.id ? 'bg-primary text-white rounded-tr-none blue-glow' : 'bg-white/10 text-slate-200 rounded-tl-none border border-white/5'
             }`}>
               {msg.text}
             </div>
           </div>
         ))}
         {(!messages || messages.length === 0) && (
-          <div className="flex-1 flex flex-col items-center justify-center text-center opacity-30 mt-20 px-6">
+          <div className="flex-1 flex flex-col items-center justify-center text-center opacity-20 mt-20 px-6">
             <MessageSquare className="h-12 w-12 mb-4" />
-            <p className="text-xs font-bold uppercase tracking-widest">No messages yet</p>
+            <p className="text-[10px] font-black uppercase tracking-widest">Workspace secure chat</p>
           </div>
         )}
       </div>
 
-      <div className="p-4 border-t border-white/5 pb-8 sm:pb-4">
+      <div className="p-4 border-t border-white/5 bg-white/5">
         <form onSubmit={handleSend} className="relative flex items-center gap-2">
-          <Button type="button" variant="ghost" size="icon" className="h-10 w-10 shrink-0 rounded-xl bg-white/5 hover:bg-white/10 hidden xs:flex">
-            <FileUp className="h-4 w-4" />
+          <Button type="button" variant="ghost" size="icon" className="h-11 w-11 shrink-0 rounded-xl bg-white/5 hover:bg-white/10 hidden xs:flex transition-all">
+            <FileUp className="h-5 w-5" />
           </Button>
           <div className="relative flex-1">
              <Input 
-                placeholder="Message..." 
-                className="bg-white/5 border-none h-11 rounded-xl pr-10 text-sm focus-visible:ring-1 focus-visible:ring-primary/50 text-white"
+                placeholder="Message team..." 
+                className="bg-white/5 border-none h-11 rounded-xl pr-10 text-sm focus-visible:ring-1 focus-visible:ring-primary/50 text-white placeholder:text-white/20"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
               />
@@ -88,7 +88,7 @@ export function ChatPanel({ roomId, user, onClose }: ChatPanelProps) {
                 type="submit" 
                 size="icon" 
                 disabled={!text.trim()}
-                className="absolute right-1 top-1 h-9 w-9 rounded-lg bg-primary hover:bg-primary/90 transition-all active:scale-90 disabled:opacity-30"
+                className="absolute right-1 top-1 h-9 w-9 rounded-lg primary-gradient transition-all active:scale-90 disabled:opacity-30"
               >
                 <Send className="h-4 w-4 text-white" />
               </Button>
@@ -98,4 +98,3 @@ export function ChatPanel({ roomId, user, onClose }: ChatPanelProps) {
     </div>
   );
 }
-import { MessageSquare } from 'lucide-react';
