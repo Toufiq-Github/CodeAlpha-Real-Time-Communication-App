@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -65,7 +64,7 @@ export default function Dashboard() {
     <div className="max-w-6xl mx-auto space-y-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div>
-          <h1 className="text-4xl font-black tracking-tighter text-white uppercase italic">Omni<span className="text-primary">Meet</span></h1>
+          <h1 className="text-4xl font-black tracking-tighter text-white uppercase italic">Team<span className="text-primary">Sync</span></h1>
           <p className="text-muted-foreground mt-2 text-lg font-medium tracking-tight">Execute your objectives, {user?.name}.</p>
         </div>
         <div className="flex items-center gap-3">

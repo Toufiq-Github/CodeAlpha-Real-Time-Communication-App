@@ -99,7 +99,7 @@ export function SignupForm() {
       });
 
       toast({
-        title: 'Welcome to OmniMeet!',
+        title: 'Welcome to TeamSync!',
         description: 'Your account has been successfully created.',
       });
 
@@ -119,7 +119,7 @@ export function SignupForm() {
       <CardHeader>
         <CardTitle className="text-2xl text-white">Create Account</CardTitle>
         <CardDescription className="text-slate-400">
-          Join OmniMeet to unify your workspace and meet team goals.
+          Join TeamSync to unify your workspace and meet team goals.
         </CardDescription>
       </CardHeader>
       <Form {...form}>

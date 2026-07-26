@@ -25,7 +25,7 @@ export function Navbar() {
              <Sparkles className="h-5 w-5 text-primary-foreground" />
           </div>
           <span className="text-xl md:text-2xl font-black tracking-tighter text-foreground uppercase group-hover:text-primary transition-colors">
-            OmniMeet
+            TeamSync
           </span>
         </Link>
 

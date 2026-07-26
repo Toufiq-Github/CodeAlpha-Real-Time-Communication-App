@@ -24,7 +24,7 @@ export default function LandingPage() {
     setIsCreating(true);
     try {
       const docRef = await addDoc(collection(db, 'rooms'), {
-        name: `OMNI-${Math.random().toString(36).substring(7).toUpperCase()}`,
+        name: `SYNC-${Math.random().toString(36).substring(7).toUpperCase()}`,
         createdBy: user.id,
         createdAt: new Date().toISOString(),
         isActive: true,
@@ -74,7 +74,7 @@ export default function LandingPage() {
           </h1>
           
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-medium">
-            OmniMeet provides high-fidelity collaboration for performance-driven teams. Secure video, interactive whiteboards, and real-time team synchronization in one unified interface.
+            TeamSync provides high-fidelity collaboration for performance-driven teams. Secure video, interactive whiteboards, and real-time team synchronization in one unified interface.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">

@@ -56,7 +56,7 @@ export function LoginForm() {
       
       toast({
         title: 'Welcome back!',
-        description: 'Successfully signed in to OmniMeet.',
+        description: 'Successfully signed in to TeamSync.',
       });
       
       router.push('/dashboard');

@@ -104,7 +104,7 @@ export default function OrganizationSettingsPage() {
         <Card className="md:col-span-2 glass-panel border-none rounded-[2rem]">
           <CardHeader className="p-8 border-b border-white/5">
             <CardTitle className="text-xl font-black uppercase">Identity Control</CardTitle>
-            <CardDescription>Update your presence across the OmniMeet ecosystem.</CardDescription>
+            <CardDescription>Update your presence across the TeamSync ecosystem.</CardDescription>
           </CardHeader>
           <CardContent className="p-8 space-y-8">
             <div className="space-y-6">

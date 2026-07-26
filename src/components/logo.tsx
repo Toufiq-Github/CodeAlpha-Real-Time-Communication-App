@@ -10,7 +10,7 @@ export function Logo({ className }: { className?: string }) {
         <Shield className="h-5 w-5 text-white" />
       </div>
       <span className="text-xl font-black tracking-tighter text-white uppercase">
-        OMNI<span className="text-primary">MEET</span>
+        TEAM<span className="text-primary">SYNC</span>
       </span>
     </div>
   );
