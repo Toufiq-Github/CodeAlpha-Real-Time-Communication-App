@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -7,6 +6,8 @@ import { doc } from 'firebase/firestore';
 import { VideoRoom } from '@/components/video/video-room';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Room } from '@/lib/types';
+import { useMemo } from 'react';
+import { Button } from '@/components/ui/button';
 
 export default function RoomPage() {
   const { roomId } = useParams() as { roomId: string };
@@ -14,7 +15,11 @@ export default function RoomPage() {
   const db = useFirestore();
   const router = useRouter();
 
-  const roomRef = doc(db, 'rooms', roomId);
+  const roomRef = useMemo(() => {
+    if (!db || !roomId) return null;
+    return doc(db, 'rooms', roomId);
+  }, [db, roomId]);
+
   const { data: room, loading: roomLoading } = useDoc<Room>(roomRef);
 
   if (userLoading || roomLoading) {
@@ -38,7 +43,7 @@ export default function RoomPage() {
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-8 text-center">
         <h1 className="text-4xl font-black text-white uppercase tracking-tighter mb-4">Room Expired</h1>
         <p className="text-slate-400 mb-8">This meeting link is no longer valid or has been closed.</p>
-        <Button onClick={() => router.push('/')}>Go Home</Button>
+        <Button onClick={() => router.push('/dashboard')}>Go to Dashboard</Button>
       </div>
     );
   }

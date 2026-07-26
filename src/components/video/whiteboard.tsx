@@ -1,11 +1,10 @@
-
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useFirestore, useCollection } from '@/firebase';
-import { collection, addDoc, query, orderBy, limit, doc } from 'firebase/firestore';
+import { collection, addDoc, query, orderBy } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
-import { X, RotateCcw, Download, Eraser, MousePointer2 } from 'lucide-react';
+import { X, RotateCcw, Download, Eraser } from 'lucide-react';
 import { WhiteboardPath } from '@/lib/types';
 
 interface WhiteboardProps {
@@ -21,7 +20,12 @@ export function Whiteboard({ roomId, userId, onClose }: WhiteboardProps) {
   const [points, setPoints] = useState<{ x: number; y: number }[]>([]);
   
   const db = useFirestore();
-  const whiteboardQuery = query(collection(db, 'rooms', roomId, 'whiteboard'), orderBy('createdAt', 'asc'));
+  
+  const whiteboardQuery = useMemo(() => {
+    if (!db || !roomId) return null;
+    return query(collection(db, 'rooms', roomId, 'whiteboard'), orderBy('createdAt', 'asc'));
+  }, [db, roomId]);
+
   const { data: paths } = useCollection<WhiteboardPath>(whiteboardQuery);
 
   useEffect(() => {
@@ -30,20 +34,36 @@ export function Whiteboard({ roomId, userId, onClose }: WhiteboardProps) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Clear and redraw all paths
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    paths?.forEach(path => {
-      ctx.beginPath();
-      ctx.strokeStyle = path.color;
-      ctx.lineWidth = 2;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      path.points.forEach((p, idx) => {
-        if (idx === 0) ctx.moveTo(p.x, p.y);
-        else ctx.lineTo(p.x, p.y);
+    // Responsive Canvas
+    const resizeCanvas = () => {
+      const parent = canvas.parentElement;
+      if (parent) {
+        canvas.width = parent.clientWidth;
+        canvas.height = parent.clientHeight;
+        redraw();
+      }
+    };
+
+    const redraw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      paths?.forEach(path => {
+        ctx.beginPath();
+        ctx.strokeStyle = path.color;
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        path.points.forEach((p, idx) => {
+          if (idx === 0) ctx.moveTo(p.x, p.y);
+          else ctx.lineTo(p.x, p.y);
+        });
+        ctx.stroke();
       });
-      ctx.stroke();
-    });
+    };
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    
+    return () => window.removeEventListener('resize', resizeCanvas);
   }, [paths]);
 
   const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
@@ -65,20 +85,22 @@ export function Whiteboard({ roomId, userId, onClose }: WhiteboardProps) {
     }
     
     setIsDrawing(false);
-    await addDoc(collection(db, 'rooms', roomId, 'whiteboard'), {
+    const pathData = {
       userId,
       color,
       points,
       createdAt: new Date().toISOString()
-    });
+    };
+
+    addDoc(collection(db, 'rooms', roomId, 'whiteboard'), pathData).catch(() => {});
     setPoints([]);
   };
 
   const getPos = (e: React.MouseEvent | React.TouchEvent) => {
     const canvas = canvasRef.current!;
     const rect = canvas.getBoundingClientRect();
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+    const clientX = 'touches' in e ? (e as any).touches[0].clientX : (e as any).clientX;
+    const clientY = 'touches' in e ? (e as any).touches[0].clientY : (e as any).clientY;
     return {
       x: clientX - rect.left,
       y: clientY - rect.top
@@ -86,14 +108,17 @@ export function Whiteboard({ roomId, userId, onClose }: WhiteboardProps) {
   };
 
   return (
-    <div className="w-full h-full bg-slate-900 rounded-[2.5rem] border border-white/10 shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+    <div className="w-full h-full bg-slate-900 rounded-[2.5rem] border border-white/10 shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-300">
       <div className="p-4 flex justify-between items-center bg-white/5 border-b border-white/10">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             {['#6366f1', '#f43f5e', '#10b981', '#f59e0b', '#ffffff'].map(c => (
               <button 
                 key={c}
-                className={`h-6 w-6 rounded-full border-2 ${color === c ? 'border-white' : 'border-transparent'}`}
+                className={cn(
+                  "h-7 w-7 rounded-full border-2 transition-transform active:scale-90",
+                  color === c ? 'border-white scale-110 shadow-lg' : 'border-transparent opacity-50 hover:opacity-100'
+                )}
                 style={{ backgroundColor: c }}
                 onClick={() => setColor(c)}
               />
@@ -108,7 +133,7 @@ export function Whiteboard({ roomId, userId, onClose }: WhiteboardProps) {
           </Button>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="text-xs font-bold gap-2">
+          <Button variant="ghost" size="sm" className="text-xs font-black uppercase tracking-widest gap-2 bg-white/5">
             <Download className="h-4 w-4" /> Export
           </Button>
           <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={onClose}>
@@ -117,11 +142,9 @@ export function Whiteboard({ roomId, userId, onClose }: WhiteboardProps) {
         </div>
       </div>
       
-      <div className="flex-1 relative cursor-crosshair">
+      <div className="flex-1 relative cursor-crosshair bg-[url('https://www.transparenttextures.com/patterns/graphy.png')] bg-repeat">
         <canvas
           ref={canvasRef}
-          width={1200}
-          height={800}
           className="w-full h-full touch-none"
           onMouseDown={startDrawing}
           onMouseMove={draw}
