@@ -26,6 +26,7 @@ import { useAuth } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { useUser } from "@/firebase/auth/use-user";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const IconMap = {
   LayoutDashboard,
@@ -58,10 +59,14 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
     <Sidebar collapsible="icon" className="border-r border-white/5 bg-card/50">
       <SidebarHeader className="py-8 px-4">
         <div className="flex w-full items-center justify-center group-data-[collapsible=icon]:hidden">
-          <Logo />
+          <Link href="/dashboard">
+            <Logo />
+          </Link>
         </div>
         <div className="hidden h-12 w-full items-center justify-center group-data-[collapsible=icon]:flex">
-            <Logo className="[&>span]:hidden" />
+            <Link href="/dashboard">
+                <Logo className="[&>span]:hidden" />
+            </Link>
         </div>
       </SidebarHeader>
       
@@ -69,25 +74,26 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
         <SidebarMenu className="gap-2">
           {navItems.map((item) => {
             const Icon = IconMap[item.icon as keyof typeof IconMap] || LayoutDashboard;
+            const isActive = pathname === item.href;
+            
             return (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
                   suppressHydrationWarning
-                  href={item.href}
-                  isActive={pathname === item.href}
+                  isActive={isActive}
                   asChild
                   tooltip={item.tooltip}
                   className={cn(
                     "h-12 rounded-xl transition-all duration-200",
-                    pathname === item.href 
+                    isActive 
                       ? "bg-primary text-white shadow-lg shadow-primary/20" 
                       : "hover:bg-white/5 text-muted-foreground/60 hover:text-white"
                   )}
                 >
-                  <div className="flex items-center gap-3">
+                  <Link href={item.href} className="flex items-center gap-3">
                       <Icon className="h-5 w-5" />
                       <span className="font-bold tracking-tight">{item.label}</span>
-                  </div>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             );
@@ -102,9 +108,12 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
                     suppressHydrationWarning
                     className="h-12 rounded-xl hover:bg-white/5 text-muted-foreground/60"
                     tooltip={user?.email || 'Profile'}
+                    asChild
                 >
-                    <UserCircle className="h-5 w-5" />
-                    <span className="font-bold truncate">{user?.name || 'Session User'}</span>
+                    <Link href="/dashboard/settings" className="flex items-center gap-3">
+                        <UserCircle className="h-5 w-5" />
+                        <span className="font-bold truncate">{user?.name || 'Session User'}</span>
+                    </Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>
