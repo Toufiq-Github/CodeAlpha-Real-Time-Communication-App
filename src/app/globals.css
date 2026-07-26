@@ -4,26 +4,35 @@
 
 @layer base {
   :root {
-    --background: 222 47% 7%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 9%;
+    --background: 221 48% 9%;      /* #0B1220 */
+    --foreground: 210 40% 98%;     /* #F8FAFC */
+    --card: 217 34% 16%;           /* #1A2435 */
     --card-foreground: 210 40% 98%;
-    --popover: 222 47% 8%;
+    --popover: 219 42% 11%;        /* #101827 */
     --popover-foreground: 210 40% 98%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 47% 11%;
-    --secondary: 222 47% 14%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 222 47% 14%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 217 91% 60%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 63% 31%;
+    --primary: 219 100% 65%;       /* #4F8CFF */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 214 33% 21%;      /* #243247 */
+    --secondary-foreground: 215 16% 65%;
+    --muted: 215 25% 23%;          /* #2B3748 */
+    --muted-foreground: 215 16% 65%;
+    --accent: 214 33% 21%;
+    --accent-foreground: 219 100% 65%;
+    --destructive: 0 84% 60%;      /* #EF4444 */
     --destructive-foreground: 210 40% 98%;
-    --border: 222 47% 15%;
-    --input: 222 47% 15%;
-    --ring: 217 91% 60%;
-    --radius: 1rem;
+    --border: 215 25% 23%;         /* #2B3748 */
+    --input: 215 25% 23%;
+    --ring: 219 100% 65%;
+    --radius: 14px;
+
+    --sidebar-background: 219 42% 11%;
+    --sidebar-foreground: 215 16% 65%;
+    --sidebar-primary: 219 100% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 214 33% 21%;
+    --sidebar-accent-foreground: 219 100% 65%;
+    --sidebar-border: 215 25% 23%;
+    --sidebar-ring: 219 100% 65%;
   }
 }
 
@@ -32,28 +41,57 @@
     @apply border-border transition-colors duration-200;
   }
   body {
-    @apply bg-background text-foreground font-body antialiased selection:bg-primary/30;
+    @apply bg-background text-foreground font-body antialiased selection:bg-primary/30 leading-[1.5];
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline;
   }
 }
 
-.glass-panel {
-  background: rgba(30, 41, 59, 0.75);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+.premium-card {
+  background: #1A2435;
+  border: 1px solid #2B3748;
+  border-radius: 18px;
+  box-shadow: 0 12px 32px rgba(0,0,0,.28);
 }
 
-.primary-gradient {
-  background: linear-gradient(135deg, #3B82F6, #2563EB);
+.primary-button {
+  background: linear-gradient(135deg, #4F8CFF, #377BFF);
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(79,140,255,.20);
+  transition: all 0.2s ease;
 }
 
-.blue-glow {
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.25);
+.primary-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+.input-field {
+  background: #253244;
+  border: 1px solid #324156;
+  border-radius: 14px;
+  height: 52px;
+}
+
+.input-field:focus {
+  border-color: #4F8CFF;
+  ring: 0;
+}
+
+.sidebar-item-active {
+  background: rgba(79, 140, 255, 0.1);
+  color: #4F8CFF;
+  border-radius: 12px;
+}
+
+.status-chip {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest;
 }
 
 .meeting-grid {
   display: grid;
-  gap: 1.5rem;
+  gap: 2rem;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   align-content: center;
   width: 100%;

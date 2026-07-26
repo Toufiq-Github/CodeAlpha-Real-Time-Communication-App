@@ -1,12 +1,16 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { FirebaseProvider } from '@/firebase/provider';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const plusJakarta = Plus_Jakarta_Sans({ 
+  subsets: ['latin'], 
+  variable: '--font-plus-jakarta',
+  weight: ['400', '500', '600', '700', '800'] 
+});
 
 export const metadata: Metadata = {
   title: 'TeamSync | Professional Collaboration Platform',
@@ -20,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="dark">
-      <body className={`${inter.variable} font-body antialiased bg-slate-950 text-slate-50`} suppressHydrationWarning>
+      <body className={`${plusJakarta.variable} font-body antialiased bg-background text-foreground`} suppressHydrationWarning>
         <FirebaseProvider>
           <TooltipProvider>
             {children}
