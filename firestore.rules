@@ -7,13 +7,17 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
+      // Allow any signed in user to find and view profiles
       allow read: if isSignedIn();
+      // Only the user themselves can update their profile
       allow write: if isSignedIn() && request.auth.uid == userId;
     }
 
-    // Explicitly allow listing and reading from the rooms collection
     match /rooms/{roomId} {
-      allow list, get, create: if isSignedIn();
+      // Allow reading metadata and listing rooms for all authenticated team members
+      allow read: if isSignedIn();
+      // Any authenticated user can create a room
+      allow create: if isSignedIn();
       
       // Only the creator can update or delete the room metadata
       allow update, delete: if isSignedIn() && resource.data.createdBy == request.auth.uid;
