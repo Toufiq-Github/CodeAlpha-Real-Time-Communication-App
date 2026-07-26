@@ -127,7 +127,7 @@ export default function Dashboard() {
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
               <Input 
                 placeholder="Session Title" 
-                className="h-12 md:h-14 rounded-xl bg-white/5 border-white/10 text-base md:text-lg font-medium px-4 md:px-6 focus-visible:ring-primary/50 text-white"
+                className="h-12 md:h-14 rounded-xl bg-white/5 border-white/10 text-sm md:text-base font-medium px-4 md:px-6 focus-visible:ring-primary/50 text-white"
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleCreateRoom()}
@@ -135,7 +135,7 @@ export default function Dashboard() {
               <Button 
                 onClick={handleCreateRoom}
                 disabled={isCreating || !roomName.trim() || !user}
-                className="h-12 md:h-14 rounded-xl px-6 md:px-8 font-black text-sm md:text-base shadow-xl transition-all active:scale-95"
+                className="h-12 md:h-14 rounded-xl px-6 md:px-8 font-black text-xs md:text-sm shadow-xl transition-all active:scale-95"
               >
                 {isCreating ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
