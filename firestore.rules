@@ -7,16 +7,14 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
+      // Allow any authenticated user to read profiles (needed for discovery/team features)
       allow read: if isSignedIn();
+      // Only the user can manage their own profile data
       allow write: if isSignedIn() && request.auth.uid == userId;
     }
 
     match /rooms/{roomId} {
-      // Allow authenticated users to list and get session metadata
-      allow read: if isSignedIn();
-      allow create: if isSignedIn();
-      
-      // Only the creator can manage the room metadata
+      allow read, create: if isSignedIn();
       allow update, delete: if isSignedIn() && resource.data.createdBy == request.auth.uid;
 
       match /participants/{userId} {

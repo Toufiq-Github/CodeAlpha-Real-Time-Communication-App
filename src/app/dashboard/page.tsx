@@ -7,7 +7,7 @@ import { collection, addDoc, query, where, limit } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Video, Calendar, Clock, Shield, Share2, Loader2 } from 'lucide-react';
+import { Video, Calendar, Clock, Shield, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Room } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
@@ -93,7 +93,7 @@ export default function Dashboard() {
       <div className="flex h-[80vh] w-full items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-6">
           <Loader2 className="h-12 w-12 text-foreground animate-spin" />
-          <p className="text-muted-foreground font-bold uppercase tracking-[0.3em] text-[10px]">Synchronizing Workspace...</p>
+          <p className="text-muted-foreground font-semibold uppercase tracking-[0.3em] text-[10px]">Synchronizing Workspace...</p>
         </div>
       </div>
     );
@@ -103,7 +103,7 @@ export default function Dashboard() {
     <div className="max-w-7xl mx-auto space-y-8 pb-20 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-8">
         <div>
-          <h1 className="text-[32px] font-bold tracking-tight text-foreground">{getGreeting()}, {user?.name?.split(' ')[0] || 'Team'} 👋</h1>
+          <h1 className="text-[32px] font-semibold tracking-tight text-foreground">{getGreeting()}, {user?.name?.split(' ')[0] || 'Team'} 👋</h1>
           <p className="text-muted-foreground text-[14px] font-medium tracking-tight mt-2">
             Ready to collaborate with your team today?
           </p>
@@ -116,7 +116,7 @@ export default function Dashboard() {
               disabled={!user}
             >
                 <Calendar className="h-5 w-5 text-muted-foreground" />
-                <span className="text-[12px] font-bold uppercase tracking-widest">Schedule</span>
+                <span className="text-[12px] font-semibold uppercase tracking-widest">Schedule</span>
             </Button>
         </div>
       </div>
@@ -124,7 +124,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-[20px] font-bold text-foreground uppercase tracking-tight">Initialize Session</CardTitle>
+            <CardTitle className="text-[20px] font-semibold text-foreground uppercase tracking-tight">Initialize Session</CardTitle>
             <CardDescription className="text-[14px] text-card-foreground">Deploy a secure professional workspace session.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -145,7 +145,7 @@ export default function Dashboard() {
                   <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
                   <>
-                    <span className="text-[12px] font-bold uppercase tracking-[0.2em]">Launch Room</span>
+                    <span className="text-[12px] font-semibold uppercase tracking-[0.2em]">Launch Room</span>
                     <Video className="ml-3 h-5 w-5" />
                   </>
                 )}
@@ -161,13 +161,13 @@ export default function Dashboard() {
                 <Shield className="h-6 w-6 text-foreground" />
               </div>
               <div>
-                <h3 className="text-[16px] font-bold tracking-tight text-foreground uppercase">Security Protocol</h3>
+                <h3 className="text-[16px] font-semibold tracking-tight text-foreground uppercase">Security Protocol</h3>
                 <p className="text-[14px] text-card-foreground font-medium leading-relaxed mt-2">Enterprise signaling layer with peer discovery and encrypted data channels.</p>
               </div>
             </div>
             <div className="pt-6 flex items-center gap-2">
               <div className="h-2 w-2 rounded-full bg-status-online animate-pulse" />
-              <span className="text-[9px] font-bold uppercase tracking-widest text-[#77DD77]">Service: Online</span>
+              <span className="text-[9px] font-semibold uppercase tracking-widest text-[#77DD77]">Service: Online</span>
             </div>
           </CardContent>
         </Card>
@@ -197,7 +197,7 @@ export default function Dashboard() {
                           {room.scheduledAt ? <Calendar className="h-5 w-5 text-foreground" /> : <Video className="h-5 w-5 text-foreground" />}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-bold text-[14px] text-foreground transition-all uppercase tracking-tight">{room.name}</p>
+                          <p className="font-semibold text-[14px] text-foreground transition-all uppercase tracking-tight">{room.name}</p>
                           <p className="text-[11px] text-muted-foreground font-medium mt-1">
                             {room.scheduledAt 
                               ? `Scheduled • ${format(new Date(room.scheduledAt), 'MMM d, h:mm a')}`
@@ -216,20 +216,20 @@ export default function Dashboard() {
                 ))
               ) : (
                 <div className="text-center py-20 border-2 border-dashed border-border rounded-2xl bg-white/[0.01]">
-                  <p className="text-muted-foreground font-bold uppercase tracking-widest text-[9px]">No records available</p>
+                  <p className="text-muted-foreground font-semibold uppercase tracking-widest text-[9px]">No records available</p>
                 </div>
               )}
           </CardContent>
         </Card>
 
-        <div className="space-y-8">
-            <Card className="p-8 space-y-6">
-                <Share2 className="h-10 w-10 text-foreground" />
-                <h3 className="text-[16px] font-bold tracking-tight text-foreground uppercase">Team Unification</h3>
-                <p className="text-[14px] text-card-foreground font-medium leading-relaxed">Broadcast secure workspace invites to your entire organization for instant real-time collaboration.</p>
-                <Button variant="secondary" className="w-full h-11 text-[12px] font-bold uppercase tracking-widest" onClick={() => router.push('/dashboard/settings')}>Workspace Config</Button>
-            </Card>
-        </div>
+        <Card className="p-8 space-y-6">
+            <div className="h-12 w-12 rounded-xl bg-white/5 flex items-center justify-center border border-white/10">
+                <Shield className="h-6 w-6 text-foreground" />
+            </div>
+            <h3 className="text-[16px] font-semibold tracking-tight text-foreground uppercase">Team Unification</h3>
+            <p className="text-[14px] text-card-foreground font-medium leading-relaxed">Broadcast secure workspace invites to your entire organization for instant real-time collaboration.</p>
+            <Button variant="secondary" className="w-full h-11 text-[12px] font-semibold uppercase tracking-widest" onClick={() => router.push('/dashboard/settings')}>Workspace Config</Button>
+        </Card>
       </div>
 
       <ScheduleMeetingModal 

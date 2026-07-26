@@ -28,14 +28,14 @@ export function Logo({ className, size = 'md' }: LogoProps) {
   };
 
   return (
-    <div className={cn("flex items-center gap-3 font-bold group", className)}>
+    <div className={cn("flex items-center gap-3 font-semibold group", className)}>
       <div className={cn(
-        "bg-white rounded-xl shadow-lg shadow-white/5 group-hover:rotate-12 transition-all duration-300",
+        "bg-white rounded-xl shadow-lg shadow-white/5 transition-all duration-300",
         containerSizes[size]
       )}>
         <Shield className={cn("text-black", iconSizes[size])} />
       </div>
-      <span className={cn("font-bold tracking-tighter text-foreground uppercase", textSizes[size])}>
+      <span className={cn("font-semibold tracking-tighter text-foreground uppercase not-italic", textSizes[size])}>
         TEAM<span className="not-italic opacity-80">SYNC</span>
       </span>
     </div>
