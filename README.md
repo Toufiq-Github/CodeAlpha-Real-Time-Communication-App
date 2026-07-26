@@ -5,9 +5,9 @@ TeamSync is a high-performance collaboration environment designed for distribute
 ## Core Features
 
 - **Professional Monochrome UI**: Strictly grayscale aesthetic (Background #050505, Sidebar #0D0D0D, Cards #181818).
-- **High-Contrast Interaction**: Signature white-on-black navigation and primary actions (#F5F5F5).
+- **High-Contrast Interaction**: Signature white-on-black navigation for active states and primary actions (#F5F5F5).
 - **High-Fidelity Media**: Secure, low-latency video and audio communication.
-- **Enterprise Security**: Role-based access control and secure peer discovery powered by Firebase.
+- **Enterprise Security**: Secure peer discovery and signaling powered by Firebase.
 
 ## Technology Stack
 
@@ -18,7 +18,7 @@ TeamSync is a high-performance collaboration environment designed for distribute
 
 ---
 
-## Deployment Guide (Perfect Setup)
+## Deployment Guide (Vercel)
 
 ### 1. Push Code to GitHub
 Ensure you have initialized git and pushed your code to a repository:
@@ -36,7 +36,7 @@ git push -u origin main
 - Select **Add New** > **Project** and import your repository.
 
 ### 3. Critical: Environment Variables
-In the Vercel dashboard, you **must** add these variables for the app to function. Copy the values from your project settings:
+In the Vercel dashboard (Settings > Environment Variables), you **must** add these variables for the app to function. You can find these values in your Firebase Console (Project Settings > General > Your Apps).
 
 | Key | Description |
 | :--- | :--- |
@@ -46,10 +46,11 @@ In the Vercel dashboard, you **must** add these variables for the app to functio
 | `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | your-project.appspot.com |
 | `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | Your sender ID |
 | `NEXT_PUBLIC_FIREBASE_APP_ID` | Your Firebase App ID |
+| `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID` | Your Analytics ID (e.g., G-XXXXXX) |
 | `GEMINI_API_KEY` | Your Google AI Studio API Key |
 
 ### 4. Deploy
-Click **Deploy**. Vercel will handle the build automatically using these secure variables.
+Once the variables are added, click **Deploy**. Vercel will handle the build automatically.
 
 ---
 *© 2024 TeamSync Infrastructure. Professional tools for distributed excellence.*
