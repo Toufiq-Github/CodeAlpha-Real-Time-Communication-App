@@ -1,18 +1,19 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { UserProfile, ChatMessage, WhiteboardPath, Participant } from '@/lib/types';
+import { UserProfile, Participant } from '@/lib/types';
 import { useFirestore, useCollection } from '@/firebase';
-import { collection, query, orderBy, limit, addDoc, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, collection } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { 
   Mic, MicOff, Video, VideoOff, ScreenShare, 
   MessageSquare, Users, Settings, LogOut, Palette,
-  Send, X, LayoutGrid, Maximize
+  Link as LinkIcon, Share2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Whiteboard } from './whiteboard';
 import { ChatPanel } from './chat-panel';
+import { useToast } from '@/hooks/use-toast';
 
 interface VideoRoomProps {
   roomId: string;
@@ -24,13 +25,13 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
   const [isMicOn, setIsMicOn] = useState(false);
   const [isCamOn, setIsCamOn] = useState(false);
   const [activeTab, setActiveTab] = useState<'chat' | 'users' | 'whiteboard' | null>(null);
+  const { toast } = useToast();
   
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
 
   const db = useFirestore();
 
-  // Memoize participant query
   const participantsQuery = useMemo(() => {
     if (!db || !roomId) return null;
     return collection(db, 'rooms', roomId, 'participants');
@@ -38,7 +39,6 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
 
   const { data: participants } = useCollection<Participant>(participantsQuery);
 
-  // Lifecycle for local media
   useEffect(() => {
     if (!db || !roomId || !user) return;
 
@@ -48,7 +48,6 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
         localStreamRef.current = stream;
         if (localVideoRef.current) localVideoRef.current.srcObject = stream;
         
-        // Default off for demo
         stream.getAudioTracks().forEach(t => t.enabled = false);
         stream.getVideoTracks().forEach(t => t.enabled = false);
       } catch (err) {
@@ -80,7 +79,6 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
       if (audioTrack) {
         audioTrack.enabled = !audioTrack.enabled;
         setIsMicOn(audioTrack.enabled);
-        
         const participantRef = doc(db, 'rooms', roomId, 'participants', user.id);
         setDoc(participantRef, { isMicOn: audioTrack.enabled }, { merge: true });
       }
@@ -93,22 +91,28 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
       if (videoTrack) {
         videoTrack.enabled = !videoTrack.enabled;
         setIsCamOn(videoTrack.enabled);
-
         const participantRef = doc(db, 'rooms', roomId, 'participants', user.id);
         setDoc(participantRef, { isCameraOn: videoTrack.enabled }, { merge: true });
       }
     }
   };
 
+  const handleCopyInvite = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url);
+    toast({
+      title: "Invite Link Copied!",
+      description: "Share this URL with others to let them join this meeting.",
+    });
+  };
+
   return (
     <div className="flex h-screen w-full bg-slate-950 overflow-hidden relative">
-      {/* Main Content Area */}
       <div className="flex-1 flex flex-col relative transition-all duration-300">
-        {/* Top Header */}
         <div className="p-4 flex justify-between items-center bg-slate-900/50 backdrop-blur-md absolute top-0 left-0 right-0 z-20 border-b border-white/5">
           <div className="flex items-center gap-3">
             <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-              <Video className="h-4 w-4 text-white" />
+              <Share2 className="h-4 w-4 text-white" />
             </div>
             <div className="flex flex-col">
               <h2 className="font-bold text-sm tracking-tight text-white">{roomName}</h2>
@@ -119,6 +123,15 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
             </div>
           </div>
           <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleCopyInvite}
+              className="rounded-full bg-white/5 border-white/10 hover:bg-primary/20 hover:text-primary transition-all text-xs font-black uppercase tracking-widest gap-2 hidden md:flex"
+            >
+              <LinkIcon className="h-3.5 w-3.5" />
+              Copy Invite Link
+            </Button>
             <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full bg-white/5 hover:bg-white/10 text-slate-400">
               <Settings className="h-4 w-4" />
             </Button>
@@ -128,13 +141,11 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
           </div>
         </div>
 
-        {/* Video Grid */}
         <div className="flex-1 flex items-center justify-center bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black p-4 pt-20 pb-28">
           <div className={cn(
             "grid gap-6 w-full h-full max-w-6xl transition-all duration-500",
             (participants && participants.length > 1) ? "md:grid-cols-2" : "grid-cols-1"
           )}>
-            {/* Local Video Card */}
             <div className="relative rounded-[2.5rem] overflow-hidden bg-slate-900 border border-white/5 shadow-2xl aspect-video group flex items-center justify-center">
               <video 
                 ref={localVideoRef} 
@@ -156,7 +167,6 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
               </div>
             </div>
 
-            {/* Remote Participants */}
             {participants?.filter(p => p.userId !== user.id).map(p => (
               <div key={p.id} className="relative rounded-[2.5rem] overflow-hidden bg-slate-900 border border-white/5 shadow-2xl aspect-video flex items-center justify-center">
                  <div className="flex flex-col items-center gap-6">
@@ -171,26 +181,30 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
               </div>
             ))}
 
-            {/* Empty State */}
             {(!participants || participants.length === 1) && (
                <div className="relative rounded-[2.5rem] overflow-hidden bg-slate-900/30 border border-white/5 border-dashed flex items-center justify-center aspect-video hidden md:flex">
-                  <div className="flex flex-col items-center gap-4">
+                  <div className="flex flex-col items-center gap-6 text-center">
                     <Users className="h-12 w-12 text-slate-800" />
-                    <span className="text-slate-700 font-black uppercase tracking-widest text-[10px]">Waiting for others...</span>
+                    <span className="text-slate-700 font-black uppercase tracking-widest text-[10px]">Invite team members to begin</span>
+                    <Button 
+                      variant="link" 
+                      onClick={handleCopyInvite} 
+                      className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/80"
+                    >
+                      Copy Link
+                    </Button>
                   </div>
                </div>
             )}
           </div>
         </div>
 
-        {/* Whiteboard Overlay */}
         {activeTab === 'whiteboard' && (
           <div className="absolute inset-x-8 inset-y-24 md:inset-x-12 md:inset-y-28 z-30 transition-all">
             <Whiteboard roomId={roomId} userId={user.id} onClose={() => setActiveTab(null)} />
           </div>
         )}
 
-        {/* Control Center */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 px-8 py-5 rounded-[2.5rem] bg-slate-900/90 backdrop-blur-3xl border border-white/10 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] z-40">
           <div className="flex items-center gap-2">
             <Button 
@@ -256,7 +270,6 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
         </div>
       </div>
 
-      {/* Side Panels */}
       {activeTab === 'chat' && (
         <ChatPanel roomId={roomId} user={user} onClose={() => setActiveTab(null)} />
       )}

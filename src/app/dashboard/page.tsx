@@ -1,16 +1,16 @@
-
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser, useFirestore, useCollection } from '@/firebase';
 import { collection, addDoc, query, where, orderBy, limit } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Video, Plus, Search, Calendar, Zap, MessageSquare, Palette } from 'lucide-react';
+import { Video, Plus, Search, Calendar, Zap, MessageSquare, Palette, Link as LinkIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { Room } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
 
 export default function CollaborationDashboard() {
   const [roomName, setRoomName] = useState('');
@@ -18,10 +18,18 @@ export default function CollaborationDashboard() {
   const { user } = useUser();
   const db = useFirestore();
   const router = useRouter();
+  const { toast } = useToast();
 
-  const recentRoomsQuery = user 
-    ? query(collection(db, 'rooms'), where('createdBy', '==', user.id), orderBy('createdAt', 'desc'), limit(5)) 
-    : null;
+  const recentRoomsQuery = useMemo(() => {
+    if (!db || !user) return null;
+    return query(
+      collection(db, 'rooms'), 
+      where('createdBy', '==', user.id), 
+      orderBy('createdAt', 'desc'), 
+      limit(5)
+    );
+  }, [db, user]);
+
   const { data: recentRooms, loading } = useCollection<Room>(recentRoomsQuery);
 
   const handleCreateRoom = async () => {
@@ -42,6 +50,15 @@ export default function CollaborationDashboard() {
     }
   };
 
+  const copyRoomLink = (roomId: string) => {
+    const url = `${window.location.origin}/room/${roomId}`;
+    navigator.clipboard.writeText(url);
+    toast({
+      title: "Invite Link Copied!",
+      description: "Send this URL to your team to join the session.",
+    });
+  };
+
   return (
     <div className="w-full max-w-6xl mx-auto space-y-8">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -56,7 +73,6 @@ export default function CollaborationDashboard() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
-        {/* Quick Launch */}
         <Card className="md:col-span-2 rounded-[2rem] border-none shadow-2xl bg-card overflow-hidden border border-primary/5">
           <CardHeader>
             <CardTitle className="text-xl font-black uppercase tracking-tight">Launch New Meeting</CardTitle>
@@ -82,7 +98,6 @@ export default function CollaborationDashboard() {
           </CardContent>
         </Card>
 
-        {/* Stats / Quick Info */}
         <Card className="rounded-[2rem] border-none shadow-2xl bg-primary text-primary-foreground overflow-hidden">
           <CardContent className="p-8 flex flex-col justify-between h-full">
             <div className="h-12 w-12 rounded-2xl bg-white/20 flex items-center justify-center">
@@ -97,7 +112,6 @@ export default function CollaborationDashboard() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {/* Recent Meetings */}
         <Card className="rounded-[2rem] border-none shadow-xl bg-card border border-muted">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-lg font-black uppercase tracking-tight">Recent Sessions</CardTitle>
@@ -112,9 +126,8 @@ export default function CollaborationDashboard() {
                   <div 
                     key={room.id} 
                     className="flex items-center justify-between p-4 rounded-2xl bg-secondary/30 hover:bg-secondary/50 transition-colors cursor-pointer border border-transparent hover:border-primary/20 group"
-                    onClick={() => router.push(`/room/${room.id}`)}
                   >
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4" onClick={() => router.push(`/room/${room.id}`)}>
                       <div className="h-10 w-10 rounded-xl bg-white shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform">
                         <MessageSquare className="h-5 w-5 text-primary" />
                       </div>
@@ -125,7 +138,24 @@ export default function CollaborationDashboard() {
                         </p>
                       </div>
                     </div>
-                    <Button variant="ghost" size="sm" className="rounded-full text-[10px] font-black uppercase tracking-widest text-primary">Join</Button>
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 rounded-full text-slate-400 hover:text-primary"
+                        onClick={() => copyRoomLink(room.id)}
+                      >
+                        <LinkIcon className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="rounded-full text-[10px] font-black uppercase tracking-widest text-primary"
+                        onClick={() => router.push(`/room/${room.id}`)}
+                      >
+                        Join
+                      </Button>
+                    </div>
                   </div>
                 ))
               ) : (
@@ -137,7 +167,6 @@ export default function CollaborationDashboard() {
           </CardContent>
         </Card>
 
-        {/* Feature Highlights */}
         <div className="grid grid-cols-2 gap-4">
           <div className="p-6 rounded-[2rem] bg-indigo-500/10 border border-indigo-500/20 space-y-3">
              <Palette className="h-6 w-6 text-indigo-500" />
