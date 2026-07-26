@@ -6,32 +6,32 @@
   :root {
     --background: 0 0% 2%;        /* #050505 */
     --foreground: 0 0% 100%;      /* #FFFFFF */
-    --card: 0 0% 9%;              /* #181818 */
+    --card: 0 0% 9%;              /* #171717 */
     --card-foreground: 0 0% 70%;  /* #B3B3B3 */
     --popover: 0 0% 4%;           /* #0B0B0B */
     --popover-foreground: 0 0% 100%;
-    --primary: 0 0% 96%;          /* #F5F5F5 */
+    --primary: 0 0% 91%;          /* #E8E8E8 */
     --primary-foreground: 0 0% 7%;/* #111111 */
     --secondary: 0 0% 13%;        /* #202020 */
     --secondary-foreground: 0 0% 96%;
     --muted: 0 0% 11%;            /* #1C1C1C */
-    --muted-foreground: 0 0% 50%; /* #808080 */
-    --accent: 217 91% 60%;        /* #4F8CFF - The Blue Accent */
+    --muted-foreground: 0 0% 84%; /* #D5D5D5 */
+    --accent: 217 91% 60%;        /* #4F8CFF - The Strategic Blue Accent */
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 18%;           /* #2D2D2D */
-    --input: 0 0% 12%;            /* #1F1F1F */
-    --ring: 217 91% 60%;          /* #4F8CFF - Blue Focus Ring */
+    --border: 0 0% 25%;           /* #404040 */
+    --input: 0 0% 10%;            /* #1A1A1A */
+    --ring: 217 91% 60%;          /* Blue Focus Ring */
     --radius: 14px;
 
     --sidebar-background: 0 0% 5%; /* #0D0D0D */
-    --sidebar-foreground: 0 0% 70%;
-    --sidebar-primary: 0 0% 96%;
+    --sidebar-foreground: 0 0% 84%;/* #D5D5D5 */
+    --sidebar-primary: 0 0% 91%;
     --sidebar-primary-foreground: 0 0% 7%;
     --sidebar-accent: 0 0% 15%;    /* #262626 */
     --sidebar-accent-foreground: 217 91% 60%; /* Blue for active items */
-    --sidebar-border: 0 0% 18%;
+    --sidebar-border: 0 0% 25%;    /* #404040 */
     --sidebar-ring: 217 91% 60%;
   }
 }
@@ -55,7 +55,7 @@
 }
 
 .primary-button {
-  background: #F5F5F5;
+  background: #E8E8E8;
   color: #111111;
   border: 1px solid #DADADA;
   border-radius: 14px;
@@ -64,7 +64,7 @@
 }
 
 .primary-button:hover {
-  background: #E4E4E4;
+  background: #D5D5D5;
   transform: translateY(-1px);
 }
 
@@ -82,7 +82,7 @@
 
 .input-field {
   background: #1A1A1A;
-  border: 1px solid #383838;
+  border: 1px solid #393939;
   border-radius: 14px;
   height: 52px;
   color: #FFFFFF;
@@ -90,7 +90,7 @@
 }
 
 .input-field::placeholder {
-  color: #808080;
+  color: #8A8A8A;
 }
 
 .input-field:focus {
@@ -101,7 +101,7 @@
 }
 
 .sidebar-item-active {
-  @apply bg-sidebar-accent border border-sidebar-border;
+  @apply bg-sidebar-accent border border-[#404040];
   border-radius: 12px;
 }
 
@@ -111,7 +111,7 @@
 }
 
 .status-chip {
-  @apply inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest;
+  @apply inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest;
 }
 
 .status-online {
