@@ -88,7 +88,7 @@ To securely push this project to a private or public GitHub repository:
 
 
 ---
-Official Repository: [https://github.com/Toufiq-Github/CodeAlpha-Ecommerce-Store](https://github.com/Toufiq-Github/CodeAlpha-Ecommerce-Store)
+Official Repository: [https://github.com/Toufiq-Github/CodeAlpha-Ecommerce-Store](https://github.com/Toufiq-Github/CodeAlpha-Real-Time-Communication-App)
 
 ---
 
