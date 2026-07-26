@@ -1,11 +1,13 @@
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+/**
+ * @fileOverview Firebase Client Configuration
+ * This file uses environment variables to ensure secure deployment on platforms like Vercel.
+ */
+
 export const firebaseConfig = {
-  apiKey: "AIzaSyDjIVgq3YGyeS0No8maGji0Bnbf6MDpieA",
-  authDomain: "studio-7384884989-b26a0.firebaseapp.com",
-  projectId: "studio-7384884989-b26a0",
-  storageBucket: "studio-7384884989-b26a0.appspot.com",
-  messagingSenderId: "524589132601",
-  appId: "1:524589132601:web:7eb13f17fe47a23db056e8",
-  measurementId: ""
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };

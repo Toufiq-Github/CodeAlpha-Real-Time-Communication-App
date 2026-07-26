@@ -1,85 +1,66 @@
 # TeamSync | Enterprise Collaboration Platform
 
-TeamSync is a professional-grade collaboration environment designed for high-performance teams. It unifies high-fidelity video conferencing, real-time visual whiteboarding, and AI-augmented productivity tools within a minimalist, high-contrast monochrome interface inspired by modern enterprise standards.
+TeamSync is a high-performance collaboration environment designed for distributed teams. It unifies video conferencing, real-time messaging, and AI-augmented productivity tools within a minimalist, high-contrast monochrome interface.
 
-## Core Capabilities
+## Core Features
 
-- **High-Fidelity Media Layer**: Secure, low-latency video and audio communication for distributed teams.
-- **Synchronized Workspace**: Real-time collaborative whiteboard and messaging for seamless context sharing.
-- **AI-Powered Productivity**: Integrated Genkit flows for session summarization and content refinement.
-- **Audit & History**: Persistent session archives and objective tracking for organizational transparency.
-- **Enterprise Security**: Role-based access control (RBAC) powered by Firebase Authentication and specialized Firestore Security Rules.
+- **High-Fidelity Media**: Secure, low-latency video and audio communication.
+- **Synchronized Workspace**: Real-time collaborative signaling and messaging.
+- **AI-Powered Productivity**: Integrated Genkit flows for session refinement and summarization.
+- **Audit & History**: Persistent session archives and objective tracking.
+- **Enterprise Security**: Role-based access control powered by Firebase.
 
 ## Technology Stack
 
-- **Framework**: Next.js 15 (App Router) & React 19
-- **Backend-as-a-Service**: Firebase (Firestore, Authentication, App Hosting)
-- **AI Integration**: Google Genkit (Gemini 2.5 Flash)
-- **UI/UX**: Tailwind CSS & ShadCN UI (Custom Monochrome Theme)
-- **Language**: TypeScript
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js (Latest LTS recommended)
-- A Firebase Project configured with Firestore and Authentication
-- A Google AI API Key for Genkit functionality
-
-### Local Development
-
-1. **Install Dependencies**:
-   ```bash
-   npm install
-   ```
-
-2. **Environment Setup**:
-   Ensure your `.env` file contains the necessary `GEMINI_API_KEY`. The Firebase configuration is managed locally in `src/firebase/config.ts`.
-
-3. **Run the Workspace**:
-   ```bash
-   npm run dev
-   ```
-   The application will be accessible at [http://localhost:9002](http://localhost:9002).
-
-## Deployment & Version Control
-
-### Security Best Practices
-
-This project is configured to exclude sensitive credentials from version control. The `.gitignore` file explicitly targets:
-- `.env` and environment local files
-- `src/firebase/config.ts` (Firebase API keys)
-- Build artifacts (`.next`, `node_modules`)
-
-### Pushing to GitHub
-
-To securely push this project to a private or public GitHub repository:
-
-1. **Initialize Git**:
-   ```bash
-   git init
-   ```
-2. **Stage Application Code**:
-   ```bash
-   git add .
-   ```
-3. **Create Initial Commit**:
-   ```bash
-   git commit -m "feat: initial enterprise release with monochrome theme"
-   ```
-4. **Define Branch**:
-   ```bash
-   git branch -M main
-   ```
-5. **Connect Remote**:
-   ```bash
-   git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
-   ```
-6. **Push to GitHub**:
-   ```bash
-   git push -u origin main
-   ```
+- **Framework**: Next.js 15 (App Router)
+- **Backend**: Firebase (Firestore, Authentication)
+- **AI**: Google Genkit (Gemini 2.5 Flash)
+- **Styling**: Tailwind CSS & ShadCN UI (Monochrome Theme)
 
 ---
+
+## Deployment to Vercel
+
+To deploy this project to Vercel, follow these steps:
+
+### 1. Push to GitHub
+Ensure you have initialized git and pushed your code to a GitHub repository:
+```bash
+git init
+git add .
+git commit -m "Initial commit: Professional Monochrome Release"
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+git push -u origin main
+```
+
+### 2. Import to Vercel
+1. Log in to [Vercel](https://vercel.com).
+2. Click **Add New** > **Project**.
+3. Import your GitHub repository.
+
+### 3. Configure Environment Variables
+In the Vercel project settings, add the following **Environment Variables**:
+
+| Variable | Description |
+| :--- | :--- |
+| `GEMINI_API_KEY` | Your Google AI Studio API Key |
+| `NEXT_PUBLIC_FIREBASE_API_KEY` | Firebase API Key |
+| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Firebase Auth Domain |
+| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Firebase Project ID |
+| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | Firebase Storage Bucket |
+| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | Firebase Messaging Sender ID |
+| `NEXT_PUBLIC_FIREBASE_APP_ID` | Firebase App ID |
+
+### 4. Deploy
+Click **Deploy**. Vercel will build the project and provide a live URL.
+
+---
+
+## Local Development
+
+1. **Install Dependencies**: `npm install`
+2. **Environment Setup**: Create a `.env` file with your `GEMINI_API_KEY`.
+3. **Run**: `npm run dev`
 
 *© 2024 TeamSync Infrastructure. Professional tools for distributed excellence.*
