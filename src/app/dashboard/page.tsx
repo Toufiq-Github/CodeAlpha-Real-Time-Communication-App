@@ -7,7 +7,7 @@ import { collection, addDoc, query, where, limit } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Video, Calendar, UserPlus, Clock, Link as LinkIcon, Shield, Share2 } from 'lucide-react';
+import { Video, Calendar, UserPlus, Clock, Shield, Share2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Room } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
@@ -20,8 +20,7 @@ export default function Dashboard() {
   const router = useRouter();
   const { toast } = useToast();
 
-  // We only use 'where' here to avoid composite index requirements for 'orderBy'
-  // Sorting is handled on the client side for robustness
+  // Fetch recent sessions. Limit increased to 20 to ensure we have enough for the top 10 after sorting.
   const historyQuery = useMemo(() => {
     if (!db || !user) return null;
     return query(
@@ -33,11 +32,12 @@ export default function Dashboard() {
 
   const { data: rooms, loading } = useCollection<Room>(historyQuery);
 
+  // Filter and sort for the 10 most recent sessions
   const recentRooms = useMemo(() => {
     if (!rooms) return [];
     return [...rooms].sort((a, b) => 
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    ).slice(0, 5);
+    ).slice(0, 10);
   }, [rooms]);
 
   const handleCreateRoom = async () => {
@@ -61,15 +61,6 @@ export default function Dashboard() {
     } finally {
       setIsCreating(false);
     }
-  };
-
-  const copyRoomLink = (roomId: string) => {
-    const url = `${window.location.origin}/room/${roomId}`;
-    navigator.clipboard.writeText(url);
-    toast({
-      title: "Invite Link Copied",
-      description: "Ready to share with your organization.",
-    });
   };
 
   return (
@@ -150,10 +141,10 @@ export default function Dashboard() {
                 recentRooms.map(room => (
                   <div 
                     key={room.id} 
-                    className="flex items-center justify-between p-5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] transition-all group border border-transparent hover:border-white/5"
+                    className="flex items-center justify-between p-5 rounded-2xl bg-white/[0.03] border border-transparent hover:border-white/5"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-105 transition-transform">
+                      <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
                         <Video className="h-6 w-6 text-primary" />
                       </div>
                       <div>
@@ -163,29 +154,11 @@ export default function Dashboard() {
                         </p>
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="rounded-xl h-10 w-10 text-muted-foreground/40 hover:text-primary hover:bg-primary/10"
-                        onClick={() => copyRoomLink(room.id)}
-                        title="Copy Link"
-                      >
-                        <LinkIcon className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        className="rounded-xl px-6 h-10 font-bold shadow-md hover:shadow-primary/20 transition-all active:scale-95"
-                        onClick={() => router.push(`/room/${room.id}`)}
-                      >
-                        Join
-                      </Button>
-                    </div>
                   </div>
                 ))
               ) : (
                 <div className="text-center py-16 border-2 border-dashed border-white/5 rounded-[1.5rem] bg-white/[0.01]">
                   <p className="text-muted-foreground font-medium">No session history found.</p>
-                  <Button variant="link" onClick={() => setRoomName('Project Alpha')} className="mt-2 text-primary font-bold uppercase text-[10px] tracking-widest text-center w-full">Initialize First Session</Button>
                 </div>
               )}
             </div>
