@@ -24,7 +24,7 @@ export default function LandingPage() {
     setIsCreating(true);
     try {
       const docRef = await addDoc(collection(db, 'rooms'), {
-        name: `Session-${Math.random().toString(36).substring(7).toUpperCase()}`,
+        name: `Sync-${Math.random().toString(36).substring(7).toUpperCase()}`,
         createdBy: user.id,
         createdAt: new Date().toISOString(),
         isActive: true,
@@ -44,7 +44,7 @@ export default function LandingPage() {
         <div className="flex gap-4">
           {user ? (
             <Button variant="outline" className="rounded-full border-white/5 bg-white/5 backdrop-blur-md" asChild>
-              <Link href="/dashboard">Dashboard</Link>
+              <Link href="/dashboard">Go to Dashboard</Link>
             </Button>
           ) : (
             <>
@@ -52,7 +52,7 @@ export default function LandingPage() {
                 <Link href="/login">Login</Link>
               </Button>
               <Button className="rounded-full px-8 shadow-[0_0_30px_rgba(var(--primary),0.3)]" asChild>
-                <Link href="/signup">Get Started</Link>
+                <Link href="/signup">Start Now</Link>
               </Button>
             </>
           )}
@@ -60,23 +60,22 @@ export default function LandingPage() {
       </header>
 
       <main className="container mx-auto px-6 py-20 lg:py-40 relative">
-        {/* Pro Background Glows */}
         <div className="absolute top-[-20%] left-[-10%] -z-10 w-[1000px] h-[1000px] bg-primary/10 rounded-full blur-[160px]" />
         <div className="absolute bottom-[-20%] right-[-10%] -z-10 w-[800px] h-[800px] bg-blue-600/5 rounded-full blur-[140px]" />
         
         <div className="max-w-5xl mx-auto text-center space-y-12">
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary/5 border border-primary/10 text-primary text-[10px] font-black uppercase tracking-[0.3em]">
             <span className="flex h-2 w-2 rounded-full bg-primary animate-ping mr-1" />
-            Enterprise Collaboration 2.0
+            Empowering Modern Teams
           </div>
           
-          <h1 className="text-7xl lg:text-9xl font-black tracking-tighter leading-[0.9] text-white">
-            MEET THE <br />
-            <span className="text-primary italic">FUTURE.</span>
+          <h1 className="text-7xl lg:text-9xl font-black tracking-tighter leading-[0.9] text-white uppercase">
+            UNIFY YOUR <br />
+            <span className="text-primary italic">WORKSPACE.</span>
           </h1>
           
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-medium">
-            OmniMeet is a high-fidelity workspace for distributed teams. Video, whiteboards, and real-time synchronization in one unified interface.
+            OmniMeet is a high-fidelity workspace for high-performing teams. Seamlessly bridge the gap between video, interactive whiteboards, and real-time data.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">
@@ -86,7 +85,7 @@ export default function LandingPage() {
               className="h-20 px-12 rounded-[2rem] text-xl font-black shadow-[0_20px_50px_rgba(var(--primary),0.3)] transition-all hover:scale-105 active:scale-95"
               disabled={isCreating}
             >
-              {isCreating ? 'Deploying Environment...' : 'Launch Meeting'}
+              {isCreating ? 'Initializing...' : 'Launch Instant Session'}
               <Play className="ml-4 h-6 w-6 fill-current" />
             </Button>
             <Button 
@@ -96,7 +95,7 @@ export default function LandingPage() {
               asChild
             >
               <Link href="/dashboard">
-                Explore History
+                View All Rooms
                 <ArrowRight className="ml-4 h-6 w-6" />
               </Link>
             </Button>
@@ -105,9 +104,9 @@ export default function LandingPage() {
 
         <div className="grid md:grid-cols-3 gap-10 mt-40">
           {[
-            { icon: Shield, title: "Military-Grade Security", desc: "Advanced signaling encryption and private session layers ensure your data is always protected." },
-            { icon: Zap, title: "Sub-Second Latency", desc: "Built on optimized WebRTC clusters for crystal clear communication with zero perceived lag." },
-            { icon: Layout, title: "Unified Canvas", desc: "Bridging the gap between talk and action with integrated whiteboard and persistent data channels." }
+            { icon: Shield, title: "Enterprise Security", desc: "Private signaling layers and data encryption ensure your organization's discussions remain strictly confidential." },
+            { icon: Zap, title: "Low-Latency Media", desc: "Optimized WebRTC architecture delivers crystal-clear video and sub-second latency for seamless conversation." },
+            { icon: Layout, title: "Integrated Workspace", desc: "A unified interface combining talk, visual ideation, and persistent data for comprehensive team execution." }
           ].map((feature, i) => (
             <Card key={i} className="glass-panel border-none rounded-[2.5rem] hover:ring-2 ring-primary/20 transition-all duration-500 group overflow-hidden">
               <CardContent className="p-12 space-y-6 relative">
@@ -117,7 +116,7 @@ export default function LandingPage() {
                 <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner">
                   <feature.icon className="h-8 w-8 text-primary group-hover:text-white" />
                 </div>
-                <h3 className="text-2xl font-black text-white tracking-tight">{feature.title}</h3>
+                <h3 className="text-2xl font-black text-white tracking-tight uppercase">{feature.title}</h3>
                 <p className="text-muted-foreground leading-relaxed font-medium text-lg">{feature.desc}</p>
               </CardContent>
             </Card>
