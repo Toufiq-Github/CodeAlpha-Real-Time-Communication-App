@@ -26,7 +26,7 @@ import { useAuth } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { useUser } from "@/firebase/auth/use-user";
 import { cn } from "@/lib/utils";
-import Link from "link";
+import Link from "next/link";
 
 const IconMap = {
   LayoutDashboard,
@@ -86,7 +86,7 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
                   className={cn(
                     "h-11 transition-all duration-200 text-[14px] font-medium px-4",
                     isActive 
-                      ? "sidebar-item-active font-semibold" 
+                      ? "sidebar-item-active font-semibold bg-white/5 border border-white/10" 
                       : "hover:bg-sidebar-accent text-sidebar-foreground hover:text-foreground"
                   )}
                 >
