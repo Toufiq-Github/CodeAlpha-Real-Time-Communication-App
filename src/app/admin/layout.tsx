@@ -1,14 +1,20 @@
+
 import type { NavItem } from "@/lib/types";
-import { UserCog } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 
 const adminNavItems: NavItem[] = [
   {
     href: "/admin",
-    label: "Doctor Management",
-    icon: UserCog,
-    tooltip: "Doctor Management",
+    label: "System Control",
+    icon: "UserCog",
+    tooltip: "Admin Access",
+  },
+  {
+    href: "/dashboard",
+    label: "User Dashboard",
+    icon: "LayoutDashboard",
+    tooltip: "Return to Hub",
   },
 ];
 

@@ -43,6 +43,6 @@ export interface WhiteboardPath {
 export interface NavItem {
   href: string;
   label: string;
-  icon: any;
+  icon: string;
   tooltip?: string;
 }

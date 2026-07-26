@@ -10,7 +10,18 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import { LogOut, UserCircle, Settings } from "lucide-react";
+import { 
+  LogOut, 
+  UserCircle, 
+  LayoutDashboard, 
+  History, 
+  Users, 
+  Settings, 
+  Calendar, 
+  UserCog,
+  Search,
+  Video
+} from "lucide-react";
 import type { NavItem } from "@/lib/types";
 import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "../logo";
@@ -18,6 +29,17 @@ import { useAuth } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { useUser } from "@/firebase/auth/use-user";
 import { cn } from "@/lib/utils";
+
+const IconMap = {
+  LayoutDashboard,
+  History,
+  Users,
+  Settings,
+  Calendar,
+  UserCog,
+  Search,
+  Video
+};
 
 interface DashboardSidebarProps {
   navItems: NavItem[];
@@ -50,25 +72,28 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
       
       <SidebarContent className="px-3">
         <SidebarMenu className="gap-2">
-          {navItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
-              <SidebarMenuButton
-                href={item.href}
-                isActive={pathname === item.href}
-                asChild
-                tooltip={item.tooltip}
-                className={cn(
-                  "h-12 rounded-xl transition-all duration-200",
-                  pathname === item.href ? "bg-primary text-white shadow-lg shadow-primary/20" : "hover:bg-white/5 text-muted-foreground"
-                )}
-              >
-                <div className="flex items-center gap-3">
-                    <item.icon className="h-5 w-5" />
-                    <span className="font-bold">{item.label}</span>
-                </div>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+          {navItems.map((item) => {
+            const Icon = IconMap[item.icon as keyof typeof IconMap] || LayoutDashboard;
+            return (
+              <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton
+                  href={item.href}
+                  isActive={pathname === item.href}
+                  asChild
+                  tooltip={item.tooltip}
+                  className={cn(
+                    "h-12 rounded-xl transition-all duration-200",
+                    pathname === item.href ? "bg-primary text-white shadow-lg shadow-primary/20" : "hover:bg-white/5 text-muted-foreground"
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                      <Icon className="h-5 w-5" />
+                      <span className="font-bold">{item.label}</span>
+                  </div>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
         </SidebarMenu>
       </SidebarContent>
 

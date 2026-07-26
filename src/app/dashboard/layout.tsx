@@ -1,6 +1,5 @@
 
 import type { NavItem } from "@/lib/types";
-import { LayoutDashboard, History, Search, Settings, Video, Users } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 
@@ -8,25 +7,25 @@ const navItems: NavItem[] = [
   {
     href: "/dashboard",
     label: "Command Center",
-    icon: LayoutDashboard,
+    icon: "LayoutDashboard",
     tooltip: "Main Hub",
   },
   {
     href: "/dashboard/history",
     label: "Session History",
-    icon: History,
+    icon: "History",
     tooltip: "Past Meetings",
   },
   {
     href: "/search",
     label: "Team Search",
-    icon: Users,
+    icon: "Users",
     tooltip: "Find Members",
   },
   {
     href: "/settings",
     label: "Organization",
-    icon: Settings,
+    icon: "Settings",
     tooltip: "Global Config",
   },
 ];
