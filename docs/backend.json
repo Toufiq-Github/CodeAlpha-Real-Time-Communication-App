@@ -1,89 +1,90 @@
 
 {
   "entities": {
-    "UserProfile": {
-      "title": "User Profile",
-      "description": "Represents a user's public and private profile data.",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string", "description": "Auth UID." },
-        "username": { "type": "string", "description": "Unique handle." },
-        "displayName": { "type": "string" },
-        "email": { "type": "string" },
-        "bio": { "type": "string" },
-        "avatarUrl": { "type": "string", "format": "uri" },
-        "followerCount": { "type": "number", "default": 0 },
-        "followingCount": { "type": "number", "default": 0 },
-        "postCount": { "type": "number", "default": 0 },
-        "createdAt": { "type": "string", "format": "date-time" }
-      },
-      "required": ["id", "username", "displayName", "createdAt"]
-    },
-    "Post": {
-      "title": "Post",
-      "description": "A post shared by a user.",
+    "Room": {
+      "title": "Room",
+      "description": "A virtual meeting room.",
       "type": "object",
       "properties": {
         "id": { "type": "string" },
-        "authorId": { "type": "string" },
-        "authorName": { "type": "string" },
-        "authorUsername": { "type": "string" },
-        "authorAvatar": { "type": "string" },
-        "content": { "type": "string" },
-        "imageUrl": { "type": "string", "format": "uri" },
+        "name": { "type": "string" },
+        "createdBy": { "type": "string" },
         "createdAt": { "type": "string", "format": "date-time" },
-        "likeCount": { "type": "number", "default": 0 },
-        "commentCount": { "type": "number", "default": 0 }
+        "isActive": { "type": "boolean", "default": true }
       },
-      "required": ["authorId", "content", "createdAt"]
+      "required": ["name", "createdBy", "createdAt"]
     },
-    "Comment": {
-      "title": "Comment",
-      "description": "A comment on a post.",
+    "Participant": {
+      "title": "Participant",
+      "description": "A user in a meeting room.",
       "type": "object",
       "properties": {
-        "id": { "type": "string" },
-        "postId": { "type": "string" },
-        "authorId": { "type": "string" },
-        "authorName": { "type": "string" },
-        "authorUsername": { "type": "string" },
-        "authorAvatar": { "type": "string" },
-        "content": { "type": "string" },
-        "createdAt": { "type": "string", "format": "date-time" }
-      },
-      "required": ["postId", "authorId", "content", "createdAt"]
+        "userId": { "type": "string" },
+        "displayName": { "type": "string" },
+        "joinedAt": { "type": "string", "format": "date-time" },
+        "isCameraOn": { "type": "boolean", "default": false },
+        "isMicOn": { "type": "boolean", "default": false }
+      }
     },
-    "Follow": {
-      "title": "Follow",
-      "description": "Represents a following relationship.",
+    "SignalingMessage": {
+      "title": "Signaling Message",
+      "description": "WebRTC signaling data (offer, answer, ice-candidate).",
       "type": "object",
       "properties": {
-        "followerId": { "type": "string" },
-        "followingId": { "type": "string" },
+        "from": { "type": "string" },
+        "to": { "type": "string" },
+        "type": { "type": "string", "enum": ["offer", "answer", "candidate"] },
+        "data": { "type": "string" },
         "createdAt": { "type": "string", "format": "date-time" }
-      },
-      "required": ["followerId", "followingId"]
+      }
+    },
+    "ChatMessage": {
+      "title": "Chat Message",
+      "description": "A message sent in the room chat.",
+      "type": "object",
+      "properties": {
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "text": { "type": "string" },
+        "fileUrl": { "type": "string", "format": "uri" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "WhiteboardPath": {
+      "title": "Whiteboard Path",
+      "description": "A drawing path on the whiteboard.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "color": { "type": "string" },
+        "points": { "type": "array", "items": { "type": "object" } },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
     }
   },
   "auth": {
     "providers": ["google.com", "password"]
   },
   "firestore": {
-    "/users/{userId}": {
-      "schema": { "$ref": "#/entities/UserProfile" },
-      "description": "Public user profiles."
+    "/rooms/{roomId}": {
+      "schema": { "$ref": "#/entities/Room" },
+      "description": "Main room metadata."
     },
-    "/posts/{postId}": {
-      "schema": { "$ref": "#/entities/Post" },
-      "description": "Public posts."
+    "/rooms/{roomId}/participants/{userId}": {
+      "schema": { "$ref": "#/entities/Participant" },
+      "description": "List of active participants."
     },
-    "/posts/{postId}/comments/{commentId}": {
-      "schema": { "$ref": "#/entities/Comment" },
-      "description": "Comments on specific posts."
+    "/rooms/{roomId}/messages/{msgId}": {
+      "schema": { "$ref": "#/entities/ChatMessage" },
+      "description": "In-room chat messages."
     },
-    "/follows/{followId}": {
-      "schema": { "$ref": "#/entities/Follow" },
-      "description": "Follower/Following links. followId is followerId_followingId."
+    "/rooms/{roomId}/signaling/{sigId}": {
+      "schema": { "$ref": "#/entities/SignalingMessage" },
+      "description": "WebRTC signaling messages."
+    },
+    "/rooms/{roomId}/whiteboard/{pathId}": {
+      "schema": { "$ref": "#/entities/WhiteboardPath" },
+      "description": "Shared whiteboard paths."
     }
   }
 }

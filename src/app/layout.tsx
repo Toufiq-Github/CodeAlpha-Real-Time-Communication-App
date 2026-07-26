@@ -10,8 +10,8 @@ import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: 'Connect Social',
-  description: 'Connect with friends and share your world.',
+  title: 'EyeMeet AI | Secure Real-Time Collaboration',
+  description: 'Video conferencing, screen sharing, and collaborative whiteboards for modern teams.',
 };
 
 export default function RootLayout({
@@ -20,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-body antialiased`} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="dark">
+      <body className={`${inter.variable} font-body antialiased bg-slate-950 text-slate-50`} suppressHydrationWarning>
         <FirebaseProvider>
           <TooltipProvider>
             {children}

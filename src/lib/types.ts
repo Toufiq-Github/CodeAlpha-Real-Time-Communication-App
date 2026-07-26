@@ -1,45 +1,51 @@
 
 export interface UserProfile {
   id: string;
-  username: string;
-  displayName: string;
+  name: string;
   email: string;
-  bio?: string;
   avatarUrl?: string;
-  followerCount: number;
-  followingCount: number;
-  postCount: number;
+}
+
+export interface Room {
+  id: string;
+  name: string;
+  createdBy: string;
+  createdAt: string;
+  isActive: boolean;
+}
+
+export interface Participant {
+  id: string;
+  userId: string;
+  displayName: string;
+  joinedAt: string;
+  isCameraOn: boolean;
+  isMicOn: boolean;
+}
+
+export interface ChatMessage {
+  id: string;
+  senderId: string;
+  senderName: string;
+  text: string;
+  fileUrl?: string;
   createdAt: string;
 }
 
-export interface Post {
+export interface WhiteboardPath {
   id: string;
-  authorId: string;
-  authorName: string;
-  authorUsername: string;
-  authorAvatar?: string;
-  content: string;
-  imageUrl?: string;
-  createdAt: string;
-  likeCount: number;
-  commentCount: number;
-}
-
-export interface Comment {
-  id: string;
-  postId: string;
-  authorId: string;
-  authorName: string;
-  authorUsername: string;
-  authorAvatar?: string;
-  content: string;
+  userId: string;
+  color: string;
+  points: Array<{ x: number; y: number }>;
   createdAt: string;
 }
 
-export interface Follow {
+export interface SignalingMessage {
   id: string;
-  followerId: string;
-  followingId: string;
+  from: string;
+  to: string;
+  type: 'offer' | 'answer' | 'candidate';
+  data: string;
   createdAt: string;
 }
 

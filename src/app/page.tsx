@@ -1,287 +1,122 @@
+
 'use client';
 
-import { Navbar } from '@/components/navbar';
-import { PostCard } from '@/components/post-card';
-import { CreatePost } from '@/components/create-post';
-import { useCollection, useFirestore, useUser } from '@/firebase';
-import { collection, query, orderBy, limit, where } from 'firebase/firestore';
-import { Post, UserProfile, Follow } from '@/lib/types';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useMemo, useState } from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useUser, useFirestore } from '@/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TrendingUp, Users, Sparkles, Database, Plus } from 'lucide-react';
-import { seedDemoData } from '@/lib/seed-data';
-import { useToast } from '@/hooks/use-toast';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Video, Plus, ArrowRight, Shield, Share2, Palette } from 'lucide-react';
+import { Logo } from '@/components/logo';
+import Link from 'next/link';
 
-function RecommendedUsers() {
-  const db = useFirestore();
+export default function LandingPage() {
+  const [roomName, setRoomName] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
   const { user } = useUser();
-  
-  const usersQuery = useMemo(() => {
-    if (!db) return null;
-    return query(collection(db, 'users'), limit(10));
-  }, [db]);
-
-  const { data: users, loading } = useCollection<UserProfile>(usersQuery);
-
-  if (loading) return (
-    <div className="space-y-4">
-      {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="flex items-center gap-3">
-          <Skeleton className="h-10 w-10 rounded-full" />
-          <div className="space-y-1">
-            <Skeleton className="h-3 w-20" />
-            <Skeleton className="h-2 w-12" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-
-  const filteredUsers = users?.filter(u => u.id !== user?.id).slice(0, 5) || [];
-
-  return (
-    <div className="space-y-4">
-      {filteredUsers.length > 0 ? (
-        filteredUsers.map((u) => (
-          <div key={u.id} className="flex items-center justify-between group">
-            <Link href={`/profile/${u.username}`} className="flex items-center gap-3 flex-1">
-              <Avatar className="h-10 w-10 ring-2 ring-transparent group-hover:ring-primary/20 transition-all">
-                <AvatarImage src={u.avatarUrl} />
-                <AvatarFallback>{u.displayName?.charAt(0)}</AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col">
-                <span className="text-sm font-bold hover:underline line-clamp-1">{u.displayName}</span>
-                <span className="text-xs text-muted-foreground line-clamp-1">@{u.username}</span>
-              </div>
-            </Link>
-            <Link href={`/profile/${u.username}`}>
-              <Button variant="ghost" size="sm" className="rounded-full text-xs font-bold text-primary hover:bg-primary/10">
-                View
-              </Button>
-            </Link>
-          </div>
-        ))
-      ) : (
-        <p className="text-xs text-muted-foreground">No recommendations yet.</p>
-      )}
-    </div>
-  );
-}
-
-function TrendingTopics() {
-  const topics = [
-    { name: '#ConnectHub', posts: '12.4K' },
-    { name: '#TechTrends', posts: '8.2K' },
-    { name: '#DailyVlog', posts: '5.1K' },
-    { name: '#CodingLife', posts: '3.9K' },
-    { name: '#AIRevolution', posts: '2.8K' },
-  ];
-
-  return (
-    <div className="space-y-4">
-      {topics.map((topic) => (
-        <div key={topic.name} className="flex flex-col gap-0.5 group cursor-pointer hover:bg-accent/50 p-2 -mx-2 rounded-xl transition-colors">
-          <span className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase">Trending</span>
-          <span className="text-sm font-black group-hover:text-primary transition-colors">{topic.name}</span>
-          <span className="text-[10px] text-muted-foreground font-medium">{topic.posts} Posts</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-export default function Home() {
   const db = useFirestore();
-  const { user } = useUser();
-  const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState("for-you");
-  const [isSeeding, setIsSeeding] = useState(false);
+  const router = useRouter();
 
-  const followsQuery = useMemo(() => {
-    if (!db || !user) return null;
-    return query(collection(db, 'follows'), where('followerId', '==', user.id));
-  }, [db, user]);
-
-  const { data: follows } = useCollection<Follow>(followsQuery);
-
-  const globalPostsQuery = useMemo(() => {
-    if (!db) return null;
-    return query(collection(db, 'posts'), orderBy('createdAt', 'desc'), limit(50));
-  }, [db]);
-
-  const followingPostsQuery = useMemo(() => {
-    if (!db || !user || !follows || follows.length === 0) return null;
-    const followingIds = follows.map(f => f.followingId);
-    followingIds.push(user.id);
-    return query(
-      collection(db, 'posts'),
-      where('authorId', 'in', followingIds.slice(0, 30)),
-      orderBy('createdAt', 'desc'),
-      limit(50)
-    );
-  }, [db, user, follows]);
-
-  const { data: globalPosts, loading: globalLoading } = useCollection<Post>(globalPostsQuery);
-  const { data: followingPosts, loading: followingLoading } = useCollection<Post>(followingPostsQuery);
-
-  const isLoading = activeTab === "for-you" ? globalLoading : followingLoading;
-  const currentPosts = activeTab === "for-you" ? globalPosts : followingPosts;
-
-  const handleSeed = async () => {
-    if (!db) {
-        toast({ variant: 'destructive', title: "Error", description: "Database not initialized." });
-        return;
-    }
-    if (!user) {
-        toast({ title: "Login Required", description: "Please sign in to seed data." });
-        return;
-    }
-    
-    setIsSeeding(true);
+  const handleCreateRoom = async () => {
+    if (!user || !roomName.trim()) return;
+    setIsCreating(true);
     try {
-      await seedDemoData(db);
-      toast({ title: "Demo Content Seeded!", description: "Refreshing the feed with lively content." });
-    } catch (e: any) {
-      console.error("Seeding error:", e);
-      toast({ 
-        variant: 'destructive', 
-        title: "Seeding failed", 
-        description: e.message || "Could not create demo data. Check your permissions." 
+      const docRef = await addDoc(collection(db, 'rooms'), {
+        name: roomName.trim(),
+        createdBy: user.id,
+        createdAt: new Date().toISOString(),
+        isActive: true,
       });
+      router.push(`/room/${docRef.id}`);
+    } catch (error) {
+      console.error("Error creating room:", error);
     } finally {
-      setIsSeeding(false);
+      setIsCreating(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <main className="container mx-auto px-4 pt-24 pb-12">
-        <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
-          {/* Main Content */}
-          <div className="space-y-6 max-w-2xl mx-auto w-full">
-            {user && <CreatePost />}
-            
-            <Tabs defaultValue="for-you" className="w-full" onValueChange={setActiveTab}>
-              <div className="flex items-center justify-between mb-2 sticky top-[72px] bg-background/80 backdrop-blur-md z-40 py-2">
-                <TabsList className="bg-transparent h-auto p-0 gap-6">
-                  <TabsTrigger 
-                    value="for-you" 
-                    className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-primary data-[state=active]:border-b-2 border-primary rounded-none px-0 pb-2 font-black uppercase tracking-[0.2em] text-[10px]"
-                  >
-                    For You
-                  </TabsTrigger>
-                  {user && (
-                    <TabsTrigger 
-                      value="following" 
-                      className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-primary data-[state=active]:border-b-2 border-primary rounded-none px-0 pb-2 font-black uppercase tracking-[0.2em] text-[10px]"
-                    >
-                      Following
-                    </TabsTrigger>
-                  )}
-                </TabsList>
-              </div>
+    <div className="min-h-screen bg-slate-950 text-white selection:bg-primary/30">
+      {/* Header */}
+      <header className="container mx-auto py-6 px-4 flex justify-between items-center border-b border-white/5">
+        <Logo className="text-white" />
+        <div className="flex gap-4">
+          {user ? (
+            <Button variant="ghost" className="rounded-full" asChild>
+              <Link href={`/profile/${user.id}`}>Profile</Link>
+            </Button>
+          ) : (
+            <Button className="rounded-full px-8" asChild>
+              <Link href="/login">Get Started</Link>
+            </Button>
+          )}
+        </div>
+      </header>
 
-              <div className="space-y-4">
-                {isLoading ? (
-                  Array.from({ length: 3 }).map((_, i) => (
-                    <Card key={i} className="rounded-2xl border-none shadow-sm p-4 space-y-4">
-                      <div className="flex items-center gap-3">
-                        <Skeleton className="h-12 w-12 rounded-full" />
-                        <div className="space-y-2">
-                          <Skeleton className="h-4 w-32" />
-                          <Skeleton className="h-3 w-20" />
-                        </div>
-                      </div>
-                      <Skeleton className="h-32 w-full rounded-2xl" />
-                    </Card>
-                  ))
-                ) : currentPosts && currentPosts.length > 0 ? (
-                  currentPosts.map((post) => (
-                    <PostCard key={post.id} post={post} />
-                  ))
-                ) : (
-                  <div className="text-center py-32 bg-accent/10 rounded-[32px] border border-dashed border-primary/20">
-                    <div className="max-w-xs mx-auto space-y-4">
-                      <Sparkles className="h-12 w-12 mx-auto text-primary/30" />
-                      <p className="text-sm text-muted-foreground font-medium italic">
-                        "Your feed is waiting for its first spark."
-                      </p>
-                      <Button 
-                        variant="outline" 
-                        onClick={handleSeed}
-                        disabled={isSeeding}
-                        className="rounded-full font-bold uppercase tracking-tighter text-xs"
-                      >
-                        {isSeeding ? 'Seeding...' : 'Seed Demo Content'}
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </Tabs>
-          </div>
+      <main className="container mx-auto px-4 py-20 lg:py-32">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="space-y-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-widest">
+              <Shield className="h-3 w-3" />
+              E2E Encrypted Signaling
+            </div>
+            <h1 className="text-5xl lg:text-7xl font-black tracking-tighter leading-tight">
+              Real-time <br />
+              <span className="text-primary italic">Collaboration</span> <br />
+              Perfected.
+            </h1>
+            <p className="text-xl text-slate-400 max-w-lg leading-relaxed">
+              Video calls, screen sharing, and interactive whiteboards. All in one secure, seamless platform built for the modern team.
+            </p>
 
-          {/* Sidebar */}
-          <aside className="hidden lg:block space-y-6">
-            <Card className="rounded-[32px] border-none shadow-xl bg-card/50 backdrop-blur-sm overflow-hidden sticky top-24">
-              <div className="bg-primary/5 p-6 border-b border-primary/10">
-                <div className="flex items-center gap-3 mb-1">
-                   <div className="p-2 bg-primary/10 rounded-xl">
-                      <TrendingUp className="h-4 w-4 text-primary" />
-                   </div>
-                   <h2 className="font-black text-lg tracking-tight uppercase">Trending</h2>
-                </div>
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Real-time pulses</p>
-              </div>
-              
-              <CardContent className="p-6 space-y-8">
-                <div>
-                   <TrendingTopics />
-                </div>
-                
-                <div className="pt-6 border-t border-muted">
-                   <div className="flex items-center gap-3 mb-6">
-                      <div className="p-2 bg-primary/10 rounded-xl">
-                        <Users className="h-4 w-4 text-primary" />
-                      </div>
-                      <h3 className="text-xs font-black uppercase tracking-widest">Who to Follow</h3>
-                   </div>
-                   <RecommendedUsers />
-                </div>
-
-                <div className="pt-6 border-t border-muted">
+            <Card className="bg-white/5 border-white/10 rounded-[2rem] overflow-hidden backdrop-blur-xl">
+              <CardHeader>
+                <CardTitle className="text-white text-lg">Start a New Meeting</CardTitle>
+                <CardDescription className="text-slate-400 text-sm">Create a secure room and invite your team instantly.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex gap-3">
+                  <Input 
+                    placeholder="Enter meeting name..." 
+                    className="bg-white/5 border-white/10 rounded-xl h-12"
+                    value={roomName}
+                    onChange={(e) => setRoomName(e.target.value)}
+                  />
                   <Button 
-                    variant="ghost" 
-                    className="w-full justify-start text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary hover:bg-primary/5"
-                    onClick={handleSeed}
-                    disabled={isSeeding}
+                    className="rounded-xl h-12 px-6 font-black uppercase tracking-widest text-xs"
+                    onClick={handleCreateRoom}
+                    disabled={!user || isCreating || !roomName.trim()}
                   >
-                    <Database className="mr-2 h-4 w-4" />
-                    {isSeeding ? 'Seeding...' : 'Populate Demo Data'}
+                    {isCreating ? 'Setting up...' : 'Create'}
+                    <Plus className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
+                {!user && (
+                   <p className="text-xs text-primary/60 font-medium">Please login to create a room.</p>
+                )}
               </CardContent>
             </Card>
+          </div>
 
-            <div className="px-6 space-y-4 opacity-60">
-              <div className="flex flex-wrap gap-x-4 gap-y-1">
-                {['About', 'Help', 'Privacy', 'Terms', 'Ads'].map(l => (
-                  <Link key={l} href="#" className="text-[9px] text-muted-foreground hover:underline uppercase tracking-widest font-bold">
-                    {l}
-                  </Link>
-                ))}
+          {/* Feature Grid */}
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { icon: Video, title: "HD Video", desc: "Crystal clear multi-user streaming" },
+              { icon: Share2, title: "Screen Share", desc: "Present your work in real-time" },
+              { icon: Palette, title: "Whiteboard", desc: "Sketch ideas collaboratively" },
+              { icon: Shield, title: "Secure", desc: "Private WebRTC signaling" },
+            ].map((f, i) => (
+              <div key={i} className="p-8 rounded-[2rem] bg-white/5 border border-white/10 space-y-4 hover:bg-white/10 transition-colors">
+                <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+                  <f.icon className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="font-bold text-lg">{f.title}</h3>
+                <p className="text-sm text-slate-400">{f.desc}</p>
               </div>
-              <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-[0.3em]">
-                © 2024 CONNECTHUB.
-              </p>
-            </div>
-          </aside>
+            ))}
+          </div>
         </div>
       </main>
     </div>
