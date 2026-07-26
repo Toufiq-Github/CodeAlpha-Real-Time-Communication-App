@@ -6,11 +6,11 @@
   :root {
     --background: 0 0% 2%;        /* #050505 */
     --foreground: 0 0% 100%;      /* #FFFFFF */
-    --card: 0 0% 9%;              /* #171717 */
+    --card: 0 0% 9.4%;            /* #181818 */
     --card-foreground: 0 0% 70%;  /* #B3B3B3 */
     --popover: 0 0% 4%;           /* #0B0B0B */
     --popover-foreground: 0 0% 100%;
-    --primary: 0 0% 91%;          /* #E8E8E8 */
+    --primary: 0 0% 96%;          /* #F5F5F5 */
     --primary-foreground: 0 0% 0%;/* #000000 */
     --secondary: 0 0% 12.5%;      /* #202020 */
     --secondary-foreground: 0 0% 96%;
@@ -20,18 +20,18 @@
     --accent-foreground: 0 0% 0%; /* #000000 */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 25%;           /* #404040 */
+    --border: 0 0% 17.6%;         /* #2D2D2D */
     --input: 0 0% 10%;            /* #1A1A1A */
     --ring: 0 0% 50%;
     --radius: 12px;
 
-    --sidebar-background: 0 0% 5%; /* #0D0D0D */
-    --sidebar-foreground: 0 0% 70%;/* #B3B3B3 */
+    --sidebar-background: 0 0% 5.1%; /* #0D0D0D */
+    --sidebar-foreground: 0 0% 70%;  /* #B3B3B3 */
     --sidebar-primary: 0 0% 100%;
     --sidebar-primary-foreground: 0 0% 0%;
-    --sidebar-accent: 0 0% 100%;   /* White background */
-    --sidebar-accent-foreground: 0 0% 0%; /* Black text */
-    --sidebar-border: 0 0% 25%;    /* #404040 */
+    --sidebar-accent: 0 0% 100%;     /* White selection */
+    --sidebar-accent-foreground: 0 0% 0%; /* Black text on selection */
+    --sidebar-border: 0 0% 17.6%;    /* #2D2D2D */
     --sidebar-ring: 0 0% 50%;
   }
 }
@@ -54,7 +54,7 @@
 }
 
 .primary-button {
-  background: #E8E8E8;
+  background: #F5F5F5;
   color: #000000;
   border: none;
   border-radius: 10px;
@@ -69,7 +69,7 @@
 .secondary-button {
   background: #202020;
   color: #B3B3B3;
-  border: 1px solid #404040;
+  border: 1px solid #2D2D2D;
   border-radius: 10px;
   transition: all 0.2s ease;
 }
@@ -81,7 +81,7 @@
 
 .input-field {
   background: #1A1A1A;
-  border: 1px solid #404040;
+  border: 1px solid #2D2D2D;
   border-radius: 10px;
   height: 52px;
   color: #FFFFFF;

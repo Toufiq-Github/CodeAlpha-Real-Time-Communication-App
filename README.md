@@ -1,10 +1,11 @@
 # TeamSync | Enterprise Collaboration Platform
 
-TeamSync is a high-performance collaboration environment designed for distributed teams. It unifies video conferencing, real-time messaging, and session management within a minimalist, high-contrast monochrome interface.
+TeamSync is a high-performance collaboration environment designed for distributed teams. It unifies video conferencing, real-time messaging, and session management within a strictly monochrome, professional interface inspired by Apple Pro Apps and the Vercel dashboard.
 
 ## Core Features
 
-- **Professional Monochrome UI**: Strictly grayscale aesthetic (Black #050505, Cards #171717, Primary #E8E8E8).
+- **Professional Monochrome UI**: Strictly grayscale aesthetic (Background #050505, Sidebar #0D0D0D, Cards #181818).
+- **High-Contrast Interaction**: Signature white-on-black navigation and primary actions (#F5F5F5).
 - **High-Fidelity Media**: Secure, low-latency video and audio communication.
 - **Enterprise Security**: Role-based access control and secure peer discovery powered by Firebase.
 
@@ -35,7 +36,7 @@ git push -u origin main
 - Select **Add New** > **Project** and import your repository.
 
 ### 3. Critical: Environment Variables
-In the Vercel dashboard, you **must** add these variables for the app to function. Copy them from your local project settings:
+In the Vercel dashboard, you **must** add these variables for the app to function. Copy the values from your project settings:
 
 | Key | Description |
 | :--- | :--- |
@@ -48,6 +49,7 @@ In the Vercel dashboard, you **must** add these variables for the app to functio
 | `GEMINI_API_KEY` | Your Google AI Studio API Key |
 
 ### 4. Deploy
-Click **Deploy**. Vercel will handle the build automatically.
+Click **Deploy**. Vercel will handle the build automatically using these secure variables.
 
+---
 *© 2024 TeamSync Infrastructure. Professional tools for distributed excellence.*
