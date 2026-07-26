@@ -7,6 +7,11 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if isSignedIn() && request.auth.uid == userId;
+    }
+
     match /rooms/{roomId} {
       allow read, create: if isSignedIn();
       allow update, delete: if isSignedIn() && resource.data.createdBy == request.auth.uid;
@@ -28,9 +33,16 @@ service cloud.firestore {
       }
     }
 
-    match /users/{userId} {
+    // General posts for social feed if needed
+    match /posts/{postId} {
       allow read: if true;
-      allow write: if isSignedIn() && request.auth.uid == userId;
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn() && resource.data.authorId == request.auth.uid;
+
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create: if isSignedIn();
+      }
     }
   }
 }

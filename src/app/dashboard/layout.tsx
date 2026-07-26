@@ -1,39 +1,40 @@
+
 import type { NavItem } from "@/lib/types";
-import { Calendar, LayoutDashboard, Search } from "lucide-react";
+import { LayoutDashboard, Users, Search, Settings, Video } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 
-const patientNavItems: NavItem[] = [
+const navItems: NavItem[] = [
   {
     href: "/dashboard",
-    label: "Symptom Checker",
+    label: "Dashboard",
     icon: LayoutDashboard,
-    tooltip: "Symptom Checker",
+    tooltip: "My Hub",
   },
   {
-    href: "/dashboard/find-doctor",
-    label: "Find a Doctor",
+    href: "/search",
+    label: "Team Search",
     icon: Search,
-    tooltip: "Find a Doctor",
+    tooltip: "Find Members",
   },
   {
-    href: "/dashboard/appointments",
-    label: "Appointments",
-    icon: Calendar,
-    tooltip: "Appointments",
+    href: "/dashboard/recent",
+    label: "History",
+    icon: Video,
+    tooltip: "Past Meetings",
   },
 ];
 
-export default function PatientDashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
     <SidebarProvider>
-      <div className="flex">
-        <DashboardSidebar navItems={patientNavItems} />
-        <main className="flex-1 p-4 md:p-8">{children}</main>
+      <div className="flex min-h-screen w-full bg-background">
+        <DashboardSidebar navItems={navItems} />
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 pt-20 md:pt-8">{children}</main>
       </div>
     </SidebarProvider>
   );

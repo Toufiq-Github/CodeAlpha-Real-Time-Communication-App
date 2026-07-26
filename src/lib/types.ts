@@ -2,9 +2,14 @@
 export interface UserProfile {
   id: string;
   name: string;
+  username: string;
   email: string;
+  bio?: string;
   avatarUrl?: string;
   createdAt: string;
+  followerCount?: number;
+  followingCount?: number;
+  postCount?: number;
 }
 
 export interface Room {
