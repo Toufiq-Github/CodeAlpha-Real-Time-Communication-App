@@ -1,31 +1,32 @@
-
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { UserProfile, Participant } from '@/lib/types';
+import { UserProfile, Participant, Room } from '@/lib/types';
 import { useFirestore, useCollection } from '@/firebase';
 import { doc, setDoc, deleteDoc, collection } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { 
   Mic, MicOff, Video, VideoOff, ScreenShare, 
   MessageSquare, Users, Settings, LogOut, Palette,
-  Link as LinkIcon, Share2, MoreVertical
+  Link as LinkIcon, Share2, MoreVertical, Clock
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Whiteboard } from './whiteboard';
 import { ChatPanel } from './chat-panel';
 import { useToast } from '@/hooks/use-toast';
+import { differenceInSeconds } from 'date-fns';
 
 interface VideoRoomProps {
   roomId: string;
   user: UserProfile;
-  roomName: string;
+  room: Room;
 }
 
-export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
+export function VideoRoom({ roomId, user, room }: VideoRoomProps) {
   const [isMicOn, setIsMicOn] = useState(false);
   const [isCamOn, setIsCamOn] = useState(false);
   const [activeTab, setActiveTab] = useState<'chat' | 'users' | 'whiteboard' | null>(null);
+  const [timeLeft, setTimeLeft] = useState(3600); // Default to 1 hour
   const { toast } = useToast();
   
   const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -40,6 +41,25 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
 
   const { data: participants } = useCollection<Participant>(participantsRef);
 
+  // Timer Logic
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const start = new Date(room.createdAt);
+      const now = new Date();
+      const elapsed = differenceInSeconds(now, start);
+      const remaining = 3600 - elapsed;
+      setTimeLeft(remaining > 0 ? remaining : 0);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [room.createdAt]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   useEffect(() => {
     if (!db || !roomId || !user) return;
 
@@ -49,7 +69,6 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
         localStreamRef.current = stream;
         if (localVideoRef.current) localVideoRef.current.srcObject = stream;
         
-        // Start muted/camera off by default for professional sessions
         stream.getAudioTracks().forEach(t => t.enabled = false);
         stream.getVideoTracks().forEach(t => t.enabled = false);
       } catch (err) {
@@ -112,43 +131,51 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
   return (
     <div className="flex h-screen w-full bg-background overflow-hidden relative">
       <div className="flex-1 flex flex-col relative">
-        {/* Modern Header */}
         <header className="px-6 py-4 flex justify-between items-center glass-panel absolute top-0 left-0 right-0 z-50 border-x-0 border-t-0 bg-background/50">
           <div className="flex items-center gap-4">
             <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30">
               <Share2 className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h2 className="font-bold text-sm tracking-tight">{roomName}</h2>
+              <h2 className="font-bold text-sm tracking-tight">{room.name}</h2>
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Live • {participants?.length || 1} Participants</span>
               </div>
             </div>
           </div>
-          
-          <div className="flex items-center gap-3">
-            <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleCopyInvite}
-                className="rounded-xl border-white/10 hover:bg-white/5 text-xs font-bold gap-2 hidden md:flex"
-            >
-              <LinkIcon className="h-3.5 w-3.5" />
-              Invite
-            </Button>
-            <div className="w-px h-6 bg-white/10 mx-2" />
-            <Button variant="ghost" size="icon" className="rounded-full h-10 w-10 hover:bg-white/5">
-              <Settings className="h-4 w-4" />
-            </Button>
-            <Button variant="destructive" size="sm" className="rounded-xl px-4 gap-2" onClick={() => window.location.href = '/dashboard'}>
-              <LogOut className="h-4 w-4" />
-              Leave
-            </Button>
+
+          <div className="flex items-center gap-6">
+            <div className={cn(
+              "flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel border-white/10",
+              timeLeft < 300 ? "text-destructive animate-pulse" : "text-primary"
+            )}>
+              <Clock className="h-4 w-4" />
+              <span className="text-xs font-black font-code tracking-widest">{formatTime(timeLeft)}</span>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleCopyInvite}
+                  className="rounded-xl border-white/10 hover:bg-white/5 text-xs font-bold gap-2 hidden md:flex"
+              >
+                <LinkIcon className="h-3.5 w-3.5" />
+                Invite
+              </Button>
+              <div className="w-px h-6 bg-white/10 mx-2" />
+              <Button variant="ghost" size="icon" className="rounded-full h-10 w-10 hover:bg-white/5">
+                <Settings className="h-4 w-4" />
+              </Button>
+              <Button variant="destructive" size="sm" className="rounded-xl px-4 gap-2" onClick={() => window.location.href = '/dashboard'}>
+                <LogOut className="h-4 w-4" />
+                Leave
+              </Button>
+            </div>
           </div>
         </header>
 
-        {/* Dynamic Grid Layout */}
         <div className="flex-1 flex items-center justify-center p-6 pt-24 pb-32">
           <div className="meeting-grid w-full h-full max-w-7xl">
             <div className="relative rounded-3xl overflow-hidden glass-panel aspect-video flex items-center justify-center group">
@@ -188,14 +215,12 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
           </div>
         </div>
 
-        {/* Whiteboard Overlay */}
         {activeTab === 'whiteboard' && (
           <div className="absolute inset-x-8 inset-y-28 z-40 animate-in zoom-in-95 duration-300">
             <Whiteboard roomId={roomId} userId={user.id} onClose={() => setActiveTab(null)} />
           </div>
         )}
 
-        {/* Floating Controls */}
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-6 px-8 py-5 rounded-[2.5rem] glass-panel bg-background/80 shadow-[0_30px_60px_-12px_rgba(0,0,0,0.6)] z-50">
           <div className="flex items-center gap-2">
             <Button 
@@ -267,7 +292,6 @@ export function VideoRoom({ roomId, user, roomName }: VideoRoomProps) {
         </div>
       </div>
 
-      {/* Side Panels */}
       {activeTab === 'chat' && (
         <ChatPanel roomId={roomId} user={user} onClose={() => setActiveTab(null)} />
       )}

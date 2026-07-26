@@ -9,7 +9,7 @@ import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: 'CoreMeet | Professional Collaboration Platform',
+  title: 'OmniMeet | Professional Collaboration Platform',
   description: 'Unify your workspace with high-fidelity video conferencing, interactive whiteboards, and real-time team synchronization.',
 };
 

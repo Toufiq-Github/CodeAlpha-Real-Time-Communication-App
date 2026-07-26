@@ -1,13 +1,12 @@
 'use client';
 
-import Link from 'next/link';
-import { Home, User, LogOut, Search, Bell, Sparkles, PlusCircle } from 'lucide-react';
+import Link from 'link';
+import { Home, LogOut, Search, Bell, Sparkles } from 'lucide-react';
 import { useAuth, useUser } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { cn } from '@/lib/utils';
 
 export function Navbar() {
   const auth = useAuth();
@@ -18,17 +17,6 @@ export function Navbar() {
     signOut(auth).then(() => router.push('/login'));
   };
 
-  const scrollToPost = () => {
-    if (window.location.pathname !== '/') {
-      router.push('/');
-      return;
-    }
-    const element = document.getElementById('post-creator');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  };
-
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-muted/50 bg-background/70 backdrop-blur-2xl">
       <div className="container mx-auto flex h-18 md:h-20 items-center justify-between px-6">
@@ -37,7 +25,7 @@ export function Navbar() {
              <Sparkles className="h-5 w-5 text-primary-foreground" />
           </div>
           <span className="text-xl md:text-2xl font-black tracking-tighter text-foreground uppercase group-hover:text-primary transition-colors">
-            ConnectHub
+            OmniMeet
           </span>
         </Link>
 
@@ -55,32 +43,21 @@ export function Navbar() {
           </Button>
 
           {user && (
-            <>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="rounded-full text-primary hover:bg-primary/10 md:hidden" 
-                onClick={scrollToPost}
-                title="Compose"
-              >
-                <PlusCircle className="h-6 w-6" />
-              </Button>
-              <Button variant="ghost" size="icon" className="rounded-full relative hover:bg-primary/5 hover:text-primary hidden md:inline-flex" title="Notifications">
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-2.5 right-2.5 h-2 w-2 bg-primary rounded-full border-2 border-background animate-pulse"></span>
-              </Button>
-            </>
+            <Button variant="ghost" size="icon" className="rounded-full relative hover:bg-primary/5 hover:text-primary hidden md:inline-flex" title="Notifications">
+              <Bell className="h-5 w-5" />
+              <span className="absolute top-2.5 right-2.5 h-2 w-2 bg-primary rounded-full border-2 border-background animate-pulse"></span>
+            </Button>
           )}
 
           {user ? (
             <div className="flex items-center gap-2 ml-2 pl-4 border-l border-muted">
               <Button variant="ghost" size="sm" className="rounded-full pl-1 pr-4 gap-3 bg-accent/30 hover:bg-primary/10 transition-colors h-10" asChild>
-                <Link href={`/profile/${user.username}`}>
+                <Link href="/dashboard">
                    <Avatar className="h-8 w-8 ring-2 ring-primary/20">
                     <AvatarImage src={user.avatarUrl} />
-                    <AvatarFallback className="bg-primary/10 text-primary">{user.displayName?.charAt(0)}</AvatarFallback>
+                    <AvatarFallback className="bg-primary/10 text-primary">{user.name?.charAt(0)}</AvatarFallback>
                   </Avatar>
-                  <span className="hidden lg:inline font-black text-[10px] uppercase tracking-[0.2em] text-primary">@{user.username}</span>
+                  <span className="hidden lg:inline font-black text-[10px] uppercase tracking-[0.2em] text-primary">Workspace</span>
                 </Link>
               </Button>
               <Button 

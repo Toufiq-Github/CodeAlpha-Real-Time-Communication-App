@@ -50,7 +50,7 @@ export default function RoomPage() {
 
   return (
     <div className="min-h-screen bg-slate-900 text-white overflow-hidden">
-      <VideoRoom roomId={roomId} user={user} roomName={room.name} />
+      <VideoRoom roomId={roomId} user={user} room={room} />
     </div>
   );
 }
