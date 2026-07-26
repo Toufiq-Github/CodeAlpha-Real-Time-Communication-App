@@ -184,7 +184,7 @@ export default function Dashboard() {
                 <Share2 className="h-8 w-8 text-primary" />
                 <h3 className="text-xl font-black uppercase tracking-tight">Unify Teams</h3>
                 <p className="text-sm text-muted-foreground font-medium">Broadcast secure workspace invites to your entire organization for instant real-time goal execution.</p>
-                <Button variant="outline" className="w-full rounded-xl border-white/10 h-12 font-bold bg-white/5 hover:bg-white/10 uppercase text-[10px] tracking-widest">Workspace Settings</Button>
+                <Button variant="outline" className="w-full rounded-xl border-white/10 h-12 font-bold bg-white/5 hover:bg-white/10 uppercase text-[10px] tracking-widest" onClick={() => router.push('/dashboard/settings')}>Workspace Settings</Button>
             </Card>
         </div>
       </div>
