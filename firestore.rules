@@ -13,7 +13,10 @@ service cloud.firestore {
     }
 
     match /rooms/{roomId} {
+      // Allow any signed-in user to read (get/list) and create rooms
       allow read, create: if isSignedIn();
+      
+      // Only the creator can update or delete the room metadata
       allow update, delete: if isSignedIn() && resource.data.createdBy == request.auth.uid;
 
       match /participants/{userId} {
@@ -33,7 +36,7 @@ service cloud.firestore {
       }
     }
 
-    // General posts for social feed if needed
+    // General posts logic if still referenced by legacy components
     match /posts/{postId} {
       allow read: if true;
       allow create: if isSignedIn();

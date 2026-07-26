@@ -14,7 +14,7 @@ const adminNavItems: NavItem[] = [
     href: "/dashboard",
     label: "User Dashboard",
     icon: "LayoutDashboard",
-    tooltip: "Return to Hub",
+    tooltip: "Return to Dashboard",
   },
 ];
 
