@@ -94,7 +94,7 @@ export default function LandingPage() {
               asChild
             >
               <Link href="/dashboard">
-                Workspace Hub
+                Workspace
                 <ArrowRight className="ml-4 h-5 w-5" />
               </Link>
             </Button>

@@ -8,7 +8,7 @@ const navItems: NavItem[] = [
     href: "/dashboard",
     label: "Command Center",
     icon: "LayoutDashboard",
-    tooltip: "Main Hub",
+    tooltip: "Main Workspace",
   },
   {
     href: "/dashboard/history",
