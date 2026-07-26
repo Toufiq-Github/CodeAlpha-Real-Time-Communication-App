@@ -124,7 +124,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-[20px] font-semibold text-foreground uppercase tracking-tight">Initialize Session</CardTitle>
+            <CardTitle className="text-[18px] font-semibold text-foreground uppercase tracking-tight">Initialize Session</CardTitle>
             <CardDescription className="text-[14px] text-card-foreground">Deploy a secure professional workspace session.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -176,7 +176,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pt-8">
         <Card className="lg:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between border-b border-border pb-6">
-            <CardTitle className="text-[18px] text-foreground uppercase tracking-tight">Recent Sessions</CardTitle>
+            <CardTitle className="text-[16px] text-foreground uppercase tracking-tight">Recent Sessions</CardTitle>
             <Clock className="h-5 w-5 text-muted-foreground" />
           </CardHeader>
           <CardContent className="pt-8 space-y-4">

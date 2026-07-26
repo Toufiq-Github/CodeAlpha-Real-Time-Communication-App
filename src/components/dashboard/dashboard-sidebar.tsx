@@ -86,13 +86,13 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
                   className={cn(
                     "h-11 transition-all duration-200 text-[14px] font-medium px-4",
                     isActive 
-                      ? "sidebar-item-active text-black bg-white" 
+                      ? "bg-white text-black hover:bg-white" 
                       : "hover:bg-sidebar-accent/10 text-sidebar-foreground hover:text-white"
                   )}
                 >
                   <Link href={item.href} className="flex items-center gap-4">
                       <Icon className={cn("h-5 w-5", isActive ? "text-black" : "text-sidebar-foreground")} />
-                      <span className={cn("tracking-tight", isActive ? "text-black" : "")}>{item.label}</span>
+                      <span className={cn("tracking-tight", isActive ? "text-black font-semibold" : "")}>{item.label}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
