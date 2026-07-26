@@ -33,7 +33,7 @@ export default function SessionHistoryPage() {
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col gap-2">
-        <h1 className="text-4xl font-black tracking-tighter text-white uppercase italic">Session <span className="text-primary">History</span></h1>
+        <h1 className="text-4xl font-black tracking-tighter text-white uppercase">Session <span className="text-primary">History</span></h1>
         <p className="text-muted-foreground text-lg font-medium tracking-tight">Audit and review your previous workspace collaborations.</p>
       </div>
 
@@ -78,7 +78,7 @@ export default function SessionHistoryPage() {
                   {room.summary && (
                     <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 flex gap-3 items-start">
                       <Sparkles className="h-4 w-4 text-primary shrink-0 mt-1" />
-                      <p className="text-sm text-slate-300 italic font-medium leading-relaxed">
+                      <p className="text-sm text-slate-300 font-medium leading-relaxed">
                         {room.summary}
                       </p>
                     </div>

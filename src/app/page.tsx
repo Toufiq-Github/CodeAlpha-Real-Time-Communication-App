@@ -40,7 +40,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0F172A] selection:bg-primary/30 overflow-x-hidden text-slate-50">
+    <div className="min-h-screen bg-[#050505] selection:bg-primary/30 overflow-x-hidden text-slate-50">
       <header className="container mx-auto py-8 px-6 flex justify-between items-center relative z-50">
         <Logo />
         
@@ -101,7 +101,7 @@ export default function LandingPage() {
             Empowering Distributed Teams
           </div>
           
-          <h1 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tighter leading-[0.9] text-white uppercase italic">
+          <h1 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tighter leading-[0.9] text-white uppercase">
             UNIFY YOUR <br />
             <span className="text-primary not-italic">WORKSPACE.</span>
           </h1>
@@ -164,7 +164,7 @@ export default function LandingPage() {
             <Link href="#" className="hover:text-white transition-all">Terms of Service</Link>
             <Link href="#" className="hover:text-white transition-all">Security</Link>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic">© 2024 TeamSync Infrastructure</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">© 2024 TeamSync Infrastructure</p>
         </div>
       </footer>
     </div>

@@ -7,7 +7,7 @@ import { collection, addDoc, query, where, limit } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Video, Calendar, UserPlus, Clock, Shield, Share2, Loader2 } from 'lucide-react';
+import { Video, Calendar, Clock, Shield, Share2, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Room } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
@@ -117,10 +117,6 @@ export default function Dashboard() {
             >
                 <Calendar className="h-5 w-5 text-muted-foreground" />
                 <span className="text-[12px] font-bold uppercase tracking-widest">Schedule</span>
-            </Button>
-            <Button variant="default" className="h-10 px-4 font-bold uppercase tracking-widest text-[10px]">
-                <UserPlus className="h-5 w-5 mr-2" />
-                Invite Team
             </Button>
         </div>
       </div>

@@ -35,7 +35,7 @@ export default function TeamSearchPage() {
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col gap-2">
-        <h1 className="text-4xl font-black tracking-tighter text-white uppercase italic">Team <span className="text-primary">Search</span></h1>
+        <h1 className="text-4xl font-black tracking-tighter text-white uppercase">Team <span className="text-primary">Search</span></h1>
         <p className="text-muted-foreground text-lg font-medium tracking-tight">Identify and connect with members of your organization.</p>
       </div>
 
