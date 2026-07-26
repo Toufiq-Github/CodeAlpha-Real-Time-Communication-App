@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -57,7 +56,7 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
   }
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border bg-[#0B0B0B]">
+    <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar">
       <SidebarHeader className="py-8 px-6">
         <div className="flex w-full items-center justify-start group-data-[collapsible=icon]:hidden">
           <Link href="/dashboard">
@@ -88,11 +87,11 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
                     "h-11 transition-all duration-200 text-[14px] font-medium px-4",
                     isActive 
                       ? "sidebar-item-active font-semibold" 
-                      : "hover:bg-[#1F1F1F] text-[#BDBDBD] hover:text-[#FFFFFF]"
+                      : "hover:bg-sidebar-accent text-sidebar-foreground hover:text-foreground"
                   )}
                 >
                   <Link href={item.href} className="flex items-center gap-4">
-                      <Icon className={cn("h-5 w-5", isActive ? "text-white" : "text-[#BDBDBD]")} />
+                      <Icon className={cn("h-5 w-5", isActive ? "text-foreground" : "text-sidebar-foreground")} />
                       <span className="tracking-tight">{item.label}</span>
                   </Link>
                 </SidebarMenuButton>
@@ -102,12 +101,12 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
         </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter className="p-4 border-t border-border bg-black/10">
+      <SidebarFooter className="p-4 border-t border-sidebar-border bg-black/10">
          <SidebarMenu className="gap-2">
             <SidebarMenuItem>
                 <SidebarMenuButton 
                     suppressHydrationWarning
-                    className="h-11 rounded-[12px] hover:bg-[#1F1F1F] text-[#BDBDBD] hover:text-[#FFFFFF] text-[14px]"
+                    className="h-11 rounded-[12px] hover:bg-sidebar-accent text-sidebar-foreground hover:text-foreground text-[14px]"
                     tooltip={user?.email || 'Profile'}
                     asChild
                 >
@@ -120,7 +119,7 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
              <SidebarMenuItem>
                 <SidebarMenuButton 
                     suppressHydrationWarning
-                    className="h-11 rounded-[12px] hover:bg-destructive/10 text-[#BDBDBD] hover:text-destructive transition-colors text-[14px]"
+                    className="h-11 rounded-[12px] hover:bg-destructive/10 text-sidebar-foreground hover:text-destructive transition-colors text-[14px]"
                     tooltip="Logout" 
                     onClick={handleLogout}
                 >
