@@ -1,4 +1,3 @@
-
 rules_version = '2';
 
 service cloud.firestore {
@@ -13,7 +12,8 @@ service cloud.firestore {
     }
 
     match /rooms/{roomId} {
-      // Allow any signed-in user to read (get/list) and create rooms
+      // Allow any signed-in user to list rooms and read metadata
+      // The application query filters by 'createdBy', which is safe
       allow read, create: if isSignedIn();
       
       // Only the creator can update or delete the room metadata
@@ -36,7 +36,7 @@ service cloud.firestore {
       }
     }
 
-    // General posts logic if still referenced by legacy components
+    // Legacy support for other collections
     match /posts/{postId} {
       allow read: if true;
       allow create: if isSignedIn();

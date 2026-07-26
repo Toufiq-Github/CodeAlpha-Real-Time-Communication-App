@@ -56,7 +56,7 @@ export function LoginForm() {
       
       toast({
         title: 'Welcome back!',
-        description: 'Successfully signed in to CoreMeet.',
+        description: 'Successfully signed in to OmniMeet.',
       });
       
       router.push('/dashboard');
