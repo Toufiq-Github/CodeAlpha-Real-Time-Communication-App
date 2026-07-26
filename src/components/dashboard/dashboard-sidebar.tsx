@@ -26,7 +26,7 @@ import { useAuth } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { useUser } from "@/firebase/auth/use-user";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
+import Link from "link";
 
 const IconMap = {
   LayoutDashboard,
@@ -91,8 +91,8 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProps) {
                   )}
                 >
                   <Link href={item.href} className="flex items-center gap-4">
-                      <Icon className={cn("h-5 w-5", isActive ? "text-foreground" : "text-sidebar-foreground")} />
-                      <span className="tracking-tight">{item.label}</span>
+                      <Icon className={cn("h-5 w-5", isActive ? "text-accent" : "text-sidebar-foreground")} />
+                      <span className={cn("tracking-tight", isActive ? "text-accent" : "")}>{item.label}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

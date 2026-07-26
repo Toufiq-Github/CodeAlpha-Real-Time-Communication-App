@@ -16,23 +16,23 @@
     --secondary-foreground: 0 0% 96%;
     --muted: 0 0% 11%;            /* #1C1C1C */
     --muted-foreground: 0 0% 50%; /* #808080 */
-    --accent: 0 0% 15%;           /* #262626 */
+    --accent: 217 91% 60%;        /* #4F8CFF - The Blue Accent */
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 18%;           /* #2D2D2D */
     --input: 0 0% 12%;            /* #1F1F1F */
-    --ring: 0 0% 50%;             /* #808080 */
+    --ring: 217 91% 60%;          /* #4F8CFF - Blue Focus Ring */
     --radius: 14px;
 
     --sidebar-background: 0 0% 5%; /* #0D0D0D */
     --sidebar-foreground: 0 0% 70%;
     --sidebar-primary: 0 0% 96%;
     --sidebar-primary-foreground: 0 0% 7%;
-    --sidebar-accent: 0 0% 13%;
-    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 15%;    /* #262626 */
+    --sidebar-accent-foreground: 217 91% 60%; /* Blue for active items */
     --sidebar-border: 0 0% 18%;
-    --sidebar-ring: 0 0% 50%;
+    --sidebar-ring: 217 91% 60%;
   }
 }
 
@@ -82,7 +82,7 @@
 
 .input-field {
   background: #1A1A1A;
-  border: 1px solid #2D2D2D;
+  border: 1px solid #383838;
   border-radius: 14px;
   height: 52px;
   color: #FFFFFF;
@@ -94,15 +94,20 @@
 }
 
 .input-field:focus {
-  border-color: #808080;
+  border-color: #8A8A8A;
   background: #1F1F1F;
-  box-shadow: 0 0 0 3px rgba(255,255,255,.05);
+  box-shadow: 0 0 0 3px rgba(255,255,255,.05), 0 0 0 1px hsl(var(--ring));
   outline: none;
 }
 
 .sidebar-item-active {
-  @apply bg-accent text-foreground border border-sidebar-border;
+  @apply bg-sidebar-accent border border-sidebar-border;
   border-radius: 12px;
+}
+
+.sidebar-item-active span,
+.sidebar-item-active svg {
+  @apply text-accent;
 }
 
 .status-chip {
@@ -157,4 +162,8 @@
 
 .white-glow {
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+}
+
+.blue-glow {
+  box-shadow: 0 0 20px rgba(79, 140, 255, 0.2);
 }
