@@ -13,6 +13,8 @@ import { User, Mail, Shield, Zap, Save, RefreshCw } from 'lucide-react';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 
+export const dynamic = 'force-dynamic';
+
 export default function OrganizationSettingsPage() {
   const { user } = useUser();
   const db = useFirestore();
@@ -30,7 +32,7 @@ export default function OrganizationSettingsPage() {
   }, [user]);
 
   const handleUpdateProfile = async () => {
-    if (!user) return;
+    if (!user?.id) return;
     setIsSaving(true);
     
     const userRef = doc(db, 'users', user.id);
@@ -59,62 +61,62 @@ export default function OrganizationSettingsPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col gap-2">
-        <h1 className="text-4xl font-black tracking-tighter text-white uppercase">Organization <span className="text-primary">Settings</span></h1>
+        <h1 className="text-4xl font-semibold tracking-tighter text-white uppercase">Organization Settings</h1>
         <p className="text-muted-foreground text-lg font-medium tracking-tight">Manage your professional identity and workspace preferences.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-1 space-y-8">
-            <Card className="glass-panel border-none rounded-[2rem] overflow-hidden">
-                <div className="h-32 bg-primary/20 flex items-center justify-center">
-                    <Avatar className="h-24 w-24 border-4 border-slate-950 shadow-2xl -mb-24">
+            <Card className="border-[#404040] bg-[#171717] rounded-[2rem] overflow-hidden">
+                <div className="h-32 bg-white/5 flex items-center justify-center">
+                    <Avatar className="h-24 w-24 border-4 border-[#050505] shadow-2xl -mb-24">
                         <AvatarImage src={avatarUrl} />
-                        <AvatarFallback className="text-2xl font-black bg-primary/10 text-primary">
+                        <AvatarFallback className="text-2xl font-bold bg-white/10 text-white">
                             {name?.charAt(0)}
                         </AvatarFallback>
                     </Avatar>
                 </div>
                 <CardContent className="pt-16 text-center space-y-2 pb-8">
-                    <h3 className="text-xl font-black uppercase tracking-tight text-white">{name}</h3>
+                    <h3 className="text-xl font-semibold uppercase tracking-tight text-white">{name}</h3>
                     <p className="text-xs text-muted-foreground font-bold tracking-widest opacity-60 truncate px-4">{user?.email}</p>
                     <div className="pt-4 flex justify-center gap-2">
-                         <div className="px-3 py-1 rounded-full bg-primary/10 text-primary text-[9px] font-black uppercase tracking-widest border border-primary/20">Active Member</div>
+                         <div className="px-3 py-1 rounded-full bg-white/10 text-white text-[9px] font-bold uppercase tracking-widest border border-white/20">Active Member</div>
                     </div>
                 </CardContent>
             </Card>
 
             <div className="space-y-4">
                 <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/[0.03] border border-white/5">
-                    <Shield className="h-5 w-5 text-emerald-500" />
+                    <Shield className="h-5 w-5 text-white/50" />
                     <div>
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Security Layer</p>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Security Layer</p>
                         <p className="text-xs font-bold text-white">Encrypted Workspace</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/[0.03] border border-white/5">
-                    <Zap className="h-5 w-5 text-primary" />
+                    <Zap className="h-5 w-5 text-white" />
                     <div>
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Discovery Mode</p>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Discovery Mode</p>
                         <p className="text-xs font-bold text-white">Public Directory</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <Card className="md:col-span-2 glass-panel border-none rounded-[2rem]">
+        <Card className="md:col-span-2 border-[#404040] bg-[#171717] rounded-[2rem]">
           <CardHeader className="p-8 border-b border-white/5">
-            <CardTitle className="text-xl font-black uppercase">Identity Control</CardTitle>
+            <CardTitle className="text-xl font-semibold uppercase">Identity Control</CardTitle>
             <CardDescription className="text-base font-medium">Update your presence across the TeamSync ecosystem.</CardDescription>
           </CardHeader>
           <CardContent className="p-8 space-y-8">
             <div className="space-y-6">
               <div className="space-y-3">
-                <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground px-1">Display Name</Label>
+                <Label htmlFor="name" className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground px-1">Display Name</Label>
                 <div className="relative">
                     <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
                     <Input 
                         id="name"
-                        className="h-14 pl-12 rounded-xl bg-white/5 border-white/10 text-base font-medium focus-visible:ring-primary/50 text-white"
+                        className="h-14 pl-12 rounded-xl bg-white/5 border-white/10 text-base font-medium focus-visible:ring-white/50 text-white"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                     />
@@ -122,7 +124,7 @@ export default function OrganizationSettingsPage() {
               </div>
 
               <div className="space-y-3">
-                <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground px-1">Corporate Email</Label>
+                <Label htmlFor="email" className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground px-1">Corporate Email</Label>
                 <div className="relative">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/20" />
                     <Input 
@@ -135,12 +137,12 @@ export default function OrganizationSettingsPage() {
               </div>
 
               <div className="space-y-3">
-                <Label htmlFor="avatar" className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground px-1">Avatar Resource (URL)</Label>
+                <Label htmlFor="avatar" className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground px-1">Avatar Resource (URL)</Label>
                 <div className="relative">
                     <RefreshCw className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
                     <Input 
                         id="avatar"
-                        className="h-14 pl-12 rounded-xl bg-white/5 border-white/10 text-base font-medium focus-visible:ring-primary/50 text-white"
+                        className="h-14 pl-12 rounded-xl bg-white/5 border-white/10 text-base font-medium focus-visible:ring-white/50 text-white"
                         value={avatarUrl}
                         onChange={(e) => setAvatarUrl(e.target.value)}
                         placeholder="https://images.unsplash.com/..."
@@ -153,7 +155,7 @@ export default function OrganizationSettingsPage() {
               <Button 
                 onClick={handleUpdateProfile} 
                 disabled={isSaving}
-                className="h-14 w-full sm:w-auto px-10 rounded-xl font-black text-sm shadow-xl shadow-primary/20 transition-all active:scale-95 gap-2"
+                className="h-14 w-full sm:w-auto px-10 rounded-xl font-bold text-sm transition-all active:scale-95 gap-2 bg-[#E8E8E8] text-black hover:bg-white"
               >
                 {isSaving ? 'Syncing...' : 'Save Changes'}
                 <Save className="h-4 w-4" />

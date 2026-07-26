@@ -19,6 +19,8 @@ import { Appointment } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 function DoctorName({ doctorId }: { doctorId: string }) {
   const db = useFirestore();
   const doctorRef = useMemo(() => {
@@ -37,9 +39,9 @@ export default function PatientAppointmentsPage() {
   const db = useFirestore();
   
   const appointmentsQuery = useMemo(() => {
-    if (!db || !user) return null;
+    if (!db || !user?.id) return null;
     return query(collection(db, 'appointments'), where('patientUserId', '==', user.id));
-  }, [db, user]);
+  }, [db, user?.id]);
 
   const { data: appointments, loading: appointmentsLoading } = useCollection<Appointment>(appointmentsQuery);
 

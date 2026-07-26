@@ -22,6 +22,8 @@ import { useToast } from "@/hooks/use-toast";
 import { FirestorePermissionError } from "@/firebase/errors";
 import { errorEmitter } from "@/firebase/error-emitter";
 
+export const dynamic = 'force-dynamic';
+
 function PatientName({ patientId }: { patientId: string }) {
   const db = useFirestore();
   const patientRef = useMemo(() => {
@@ -41,9 +43,9 @@ export default function DoctorDashboardPage() {
   const { toast } = useToast();
 
   const appointmentsQuery = useMemo(() => {
-    if (!db || !user) return null;
+    if (!db || !user?.id) return null;
     return query(collection(db, 'appointments'), where('doctorUserId', '==', user.id));
-  }, [db, user]);
+  }, [db, user?.id]);
   
   const { data: appointments, loading: appointmentsLoading } = useCollection<Appointment>(appointmentsQuery);
 
@@ -55,6 +57,7 @@ export default function DoctorDashboardPage() {
   };
   
   const handleAppointmentUpdate = (appointmentId: string, newStatus: "Accepted" | "Rejected") => {
+    if (!appointmentId) return;
     const appointmentRef = doc(db, 'appointments', appointmentId);
     
     const updateData: { status: string; meetLink?: string; } = { status: newStatus };

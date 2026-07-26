@@ -9,9 +9,15 @@ import { Appointment, UserProfile } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 
+export const dynamic = 'force-dynamic';
+
 function PatientCard({ patientId }: { patientId: string }) {
   const db = useFirestore();
-  const patientRef = useMemo(() => patientId ? doc(db, 'users', patientId) : null, [db, patientId]);
+  const patientRef = useMemo(() => {
+    if (!db || !patientId) return null;
+    return doc(db, 'users', patientId);
+  }, [db, patientId]);
+  
   const { data: patient, loading } = useDoc(patientRef) as { data: UserProfile | null, loading: boolean };
 
   if (loading) {
@@ -63,9 +69,9 @@ export default function DoctorPatientsPage() {
   const db = useFirestore();
 
   const appointmentsQuery = useMemo(() => {
-    if (!db || !user) return null;
+    if (!db || !user?.id) return null;
     return query(collection(db, 'appointments'), where('doctorUserId', '==', user.id));
-  }, [db, user]);
+  }, [db, user?.id]);
 
   const { data: appointments, loading } = useCollection<Appointment>(appointmentsQuery);
 
@@ -73,7 +79,9 @@ export default function DoctorPatientsPage() {
 
   const patientIds = useMemo(() => {
     if (!appointments) return [];
-    const ids = appointments.map(a => a.patientUserId);
+    const ids = appointments
+      .map(a => a.patientUserId)
+      .filter((id): id is string => !!id);
     return [...new Set(ids)];
   }, [appointments]);
 

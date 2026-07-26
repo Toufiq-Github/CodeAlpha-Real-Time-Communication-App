@@ -14,6 +14,8 @@ import { useToast } from '@/hooks/use-toast';
 import { ScheduleMeetingModal } from '@/components/dashboard/schedule-meeting-modal';
 import { cn } from '@/lib/utils';
 
+export const dynamic = 'force-dynamic';
+
 export default function Dashboard() {
   const [roomName, setRoomName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
@@ -31,13 +33,13 @@ export default function Dashboard() {
   };
 
   const historyQuery = useMemo(() => {
-    if (!db || !user) return null;
+    if (!db || !user?.id) return null;
     return query(
       collection(db, 'rooms'), 
       where('createdBy', '==', user.id),
       limit(20)
     );
-  }, [db, user]);
+  }, [db, user?.id]);
 
   const { data: rooms, loading: roomsLoading } = useCollection<Room>(historyQuery);
 
