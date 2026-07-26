@@ -6,12 +6,12 @@
   :root {
     --background: 0 0% 2%;        /* #050505 */
     --foreground: 0 0% 100%;      /* #FFFFFF */
-    --card: 0 0% 9.4%;            /* #181818 */
+    --card: 0 0% 9%;              /* #171717 */
     --card-foreground: 0 0% 70%;  /* #B3B3B3 */
     --popover: 0 0% 4%;           /* #0B0B0B */
     --popover-foreground: 0 0% 100%;
-    --primary: 0 0% 96%;          /* #F5F5F5 */
-    --primary-foreground: 0 0% 7%;/* #111111 */
+    --primary: 0 0% 91%;          /* #E8E8E8 */
+    --primary-foreground: 0 0% 0%;/* #000000 */
     --secondary: 0 0% 12.5%;      /* #202020 */
     --secondary-foreground: 0 0% 96%;
     --muted: 0 0% 11%;            /* #1C1C1C */
@@ -20,10 +20,10 @@
     --accent-foreground: 0 0% 0%; /* Black */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 17.6%;         /* #2D2D2D */
+    --border: 0 0% 25%;           /* #404040 */
     --input: 0 0% 10%;            /* #1A1A1A */
     --ring: 0 0% 50%;             /* Gray Focus Ring */
-    --radius: 14px;
+    --radius: 12px;
 
     --sidebar-background: 0 0% 5%; /* #0D0D0D */
     --sidebar-foreground: 0 0% 70%;/* #B3B3B3 */
@@ -31,7 +31,7 @@
     --sidebar-primary-foreground: 0 0% 0%;
     --sidebar-accent: 0 0% 100%;   /* White for active items */
     --sidebar-accent-foreground: 0 0% 0%; /* Black for active items */
-    --sidebar-border: 0 0% 17.6%;  /* #2D2D2D */
+    --sidebar-border: 0 0% 25%;    /* #404040 */
     --sidebar-ring: 0 0% 50%;
   }
 }
@@ -50,59 +50,57 @@
 
 .premium-card {
   @apply bg-card border border-border;
-  border-radius: 18px;
-  box-shadow: 0 12px 32px rgba(0,0,0,.30);
+  border-radius: 12px;
 }
 
 .primary-button {
-  background: #F5F5F5;
-  color: #111111;
-  border: 1px solid #DADADA;
-  border-radius: 14px;
-  box-shadow: 0 8px 20px rgba(0,0,0,.25);
+  background: #E8E8E8;
+  color: #000000;
+  border: none;
+  border-radius: 10px;
   transition: all 0.2s ease;
 }
 
 .primary-button:hover {
-  background: #E4E4E4;
+  background: #FFFFFF;
   transform: translateY(-1px);
 }
 
 .secondary-button {
   background: #202020;
   color: #F5F5F5;
-  border: 1px solid #343434;
-  border-radius: 14px;
+  border: 1px solid #404040;
+  border-radius: 10px;
   transition: all 0.2s ease;
 }
 
 .secondary-button:hover {
   background: #2A2A2A;
+  border-color: #505050;
 }
 
 .input-field {
   background: #1A1A1A;
-  border: 1px solid #393939;
-  border-radius: 14px;
+  border: 1px solid #404040;
+  border-radius: 10px;
   height: 52px;
   color: #FFFFFF;
   font-size: 14px;
 }
 
 .input-field::placeholder {
-  color: #8A8A8A;
+  color: #606060;
 }
 
 .input-field:focus {
-  border-color: #8A8A8A;
-  background: #1F1F1F;
-  box-shadow: 0 0 0 3px rgba(255,255,255,.05);
+  border-color: #E8E8E8;
+  background: #000000;
   outline: none;
 }
 
 .sidebar-item-active {
   @apply bg-white;
-  border-radius: 12px;
+  border-radius: 8px;
 }
 
 .sidebar-item-active span,
@@ -114,19 +112,8 @@
   @apply inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-widest;
 }
 
-.status-online {
-  background: #183122;
-  color: #77DD77;
-}
-
-.status-scheduled {
-  background: #1a1a1a;
-  color: #808080;
-  border: 1px solid #2D2D2D;
-}
-
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 4px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
@@ -138,6 +125,14 @@
   @apply bg-white/20;
 }
 
-.white-glow {
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }

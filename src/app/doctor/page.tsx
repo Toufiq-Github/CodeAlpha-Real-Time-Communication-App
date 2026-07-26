@@ -1,4 +1,5 @@
 'use client';
+import { useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -11,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Check, X } from "lucide-react";
+import { Check, X, Calendar } from "lucide-react";
 import { format } from 'date-fns';
 import { useUser, useFirestore, useCollection, useDoc } from "@/firebase";
 import { collection, query, where, doc, updateDoc } from "firebase/firestore";
@@ -23,25 +24,29 @@ import { errorEmitter } from "@/firebase/error-emitter";
 
 function PatientName({ patientId }: { patientId: string }) {
   const db = useFirestore();
-  const { data: patient, loading } = useDoc(doc(db, 'users', patientId));
+  const patientRef = useMemo(() => patientId ? doc(db, 'users', patientId) : null, [db, patientId]);
+  const { data: patient, loading } = useDoc(patientRef);
 
   if (loading) return <Skeleton className="h-4 w-24" />;
-  return <>{patient?.name || 'Unknown Patient'}</>;
+  return <span className="font-semibold text-white uppercase tracking-tight">{patient?.name || 'Unknown Patient'}</span>;
 }
-
 
 export default function DoctorDashboardPage() {
   const { user, loading: userLoading } = useUser();
   const db = useFirestore();
   const { toast } = useToast();
 
-  const appointmentsQuery = user ? query(collection(db, 'appointments'), where('doctorUserId', '==', user.id)) : null;
+  const appointmentsQuery = useMemo(() => {
+    if (!db || !user) return null;
+    return query(collection(db, 'appointments'), where('doctorUserId', '==', user.id));
+  }, [db, user]);
+  
   const { data: appointments, loading: appointmentsLoading } = useCollection<Appointment>(appointmentsQuery);
 
   const getStatusBadgeVariant = (status: string) => {
-    if (status === 'Accepted') return 'bg-status-success text-white hover:bg-status-success/80';
-    if (status === 'Pending') return 'bg-status-warning text-white hover:bg-status-warning/80';
-    if (status === 'Rejected') return 'bg-status-error text-white hover:bg-status-error/80';
+    if (status === 'Accepted') return 'bg-white text-black hover:bg-white/90 border-transparent';
+    if (status === 'Pending') return 'bg-transparent text-[#B3B3B3] border-[#404040]';
+    if (status === 'Rejected') return 'bg-transparent text-destructive border-destructive/30';
     return 'default';
   };
   
@@ -50,7 +55,6 @@ export default function DoctorDashboardPage() {
     
     const updateData: { status: string; meetLink?: string; } = { status: newStatus };
     if (newStatus === 'Accepted') {
-      // Generate a dummy meeting link for this demo
       updateData.meetLink = `https://meet.google.com/${Math.random().toString(36).substring(2, 12)}`;
     }
 
@@ -74,64 +78,67 @@ export default function DoctorDashboardPage() {
   const isLoading = userLoading || appointmentsLoading;
 
   return (
-    <div className="w-full">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold font-headline">Appointment Requests</h1>
-        <p className="text-muted-foreground">
-          Review and manage incoming patient appointment requests.
-        </p>
+    <div className="w-full max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-4xl font-semibold tracking-tighter text-white uppercase">Appointment Requests</h1>
+        <p className="text-[#B3B3B3] text-lg font-medium tracking-tight">Review and manage incoming patient appointment requests.</p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Incoming Appointments</CardTitle>
+      <Card className="border-[#404040] bg-[#171717] overflow-hidden">
+        <CardHeader className="border-b border-[#404040] p-8">
+          <CardTitle className="text-xl font-semibold uppercase text-white flex items-center gap-3">
+            <Calendar className="h-5 w-5 text-[#D5D5D5]" />
+            Incoming Consultations
+          </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Patient</TableHead>
-                <TableHead>Date & Time</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+            <TableHeader className="bg-black/20">
+              <TableRow className="border-[#404040] hover:bg-transparent">
+                <TableHead className="text-[10px] font-bold uppercase tracking-widest text-[#808080] h-14 px-8">Patient</TableHead>
+                <TableHead className="text-[10px] font-bold uppercase tracking-widest text-[#808080] h-14">Date & Time</TableHead>
+                <TableHead className="text-[10px] font-bold uppercase tracking-widest text-[#808080] h-14">Status</TableHead>
+                <TableHead className="text-[10px] font-bold uppercase tracking-widest text-[#808080] h-14 text-right px-8">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
                  <TableRow>
-                  <TableCell colSpan={5} className="text-center">Loading appointments...</TableCell>
+                  <TableCell colSpan={5} className="text-center py-10 opacity-50">Synchronizing data...</TableCell>
                 </TableRow>
               ) : appointments && appointments.length > 0 ? (
                 appointments.map((apt) => (
-                  <TableRow key={apt.id}>
-                    <TableCell className="font-medium">
+                  <TableRow key={apt.id} className="border-[#404040] hover:bg-white/[0.02] transition-all">
+                    <TableCell className="px-8 h-20">
                       <PatientName patientId={apt.patientUserId} />
                     </TableCell>
-                    <TableCell>{format(new Date(apt.date), 'MMM d, yyyy, h:mm a')}</TableCell>
+                    <TableCell className="text-[#B3B3B3] font-medium">
+                      {format(new Date(apt.date), 'MMM d, yyyy, h:mm a')}
+                    </TableCell>
                     <TableCell>
-                      <Badge className={cn("text-xs", getStatusBadgeVariant(apt.status))}>
+                      <Badge variant="outline" className={cn("text-[10px] font-bold uppercase tracking-widest px-3 py-1", getStatusBadgeVariant(apt.status))}>
                         {apt.status}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right px-8">
                       {apt.status === "Pending" ? (
                         <div className="flex gap-2 justify-end">
-                          <Button variant="outline" size="icon" className="h-8 w-8 border-status-success text-status-success hover:bg-status-success/10 hover:text-status-success" onClick={() => handleAppointmentUpdate(apt.id, 'Accepted')}>
+                          <Button variant="outline" size="icon" className="h-9 w-9 border-[#404040] hover:bg-white hover:text-black transition-all" onClick={() => handleAppointmentUpdate(apt.id, 'Accepted')}>
                             <Check className="h-4 w-4" />
                           </Button>
-                          <Button variant="outline" size="icon" className="h-8 w-8 border-status-error text-status-error hover:bg-status-error/10 hover:text-status-error" onClick={() => handleAppointmentUpdate(apt.id, 'Rejected')}>
+                          <Button variant="outline" size="icon" className="h-9 w-9 border-[#404040] hover:bg-destructive hover:text-white transition-all" onClick={() => handleAppointmentUpdate(apt.id, 'Rejected')}>
                             <X className="h-4 w-4" />
                           </Button>
                         </div>
                       ) : (
-                        <span className="text-xs text-muted-foreground">Processed</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-[#808080]">Processed</span>
                       )}
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center">No appointments found.</TableCell>
+                  <TableCell colSpan={5} className="text-center py-24 text-[#808080] font-medium">No pending appointment requests found.</TableCell>
                 </TableRow>
               )}
             </TableBody>

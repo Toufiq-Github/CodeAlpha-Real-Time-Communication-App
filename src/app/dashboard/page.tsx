@@ -81,7 +81,7 @@ export default function Dashboard() {
       toast({
         variant: 'destructive',
         title: 'Initialization Failed',
-        description: 'Could not deploy workspace session. Please check your connection.',
+        description: 'Could not deploy workspace session. Please try again.',
       });
     } finally {
       setIsCreating(false);
@@ -92,8 +92,8 @@ export default function Dashboard() {
     return (
       <div className="flex h-[80vh] w-full items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-6">
-          <Loader2 className="h-12 w-12 text-foreground animate-spin" />
-          <p className="text-muted-foreground font-semibold uppercase tracking-[0.3em] text-[10px]">Synchronizing Workspace...</p>
+          <Loader2 className="h-12 w-12 text-white animate-spin" />
+          <p className="text-[#808080] font-semibold uppercase tracking-[0.3em] text-[10px]">Synchronizing Workspace...</p>
         </div>
       </div>
     );
@@ -103,35 +103,35 @@ export default function Dashboard() {
     <div className="max-w-7xl mx-auto space-y-8 pb-20 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-8">
         <div>
-          <h1 className="text-[32px] font-semibold tracking-tight text-foreground">{getGreeting()}, {user?.name?.split(' ')[0] || 'Team'} 👋</h1>
-          <p className="text-muted-foreground text-[14px] font-medium tracking-tight mt-2">
+          <h1 className="text-[32px] font-semibold tracking-tight text-white uppercase">{getGreeting()}, {user?.name?.split(' ')[0] || 'Team'}</h1>
+          <p className="text-[#B3B3B3] text-[14px] font-medium tracking-tight mt-2">
             Ready to collaborate with your team today?
           </p>
         </div>
         <div className="flex items-center gap-4">
             <Button 
               variant="secondary" 
-              className="gap-2 h-10 px-4"
+              className="gap-2 h-11 px-6 rounded-xl border-[#404040]"
               onClick={() => setIsScheduleModalOpen(true)}
               disabled={!user}
             >
-                <Calendar className="h-5 w-5 text-muted-foreground" />
-                <span className="text-[12px] font-semibold uppercase tracking-widest">Schedule</span>
+                <Calendar className="h-5 w-5 text-[#D5D5D5]" />
+                <span className="text-[12px] font-semibold uppercase tracking-widest">Schedule Session</span>
             </Button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 border-[#404040] bg-[#171717]">
           <CardHeader>
-            <CardTitle className="text-[18px] font-semibold text-foreground uppercase tracking-tight">Initialize Session</CardTitle>
-            <CardDescription className="text-[14px] text-card-foreground">Deploy a secure professional workspace session.</CardDescription>
+            <CardTitle className="text-[18px] font-semibold text-white uppercase tracking-tight">Initialize Session</CardTitle>
+            <CardDescription className="text-[#B3B3B3] text-[14px] font-medium">Deploy a secure professional workspace session.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4">
               <Input 
-                placeholder="Session Objective" 
-                className="flex-1 text-[14px] h-[52px]"
+                placeholder="Enter objective title..." 
+                className="flex-1 text-[14px] h-[52px] bg-black/20 border-[#404040] focus:border-white transition-all"
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleCreateRoom()}
@@ -139,7 +139,7 @@ export default function Dashboard() {
               <Button 
                 onClick={handleCreateRoom}
                 disabled={isCreating || !roomName.trim() || !user}
-                className="px-10 h-[52px]"
+                className="px-10 h-[52px] bg-[#E8E8E8] text-black hover:bg-white rounded-xl transition-all"
               >
                 {isCreating ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
@@ -154,51 +154,51 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-[#404040] bg-[#171717]">
           <CardContent className="h-full flex flex-col justify-between py-8">
             <div className="space-y-6">
-              <div className="h-12 w-12 rounded-xl bg-white/5 flex items-center justify-center border border-white/10">
-                <Shield className="h-6 w-6 text-foreground" />
+              <div className="h-12 w-12 rounded-xl bg-white/5 flex items-center justify-center border border-[#404040]">
+                <Shield className="h-6 w-6 text-[#D5D5D5]" />
               </div>
               <div>
-                <h3 className="text-[16px] font-semibold tracking-tight text-foreground uppercase">Security Protocol</h3>
-                <p className="text-[14px] text-card-foreground font-medium leading-relaxed mt-2">Enterprise signaling layer with peer discovery and encrypted data channels.</p>
+                <h3 className="text-[16px] font-semibold tracking-tight text-white uppercase">Security Protocol</h3>
+                <p className="text-[14px] text-[#B3B3B3] font-medium leading-relaxed mt-2">Enterprise signaling layer with peer discovery and encrypted data channels.</p>
               </div>
             </div>
             <div className="pt-6 flex items-center gap-2">
-              <div className="h-2 w-2 rounded-full bg-status-online animate-pulse" />
-              <span className="text-[9px] font-semibold uppercase tracking-widest text-[#77DD77]">Service: Online</span>
+              <div className="h-2 w-2 rounded-full bg-white animate-pulse" />
+              <span className="text-[9px] font-semibold uppercase tracking-widest text-[#B3B3B3]">Service Status: Secure</span>
             </div>
           </CardContent>
         </Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pt-8">
-        <Card className="lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between border-b border-border pb-6">
-            <CardTitle className="text-[16px] text-foreground uppercase tracking-tight">Recent Sessions</CardTitle>
-            <Clock className="h-5 w-5 text-muted-foreground" />
+        <Card className="lg:col-span-2 border-[#404040] bg-[#171717]">
+          <CardHeader className="flex flex-row items-center justify-between border-b border-[#404040] pb-6 px-8">
+            <CardTitle className="text-[16px] text-white uppercase tracking-tight">Recent Sessions</CardTitle>
+            <Clock className="h-5 w-5 text-[#808080]" />
           </CardHeader>
-          <CardContent className="pt-8 space-y-4">
+          <CardContent className="pt-8 space-y-4 px-8">
               {roomsLoading ? (
                 <div className="flex items-center gap-3 p-4 opacity-50">
-                  <Loader2 className="h-4 w-4 animate-spin text-foreground" />
-                  <p className="font-medium text-[12px] text-card-foreground">Syncing archives...</p>
+                  <Loader2 className="h-4 w-4 animate-spin text-white" />
+                  <p className="font-medium text-[12px] text-[#B3B3B3] uppercase tracking-widest">Syncing archives...</p>
                 </div>
               ) : recentRooms && recentRooms.length > 0 ? (
                 recentRooms.map(room => (
                   <div 
                     key={room.id} 
-                    className="flex flex-col p-5 rounded-2xl bg-muted/30 border border-border hover:bg-muted/50 transition-all group"
+                    className="flex flex-col p-5 rounded-2xl bg-black/20 border border-[#404040] hover:bg-black/40 transition-all group"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-white/10 transition-all">
-                          {room.scheduledAt ? <Calendar className="h-5 w-5 text-foreground" /> : <Video className="h-5 w-5 text-foreground" />}
+                        <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-white/10 transition-all border border-[#404040]">
+                          {room.scheduledAt ? <Calendar className="h-5 w-5 text-[#D5D5D5]" /> : <Video className="h-5 w-5 text-[#D5D5D5]" />}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-semibold text-[14px] text-foreground transition-all uppercase tracking-tight">{room.name}</p>
-                          <p className="text-[11px] text-muted-foreground font-medium mt-1">
+                          <p className="font-semibold text-[14px] text-white uppercase tracking-tight truncate">{room.name}</p>
+                          <p className="text-[11px] text-[#808080] font-medium mt-1">
                             {room.scheduledAt 
                               ? `Scheduled • ${format(new Date(room.scheduledAt), 'MMM d, h:mm a')}`
                               : format(new Date(room.createdAt), 'MMM d • h:mm a')}
@@ -206,29 +206,31 @@ export default function Dashboard() {
                         </div>
                       </div>
                       <span className={cn(
-                        "status-chip text-[9px]",
-                        room.scheduledAt ? "status-scheduled" : "bg-background text-muted-foreground border border-border"
+                        "text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border",
+                        room.scheduledAt ? "border-[#404040] text-[#B3B3B3] bg-black/20" : "border-transparent text-[#808080] bg-white/5"
                       )}>
-                        {room.scheduledAt ? "Scheduled" : "Audit Only"}
+                        {room.scheduledAt ? "Planned" : "Archive"}
                       </span>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="text-center py-20 border-2 border-dashed border-border rounded-2xl bg-white/[0.01]">
-                  <p className="text-muted-foreground font-semibold uppercase tracking-widest text-[9px]">No records available</p>
+                <div className="text-center py-20 border border-dashed border-[#404040] rounded-2xl bg-black/10">
+                  <p className="text-[#808080] font-semibold uppercase tracking-widest text-[9px]">No recent sessions recorded</p>
                 </div>
               )}
           </CardContent>
         </Card>
 
-        <Card className="p-8 space-y-6">
-            <div className="h-12 w-12 rounded-xl bg-white/5 flex items-center justify-center border border-white/10">
-                <Shield className="h-6 w-6 text-foreground" />
+        <Card className="p-8 space-y-6 border-[#404040] bg-[#171717]">
+            <div className="h-12 w-12 rounded-xl bg-white/5 flex items-center justify-center border border-[#404040]">
+                <Shield className="h-6 w-6 text-[#D5D5D5]" />
             </div>
-            <h3 className="text-[16px] font-semibold tracking-tight text-foreground uppercase">Team Unification</h3>
-            <p className="text-[14px] text-card-foreground font-medium leading-relaxed">Broadcast secure workspace invites to your entire organization for instant real-time collaboration.</p>
-            <Button variant="secondary" className="w-full h-11 text-[12px] font-semibold uppercase tracking-widest" onClick={() => router.push('/dashboard/settings')}>Workspace Config</Button>
+            <h3 className="text-[16px] font-semibold tracking-tight text-white uppercase">Workspace Protocol</h3>
+            <p className="text-[14px] text-[#B3B3B3] font-medium leading-relaxed">
+              Maintain operational continuity by managing your session history and professional identity settings.
+            </p>
+            <Button variant="secondary" className="w-full h-11 text-[11px] font-bold uppercase tracking-widest border-[#404040]" onClick={() => router.push('/dashboard/settings')}>Workspace Settings</Button>
         </Card>
       </div>
 
