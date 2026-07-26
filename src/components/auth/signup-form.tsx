@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -7,7 +8,7 @@ import * as z from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc, writeBatch } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { Eye, EyeOff } from 'lucide-react';
 
 import { useAuth, useFirestore } from '@/firebase';
@@ -82,6 +83,7 @@ export function SignupForm() {
         id: user.uid,
         name: values.name,
         email: values.email,
+        avatarUrl: `https://avatar.vercel.sh/${values.email}.png`,
         createdAt: new Date().toISOString(),
       };
       
@@ -102,7 +104,7 @@ export function SignupForm() {
         description: 'Your account has been successfully created.',
       });
 
-      router.push('/dashboard');
+      router.push('/');
     } catch (error: any) {
       console.error('Signup failed:', error);
       toast({
@@ -114,10 +116,10 @@ export function SignupForm() {
   }
 
   return (
-    <Card>
+    <Card className="border-white/10 bg-white/5 backdrop-blur-xl">
       <CardHeader>
-        <CardTitle className="text-2xl">Create Account</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-2xl text-white">Create Account</CardTitle>
+        <CardDescription className="text-slate-400">
           Join OmniMeet to collaborate in real-time with your team.
         </CardDescription>
       </CardHeader>
@@ -129,9 +131,14 @@ export function SignupForm() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Full Name</FormLabel>
+                  <FormLabel className="text-slate-300">Full Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="John Doe" {...field} suppressHydrationWarning />
+                    <Input 
+                      placeholder="John Doe" 
+                      {...field} 
+                      className="bg-white/5 border-white/10 text-white"
+                      suppressHydrationWarning 
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -142,9 +149,14 @@ export function SignupForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="text-slate-300">Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="name@example.com" {...field} suppressHydrationWarning />
+                    <Input 
+                      placeholder="name@example.com" 
+                      {...field} 
+                      className="bg-white/5 border-white/10 text-white"
+                      suppressHydrationWarning 
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -155,20 +167,21 @@ export function SignupForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel className="text-slate-300">Password</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input
                         type={showPassword ? 'text' : 'password'}
                         placeholder="••••••••"
                         {...field}
+                        className="bg-white/5 border-white/10 text-white pr-10"
                         suppressHydrationWarning
                       />
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
-                        className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 text-muted-foreground"
+                        className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 text-slate-400 hover:text-white"
                         onClick={() => setShowPassword(!showPassword)}
                         suppressHydrationWarning
                       >
@@ -192,20 +205,21 @@ export function SignupForm() {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
+                  <FormLabel className="text-slate-300">Confirm Password</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input
                         type={showConfirmPassword ? 'text' : 'password'}
                         placeholder="••••••••"
                         {...field}
+                        className="bg-white/5 border-white/10 text-white pr-10"
                         suppressHydrationWarning
                       />
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
-                        className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 text-muted-foreground"
+                        className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 text-slate-400 hover:text-white"
                         onClick={() =>
                           setShowConfirmPassword(!showConfirmPassword)
                         }
@@ -232,16 +246,16 @@ export function SignupForm() {
           <CardFooter className="flex flex-col gap-4">
             <Button
               type="submit"
-              className="w-full"
+              className="w-full bg-primary hover:bg-primary/90 text-white font-bold"
               disabled={form.formState.isSubmitting}
             >
               {form.formState.isSubmitting
                 ? 'Onboarding...'
                 : 'Get Started'}
             </Button>
-            <div className="text-center text-sm">
+            <div className="text-center text-sm text-slate-400">
               Already have an account?{' '}
-              <Link href="/login" className="underline">
+              <Link href="/login" className="text-primary hover:underline">
                 Sign in
               </Link>
             </div>

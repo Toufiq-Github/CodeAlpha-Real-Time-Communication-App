@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -5,8 +6,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import Link from 'next/link';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { useAuth, useFirestore } from '@/firebase';
+import { useAuth } from '@/firebase';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -42,7 +42,6 @@ export function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
   const auth = useAuth();
-  const db = useFirestore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,30 +53,14 @@ export function LoginForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
-      const user = userCredential.user;
+      await signInWithEmailAndPassword(auth, values.email, values.password);
       
-      const userDocRef = doc(db, 'users', user.uid);
-      const userDoc = await getDoc(userDocRef);
-
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        switch (userData.role) {
-          case 'Admin':
-            router.push('/admin');
-            break;
-          case 'Doctor':
-            router.push('/doctor');
-            break;
-          default:
-            router.push('/dashboard');
-            break;
-        }
-      } else {
-        // Fallback if user profile doesn't exist for some reason
-        router.push('/dashboard');
-      }
-
+      toast({
+        title: 'Welcome back!',
+        description: 'Successfully signed in to OmniMeet.',
+      });
+      
+      router.push('/');
     } catch (error: any) {
       console.error('Login failed:', error);
       toast({
@@ -89,11 +72,11 @@ export function LoginForm() {
   }
 
   return (
-    <Card>
+    <Card className="border-white/10 bg-white/5 backdrop-blur-xl">
       <CardHeader>
-        <CardTitle className="text-2xl">Welcome Back</CardTitle>
-        <CardDescription>
-          Enter your email and password to access your account.
+        <CardTitle className="text-2xl text-white">Welcome Back</CardTitle>
+        <CardDescription className="text-slate-400">
+          Enter your email and password to access your meetings.
         </CardDescription>
       </CardHeader>
       <Form {...form}>
@@ -104,9 +87,14 @@ export function LoginForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="text-slate-300">Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="name@example.com" {...field} suppressHydrationWarning />
+                    <Input 
+                      placeholder="name@example.com" 
+                      {...field} 
+                      className="bg-white/5 border-white/10 text-white"
+                      suppressHydrationWarning 
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -117,9 +105,15 @@ export function LoginForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel className="text-slate-300">Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} suppressHydrationWarning />
+                    <Input 
+                      type="password" 
+                      placeholder="••••••••" 
+                      {...field} 
+                      className="bg-white/5 border-white/10 text-white"
+                      suppressHydrationWarning 
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -127,12 +121,12 @@ export function LoginForm() {
             />
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-white font-bold" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting ? 'Signing In...' : 'Sign In'}
             </Button>
-            <div className="text-center text-sm">
+            <div className="text-center text-sm text-slate-400">
               Don&apos;t have an account?{' '}
-              <Link href="/signup" className="underline">
+              <Link href="/signup" className="text-primary hover:underline">
                 Sign up
               </Link>
             </div>
